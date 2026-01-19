@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohamed Gamal | Selected Work</title>
-    <meta name="description" content="Strategic Digital Marketing Case Studies">
+    <title>Mohamed Gamal | Portfolio</title>
+    <meta name="description" content="Digital Marketing Portfolio - Mohamed Gamal">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
@@ -14,14 +14,29 @@
         :root {
             --teal-deep: #1A6B6B;
             --teal-primary: #2B9B9B;
+            --teal-light: #4DC4C4;
+            --teal-glow: rgba(45, 180, 180, 0.15);
             --purple-deep: #5D4A7A;
             --purple-primary: #8B6AAF;
+            --purple-light: #B89DD8;
+            --purple-glow: rgba(139, 106, 175, 0.12);
+            --gold: #C4A962;
+            --gold-light: #E8D5A3;
+
             --white: #FFFFFF;
             --gray-50: #F8F9FA;
             --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-700: #495057;
+            --gray-900: #1A2B3C;
+
             --text-primary: #1A2B3C;
             --text-secondary: #495057;
             --text-muted: #868E96;
+
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
         }
 
         * {
@@ -30,271 +45,1116 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background: var(--gray-50);
             color: var(--text-primary);
-            line-height: 1.6;
+            overflow-x: hidden;
+            line-height: 1.7;
         }
 
-        .back-nav {
+        /* Ambient Background */
+        .ambient {
             position: fixed;
-            top: 25px;
-            left: 25px;
-            z-index: 100;
+            border-radius: 50%;
+            filter: blur(150px);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .back-nav a {
-            text-decoration: none;
-            color: var(--teal-primary);
-            font-weight: 600;
+        .ambient-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--teal-glow);
+            top: -150px;
+            left: -100px;
+        }
+
+        .ambient-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--purple-glow);
+            bottom: -100px;
+            right: -100px;
+            animation: ambientDrift 20s ease-in-out infinite;
+        }
+
+        @keyframes ambientDrift {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(-30px, 20px) scale(1.1);
+            }
+        }
+
+        .ambient-1 {
+            animation: ambientDrift 25s ease-in-out infinite reverse;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, var(--teal-light), var(--purple-light));
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 15s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) {
+            left: 5%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .particle:nth-child(2) {
+            left: 15%;
+            top: 70%;
+            animation-delay: 2s;
+            animation-duration: 18s;
+        }
+
+        .particle:nth-child(3) {
+            left: 75%;
+            top: 15%;
+            animation-delay: 4s;
+            animation-duration: 12s;
+        }
+
+        .particle:nth-child(4) {
+            left: 90%;
+            top: 60%;
+            animation-delay: 6s;
+            animation-duration: 20s;
+        }
+
+        .particle:nth-child(5) {
+            left: 40%;
+            top: 85%;
+            animation-delay: 8s;
+            animation-duration: 14s;
+        }
+
+        @keyframes particleFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.2;
+            }
+
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+                opacity: 0.5;
+            }
+        }
+
+        /* Progress Line */
+        .progress-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            z-index: 1000;
+            width: 0%;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 40vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            justify-content: center;
+            text-align: center;
+            padding: 80px 20px 50px;
+            background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--teal-glow) 0%, transparent 60%);
+            opacity: 0.5;
+            pointer-events: none;
+            animation: heroGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        .hero .overline {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--teal-primary);
+            margin-bottom: 12px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.2s;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--teal-deep), var(--purple-deep), var(--teal-deep));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.3s, gradientShift 5s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 550px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.4s;
+        }
+
+        .stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 35px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease forwards 0.5s;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
             transition: all 0.3s ease;
         }
 
-        .back-nav a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        .stat:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
-        header {
-            text-align: center;
-            padding: 120px 20px 80px;
-            background: var(--white);
-        }
-
-        header h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+        .stat-number {
+            font-size: 2rem;
             font-weight: 800;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--teal-deep), var(--purple-deep));
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        header p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 3px;
         }
 
-        .projects-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px 100px;
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .project-card {
+        /* Filter Tabs */
+        .filter-section {
+            padding: 30px 20px;
             background: var(--white);
-            border-radius: 24px;
-            overflow: hidden;
-            margin-bottom: 60px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-            transition: transform 0.4s ease;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .filter-tabs {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        .filter-tab {
+            padding: 12px 28px;
+            background: var(--gray-100);
+            border: none;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .project-image {
-            height: 300px;
-            overflow: hidden;
+        .filter-tab:hover {
+            background: var(--gray-200);
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+            color: white;
+            box-shadow: 0 5px 20px rgba(45, 180, 180, 0.3);
+        }
+
+        /* Gallery */
+        .gallery-section {
+            padding: 40px 4%;
             position: relative;
+            z-index: 10;
         }
 
-        .project-image img {
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .gallery-item img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            display: block;
             transition: transform 0.6s ease;
         }
 
-        .project-card:hover .project-image img {
+        .gallery-item:hover img {
             transform: scale(1.05);
         }
 
-        .project-content {
-            padding: 40px;
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        .project-tag {
-            display: inline-block;
-            padding: 6px 16px;
-            background: var(--gray-100);
-            color: var(--teal-primary);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .gallery-item:hover::after {
+            opacity: 1;
         }
 
-        .project-title {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            color: var(--text-primary);
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 25px;
+            z-index: 5;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
         }
 
-        .case-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+            opacity: 1;
         }
 
-        .case-section h4 {
-            font-size: 1rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid var(--gray-100);
-            padding-bottom: 8px;
-            display: inline-block;
-        }
-
-        .case-section p {
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-        }
-
-        .outcome-box {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
-            padding: 30px;
-            border-radius: 16px;
-            color: white;
-            margin-top: 20px;
-        }
-
-        .outcome-box h4 {
-            color: rgba(255, 255, 255, 0.8);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .outcome-box p {
+        .gallery-overlay h4 {
             color: white;
             font-size: 1.1rem;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
+        .gallery-overlay span {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .lightbox-close {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .lightbox-nav {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lightbox-prev {
+            left: 30px;
+        }
+
+        .lightbox-next {
+            right: 30px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--white);
+            border-top: 1px solid var(--gray-200);
+            position: relative;
+            z-index: 10;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--teal-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Contact Floating Button */
+        .contact-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(45, 180, 180, 0.35);
+            z-index: 999;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-fab:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(45, 180, 180, 0.45);
+            border-radius: 20px;
+        }
+
+        .contact-fab svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Contact Modal */
+        .contact-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 15, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .contact-modal {
+            position: relative;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 251, 252, 0.98) 100%);
+            border-radius: 28px;
+            padding: 45px 30px 40px;
+            max-width: 440px;
+            width: 95%;
+            text-align: center;
+            transform: scale(0.85) translateY(30px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.25),
+                0 10px 30px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .contact-modal-overlay.show .contact-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .contact-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            border-radius: 2px;
+        }
+
+        .contact-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            min-width: 90px;
+        }
+
+        .modal-btn.call {
+            background: #111111;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-btn.call:hover {
+            background: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-btn.whatsapp {
+            background: #25D366;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.15);
+        }
+
+        .modal-btn.whatsapp:hover {
+            background: #20BD5A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        }
+
+        .modal-btn.email {
+            background: #007AFF;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 255, 0.15);
+        }
+
+        .modal-btn.email:hover {
+            background: #0066D6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25);
+        }
+
+        .modal-btn:active {
+            transform: scale(0.98);
+        }
+
+        .modal-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .case-grid {
-                grid-template-columns: 1fr;
-                gap: 25px;
+            .hero {
+                min-height: 50vh;
+                padding: 60px 20px 40px;
             }
-            
-            .project-title {
-                font-size: 1.6rem;
+
+            .stats {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .stat {
+                padding: 12px 20px;
+            }
+
+            .stat-number {
+                font-size: 1.8rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 16px;
+            }
+
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+                background: rgba(0, 0, 0, 0.5);
+            }
+
+            .lightbox-prev {
+                left: 10px;
+            }
+
+            .lightbox-next {
+                right: 10px;
+            }
+
+            .contact-fab {
+                bottom: 20px;
+                right: 20px;
+                width: 55px;
+                height: 55px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+            }
+
+            .contact-modal {
+                padding: 35px 25px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .filter-section {
+                padding: 15px 15px;
+            }
+
+            .filter-tabs {
+                gap: 8px;
+            }
+
+            .filter-tab {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .gallery-section {
+                padding: 40px 3%;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .tagline {
+                font-size: 0.95rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="back-nav">
-        <a href="/CV/">← Back to CV</a>
+    <!-- Ambient Background -->
+    <div class="ambient ambient-1"></div>
+    <div class="ambient ambient-2"></div>
+
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
 
-    <header>
-        <h1>Selected Work</h1>
-        <p>Strategic interventions that delivered measurable growth.</p>
+    <!-- Progress Line -->
+    <div class="progress-line" id="progressLine"></div>
+
+    <nav style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+        <a href="/CV/" style="text-decoration: none; color: var(--teal-primary); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            ← Back to CV
+        </a>
+    </nav>
+
+    <nav style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+        <a href="/CV/" style="text-decoration: none; color: var(--teal-primary); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            ← Back to CV
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero">
+        <p class="overline">Mohamed Gamal</p>
+        <h1>My Work</h1>
+        <p>Creative campaigns & designs for leading brands</p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">33+</div>
+                <div class="stat-label">Projects</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Brands</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Years</div>
+            </div>
+        </div>
     </header>
 
-    <div class="projects-container">
-        
-        <!-- Project 1: Arabian Oud -->
-        <article class="project-card">
-            <div class="project-image">
-                <img src="https://i.ibb.co/F4CdJZdL/page-4.png" alt="Arabian Oud Project">
-            </div>
-            <div class="project-content">
-                <span class="project-tag">E-commerce Growth</span>
-                <h2 class="project-title">Arabian Oud: Scaling to World Record Heights</h2>
-                
-                <div class="case-grid">
-                    <div class="case-section">
-                        <h4>The Problem</h4>
-                        <p>Despite strong brand equity, digital sales channels were underperforming compared to retail footprint. The challenge was to transfer the in-store luxury experience to digital.</p>
-                    </div>
-                    <div class="case-section">
-                        <h4>What I Did</h4>
-                        <p>Led a comprehensive digital transformation strategy focusing on UX optimization, unified inventory systems, and high-impact seasonal campaigns.</p>
-                    </div>
-                    <div class="outcome-box">
-                        <h4>The Outcome</h4>
-                        <p>Achieved Guinness World Record for sales volume and recognized as the #1 E-commerce platform in Saudi Arabia.</p>
-                    </div>
+    <!-- Gallery -->
+    <main class="gallery-section">
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/F4CdJZdL/page-4.png" alt="Portfolio Page 4" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 4</h4>
+                    <span>Branding</span>
                 </div>
             </div>
-        </article>
-
-        <!-- Project 2: Qeyadat -->
-        <article class="project-card">
-            <div class="project-image">
-                <img src="https://i.ibb.co/xtXV5s74/page-19.png" alt="Qeyadat Project">
-            </div>
-            <div class="project-content">
-                <span class="project-tag">B2B Lead Gen</span>
-                <h2 class="project-title">Qeyadat: High-Value Deal Flow</h2>
-                
-                <div class="case-grid">
-                    <div class="case-section">
-                        <h4>The Problem</h4>
-                        <p>Qeyadat needed to move beyond standard service offerings to secure high-value contracts with major Saudi government and private institutions.</p>
-                    </div>
-                    <div class="case-section">
-                        <h4>What I Did</h4>
-                        <p>Restructured the business development approach, creating tailored "solution-first" proposals rather than service lists, and optimized the B2B funnel.</p>
-                    </div>
-                    <div class="outcome-box">
-                        <h4>The Outcome</h4>
-                        <p>Successfully secured long-term contracts with top-tier Saudi brands and diversified the company's revenue models.</p>
-                    </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/Jj1sBwzC/page-5.png" alt="Portfolio Page 5" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 5</h4>
+                    <span>Social Media</span>
                 </div>
             </div>
-        </article>
-
-        <!-- Project 3: Iso-tec -->
-        <article class="project-card">
-            <div class="project-image">
-                <img src="https://i.ibb.co/9HL6ZpKW/page-6.png" alt="Iso-tec Project">
-            </div>
-            <div class="project-content">
-                <span class="project-tag">Digital Transformation</span>
-                <h2 class="project-title">Iso-tec: Compliance as a Growth Lever</h2>
-                
-                <div class="case-grid">
-                    <div class="case-section">
-                        <h4>The Problem</h4>
-                        <p>Clients were struggling to meet ISO digital standards, creating a bottleneck for Iso-tec's consultancy services.</p>
-                    </div>
-                    <div class="case-section">
-                        <h4>What I Did</h4>
-                        <p>Developed a "Digital Readiness" framework that pre-qualified clients for certification, turning a compliance hurdle into a consulting product.</p>
-                    </div>
-                    <div class="outcome-box">
-                        <h4>The Outcome</h4>
-                        <p>Streamlined certification processes for major ministries and increased client retention by 40%.</p>
-                    </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/9HL6ZpKW/page-6.png" alt="Portfolio Page 6" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 6</h4>
+                    <span>Advertising</span>
                 </div>
             </div>
-        </article>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/bR7PggCX/page-7.png" alt="Portfolio Page 7" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 7</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/Z6CpvkHr/page-8.png" alt="Portfolio Page 8" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 8</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/3DDDk0s/page-9.png" alt="Portfolio Page 9" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 9</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/1fSvxdZk/page-10.png" alt="Portfolio Page 10" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 10</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/cXQjTn0m/page-11.png" alt="Portfolio Page 11" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 11</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/93TXsrXh/page-12.png" alt="Portfolio Page 12" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 12</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/4RrrQWfn/page-13.png" alt="Portfolio Page 13" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 13</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/99Z8nfjb/page-14.png" alt="Portfolio Page 14" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 14</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/nNfQBdKf/page-15.png" alt="Portfolio Page 15" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 15</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/M5NWnDfP/page-16.png" alt="Portfolio Page 16" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 16</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/32QLD01/page-17.png" alt="Portfolio Page 17" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 17</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/HD2jySg3/page-18.png" alt="Portfolio Page 18" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 18</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/xtXV5s74/page-19.png" alt="Portfolio Page 19" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 19</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/zVpWX3q2/page-20.png" alt="Portfolio Page 20" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 20</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/wNqKvD3s/page-21.png" alt="Portfolio Page 21" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 21</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/Y44TnK3c/page-22.png" alt="Portfolio Page 22" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 22</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/Y4ZmYS3C/page-23.png" alt="Portfolio Page 23" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 23</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/1t1mHvw9/page-24.png" alt="Portfolio Page 24" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 24</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/d096WWnt/page-25.png" alt="Portfolio Page 25" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 25</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/NgCTgTCD/page-26.png" alt="Portfolio Page 26" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 26</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/YB4zHnTm/page-27.png" alt="Portfolio Page 27" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 27</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/S7R77v9Z/page-28.png" alt="Portfolio Page 28" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 28</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/5WBtwGtb/page-29.png" alt="Portfolio Page 29" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 29</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/FLfwJNR6/page-30.png" alt="Portfolio Page 30" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 30</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/wZjtcQBT/page-31.png" alt="Portfolio Page 31" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 31</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/TxVZ5h0x/page-32.png" alt="Portfolio Page 32" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 32</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/39bSRvZz/page-33.png" alt="Portfolio Page 33" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 33</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/d0nVvN5J/page-34.png" alt="Portfolio Page 34" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 34</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/S45CM2Ms/page-35.png" alt="Portfolio Page 35" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 35</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/Vc5NYrD1/page-36.png" alt="Portfolio Page 36" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 36</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/600v3Qxr/page-37.png" alt="Portfolio Page 37" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 37</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/Kjm14dBx/page-38.png" alt="Portfolio Page 38" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 38</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="ads">
+                <img src="https://i.ibb.co/ktyHJCP/page-39.png" alt="Portfolio Page 39" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 39</h4>
+                    <span>Advertising</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="branding">
+                <img src="https://i.ibb.co/xq5wKMW9/page-40.png" alt="Portfolio Page 40" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 40</h4>
+                    <span>Branding</span>
+                </div>
+            </div>
+            <div class="gallery-item" data-category="social">
+                <img src="https://i.ibb.co/4RTbgkRD/page-41.png" alt="Portfolio Page 41" loading="lazy">
+                <div class="gallery-overlay">
+                    <h4>Portfolio Page 41</h4>
+                    <span>Social Media</span>
+                </div>
+            </div>
+        </div>
+    </main>
 
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">←</button>
+        <div class="lightbox-content">
+            <img src="" alt="Lightbox Image" id="lightboxImg">
+        </div>
+        <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">→</button>
     </div>
 
+    <!-- Footer -->
     <footer style="padding: 40px 20px; text-align: center; background: var(--gray-50); border-top: 1px solid var(--gray-200); margin-top: 60px;">
         <div style="display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; flex-wrap: wrap;">
             <a href="/CV/" style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s ease;">Home</a>
@@ -304,5 +1164,148 @@
         </div>
         <p style="font-size: 0.85rem; color: var(--text-muted);">© 2026 Mohamed Gamal | All Rights Reserved</p>
     </footer>
+
+    <!-- Contact Floating Button -->
+    <div class="contact-fab" onclick="showContactModal()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+        </svg>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="contact-modal-overlay" id="contactModal">
+        <div class="contact-modal">
+            <button class="modal-close" onclick="hideContactModal()">✕</button>
+            <h3>Let's Connect with Mohamed</h3>
+            <div class="modal-buttons">
+                <a href="tel:+201555141282" class="modal-btn call">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+                    </svg>
+                    Call
+                </a>
+                <a href="https://wa.me/201555141282?text=Hi%20Mohamed,%20I'd%20like%20to%20connect%20with%20you"
+                    target="_blank" class="modal-btn whatsapp">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Progress Line
+        window.addEventListener('scroll', () => {
+            const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById('progressLine').style.width = scrolled + '%';
+        });
+
+        // Reveal on Scroll
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 50);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.gallery-item').forEach(el => revealObserver.observe(el));
+
+        // Filter Tabs
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.dataset.filter;
+
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        setTimeout(() => item.classList.add('visible'), 100);
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('visible');
+                    }
+                });
+            });
+        });
+
+        // Lightbox
+        let currentImageIndex = 0;
+        const images = Array.from(document.querySelectorAll('.gallery-item img'));
+
+        document.querySelectorAll('.gallery-item').forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentImageIndex = index;
+                openLightbox(item.querySelector('img').src);
+            });
+        });
+
+        function openLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightbox').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function navLightbox(direction) {
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+            if (currentImageIndex >= images.length) currentImageIndex = 0;
+            document.getElementById('lightboxImg').src = images[currentImageIndex].src;
+        }
+
+        // Close lightbox on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') navLightbox(1);
+            if (e.key === 'ArrowLeft') navLightbox(-1);
+        });
+
+        // Close lightbox on background click
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('lightbox')) closeLightbox();
+        });
+
+        // Contact Modal Functions
+        function showContactModal() {
+            document.getElementById('contactModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideContactModal() {
+            document.getElementById('contactModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on background click
+        document.getElementById('contactModal').addEventListener('click', function (e) {
+            if (e.target === this) hideContactModal();
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideContactModal();
+            }
+        });
+    </script>
 </body>
+
 </html>
