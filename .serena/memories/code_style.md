@@ -1,0 +1,1 @@
+Style/conventions: semantic HTML5, modular CSS organization, CSS variables for theming. Vanilla JS for interactions; avoid heavy frameworks. Keep layout responsive (desktop/tablet/mobile). Favor clear naming for sections and assets.

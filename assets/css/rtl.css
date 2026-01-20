@@ -46,6 +46,19 @@ html[lang="ar"] .timeline-dot {
     left: auto;
 }
 
+/* Position switcher on left for Arabic page */
+html[lang="ar"] .lang-switch {
+    right: auto;
+    left: 20px;
+    flex-direction: row-reverse;
+}
+
+/* Move Contact FAB to left for Arabic */
+html[lang="ar"] .contact-fab {
+    right: auto;
+    left: 25px;
+}
+
 /* Navigation / Header */
 html[lang="ar"] nav {
     flex-direction: row-reverse;

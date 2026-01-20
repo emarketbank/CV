@@ -1,0 +1,1 @@
+Project purpose: a personal digital marketing portfolio site showcasing achievements, campaigns, and case studies with visual storytelling, motion effects, and UX focus. The site is static and deployed to GitHub Pages via GitHub Actions.

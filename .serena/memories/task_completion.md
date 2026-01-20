@@ -1,0 +1,1 @@
+When finishing a task: verify relevant pages by opening `index.html`/target page in a browser or via local server. No formal test/lint steps documented; rely on visual/manual checks and spot-check JS console for errors.

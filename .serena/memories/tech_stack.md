@@ -1,0 +1,1 @@
+Tech stack: HTML5, CSS3, vanilla JavaScript (ES6+). Styling uses custom CSS with CSS variables (no framework). Animations via CSS keyframes and IntersectionObserver. Fonts: Google Fonts (Outfit). Deployment: GitHub Actions to GitHub Pages.
