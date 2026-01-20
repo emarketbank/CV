@@ -777,3 +777,328 @@ body {
         transform: none;
     }
 }
+
+/* Portfolio Tabs */
+.portfolio-tabs {
+    display: flex;
+    gap: 12px;
+    margin-top: 35px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tab-btn svg {
+    stroke: currentColor;
+    transition: transform 0.3s ease;
+}
+
+.tab-btn:hover {
+    border-color: var(--teal-primary);
+    color: var(--text-primary);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.tab-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 8px 25px rgba(43, 155, 155, 0.35);
+}
+
+.tab-btn.active svg {
+    stroke: white;
+}
+
+/* Reels Section */
+.reels-section {
+    padding: 60px 20px;
+    position: relative;
+    z-index: 10;
+    min-height: 80vh;
+}
+
+.reels-container {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Phone Mockup - iPhone Style */
+.phone-mockup {
+    position: relative;
+    margin: 0 auto;
+    max-width: 320px;
+}
+
+.phone-frame {
+    background: linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 50%, #0a0a0a 100%);
+    border-radius: 45px;
+    padding: 12px;
+    box-shadow:
+        0 50px 100px rgba(0, 0, 0, 0.4),
+        0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.phone-notch {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    background: #000;
+    border-radius: 0 0 20px 20px;
+    z-index: 20;
+}
+
+.phone-notch::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #3a3a3c 0%, #1c1c1e 100%);
+    border-radius: 50%;
+}
+
+.phone-screen {
+    background: #000;
+    border-radius: 35px;
+    overflow: hidden;
+    position: relative;
+    height: 600px;
+}
+
+/* Reels Scroll Container */
+.reels-scroll {
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.reels-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Individual Reel Item */
+.reel-item {
+    height: 100%;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.reel-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Play Button Overlay */
+.reel-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 15;
+}
+
+.reel-play-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.reel-item.playing .reel-play-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Reel Info Overlay */
+.reel-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 60px 20px 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 10;
+}
+
+.reel-info {
+    text-align: left;
+}
+
+.reel-info h4 {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.reel-info span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+/* Reel Actions (Like, Share) */
+.reel-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reel-action {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reel-action:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    text-align: center;
+    z-index: 15;
+    animation: fadeInOut 3s ease-in-out infinite;
+}
+
+.scroll-arrow {
+    font-size: 1.5rem;
+    animation: bounceDown 1.5s ease-in-out infinite;
+}
+
+@keyframes bounceDown {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(8px);
+    }
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Reels Hint */
+.reels-hint {
+    margin-top: 25px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.reels-hint p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Responsive for Reels */
+@media (max-width: 480px) {
+    .phone-mockup {
+        max-width: 280px;
+    }
+
+    .phone-screen {
+        height: 500px;
+    }
+
+    .phone-frame {
+        border-radius: 38px;
+        padding: 10px;
+    }
+
+    .phone-screen {
+        border-radius: 30px;
+    }
+
+    .portfolio-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tab-btn {
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
+}

@@ -160,4 +160,109 @@ document.addEventListener('DOMContentLoaded', () => {
             hideContactModal();
         }
     });
+
+    // ========== TAB SWITCHING ==========
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const gallerySection = document.querySelector('.gallery-section');
+    const reelsSection = document.getElementById('reelsSection');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active tab
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const tab = btn.dataset.tab;
+
+            if (tab === 'images') {
+                if (gallerySection) gallerySection.style.display = 'block';
+                if (reelsSection) reelsSection.style.display = 'none';
+                // Pause all videos
+                pauseAllVideos();
+            } else if (tab === 'videos') {
+                if (gallerySection) gallerySection.style.display = 'none';
+                if (reelsSection) reelsSection.style.display = 'block';
+            }
+        });
+    });
+
+    // ========== VIDEO REELS FUNCTIONALITY ==========
+    const reelItems = document.querySelectorAll('.reel-item');
+    const reelsScroll = document.getElementById('reelsScroll');
+    let currentlyPlaying = null;
+
+    // Pause all videos helper
+    const pauseAllVideos = () => {
+        reelItems.forEach(item => {
+            const video = item.querySelector('video');
+            if (video) {
+                video.pause();
+                item.classList.remove('playing');
+            }
+        });
+        currentlyPlaying = null;
+    };
+
+    // Play/Pause on tap
+    reelItems.forEach(item => {
+        const video = item.querySelector('video');
+        const playBtn = item.querySelector('.reel-play-btn');
+
+        const togglePlay = () => {
+            if (!video) return;
+
+            if (video.paused) {
+                // Pause any other playing video first
+                pauseAllVideos();
+                video.muted = false;
+                video.play().catch(() => {
+                    // Autoplay blocked, keep muted
+                    video.muted = true;
+                    video.play();
+                });
+                item.classList.add('playing');
+                currentlyPlaying = video;
+            } else {
+                video.pause();
+                item.classList.remove('playing');
+                currentlyPlaying = null;
+            }
+        };
+
+        playBtn?.addEventListener('click', togglePlay);
+        video?.addEventListener('click', togglePlay);
+    });
+
+    // Auto-pause on scroll (play visible video)
+    if (reelsScroll && 'IntersectionObserver' in window) {
+        const reelObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                if (!video) return;
+
+                if (!entry.isIntersecting) {
+                    video.pause();
+                    entry.target.classList.remove('playing');
+                    if (currentlyPlaying === video) {
+                        currentlyPlaying = null;
+                    }
+                }
+            });
+        }, { 
+            root: reelsScroll, 
+            threshold: 0.5 
+        });
+
+        reelItems.forEach(item => reelObserver.observe(item));
+    }
+
+    // Hide scroll indicator after first scroll
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (reelsScroll && scrollIndicator) {
+        reelsScroll.addEventListener('scroll', () => {
+            scrollIndicator.style.opacity = '0';
+            scrollIndicator.style.pointerEvents = 'none';
+        }, { once: true });
+    }
 });
+
