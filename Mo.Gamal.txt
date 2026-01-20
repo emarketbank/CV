@@ -1,0 +1,274 @@
+# Mohamed Gamal
+**Growth Systems Architect | E-commerce & Digital Transformation | MENA Specialist**  
+Cairo, Egypt • +20 155 514 1282 • emarketbank@gmail.com • LinkedIn: linkedin.com/in/mohamadgamal
+
+---
+
+## The Short Version
+
+> "In 2020, I was part of the team that broke a Guinness World Record — 5 million orders processed in a single Black Friday campaign. But the real story isn't the record. It's the system we built that made it possible."
+
+I've spent 10+ years figuring out one thing: **how to turn marketing chaos into growth machines that run without burning teams out.**
+
+**The numbers people ask about:**
+- **6x organic revenue growth** at Arabian Oud (SEO that actually sells, not just ranks)
+- **$12k–$20k/day** in paid spend across 6 markets — without the account turning into a mess
+- **7x contract growth** at DigiMora by changing *what* we sold, not just *how* we sold
+- Teams of **9–12 people** who shipped faster because the systems worked for them, not against them
+
+---
+
+## What I Actually Do
+
+I've learned that most growth problems aren't marketing problems — they're **systems problems wearing a marketing costume.**
+
+- **I build repeatable growth engines**, not one-off campaigns that die when the person who made them leaves
+- **I turn SEO into a revenue channel** — most companies treat it as a ranking game; I treat it as compound interest for your business
+- **I scale paid without the chaos** — testing frameworks, governance, and reporting that executives actually read
+- **I automate the boring stuff** — WhatsApp flows, CRM triggers, internal workflows — so humans can do human work
+- **I bridge the gap** between "the marketing team" and "the rest of the business" — because growth isn't a department, it's a company-wide sport
+
+---
+
+## Experience
+
+### Marketing Manager — Qyadat (Riyadh / KSA) | 2023 – Present
+I run marketing as a team sport: clear priorities, clean execution, and outcomes you can explain.
+
+**Scope (rough):**
+- Team: **~9 people**
+- Mix: B2B + B2C clients across **6+ industries** (hotels, hospitals, auto, fashion, charities, schools, and more)
+- Products: helped launch and market **2** main products (Mora WhatsApp + Mora SMS)
+
+**What I drove**
+- Built a marketing operation that can serve very different businesses without turning into a mess.
+- Took Mora WhatsApp from “feature list” to a sellable story: support + conversations + retention.
+- Launched campaigns for Mora SMS built around high-volume messaging for business growth.
+
+**Mini stories (Problem → Move → Result)**
+- **Problem:** Mora WhatsApp had value, but it sounded like “another tool.”  
+  **Move:** Reframed it around what owners actually care about: faster support, fewer dropped chats, more repeat buys. Built campaign angles + simple demos.  
+  **Result:** Turned it into a clearer offer that landed with real businesses in Riyadh (more serious conversations, less “sounds nice”).
+
+- **Problem:** Multi-industry clients = constant context switching, inconsistent quality.  
+  **Move:** Standardized planning + reporting, created reusable playbooks, and tightened feedback loops with the team.  
+  **Result:** Faster turnaround and more consistent output across totally different sectors.
+
+- **Problem:** Mora SMS needed to feel powerful, not spammy.  
+  **Move:** Built campaign messaging around segmentation, timing, and measurable outcomes (not “send a million messages”).  
+  **Result:** Better credibility with business owners and a smoother path from interest → decision.
+
+---
+
+### E-commerce Supervisor — Gento Shop (Electronics) | 2023 – 2025
+This wasn’t just “run a store.” It was about building a cleaner operating system for e-commerce.
+
+**Scope (rough):**
+- Cross-functional leadership: product + dev + marketing + operations
+- Built internal tools and workflows with management involvement
+
+**What I drove**
+- Commercial growth + store improvements (UX, merchandising, flows).
+- Oversaw dev + marketing execution for new capabilities.
+- Helped unify warehouses into one digital view and supported a mobile ops layer for daily work.
+
+**Mini stories (Problem → Move → Result)**
+- **Problem:** Warehouses + inventory data were scattered, decisions were slow, and updates were painful.  
+  **Move:** Helped unify warehouses under one digital system, plus a mobile layer for tracking and follow-up.  
+  **Result:** Fewer blind spots, quicker coordination, and **~60–80% less manual chasing** (less “where is this item?” drama).
+
+- **Problem:** Customer support was reactive and repetitive.  
+  **Move:** Built smarter support flows (structured customer conversations, clearer routing, better logging).  
+  **Result:** Faster responses and less noise — support started feeling like a system, not firefighting.
+
+- **Problem:** New features kept getting stuck between “idea” and “shipping.”  
+  **Move:** Tightened collaboration between tech + marketing, made priorities visible, and pushed smaller releases faster.  
+  **Result:** More frequent improvements and less “big-bang” delays.
+
+---
+
+### Business Development Manager — DigiMora | 2022 – 2024
+DigiMora is all about digitalization: e-commerce management + automation systems. My focus was raising the quality and value of external contracts.
+
+**Scope (rough):**
+- Owned BD end-to-end: lead qualification → proposal → negotiation → close
+- Worked closely with delivery to keep promises realistic
+
+**What I drove**
+- Rebuilt how deals were qualified (less “any client,” more “right client”).
+- Improved proposals so they sell outcomes, not tasks.
+- Tightened handover between sales and delivery (so contracts don’t collapse after signing).
+
+**Mini stories (Problem → Move → Result)**
+- **Problem:** Deals were coming in, but quality was inconsistent and margins were shaky.  
+  **Move:** Set stronger qualification rules, rebuilt packaging, and upgraded proposals to focus on measurable impact.  
+  **Result:** In about a year, external contracting performance hit roughly **~7x** the usual run-rate.
+
+- **Problem:** Clients wanted “digital transformation” but didn’t understand what they were buying.  
+  **Move:** Turned services into clear bundles (what you get, how it works, what success looks like).  
+  **Result:** Faster decisions and fewer “scope confusion” headaches later.
+
+- **Problem:** BD vs delivery misalignment kills trust.  
+  **Move:** Built a cleaner handshake between the teams (scope clarity + timelines + reporting rhythm).  
+  **Result:** Smoother delivery and better retention potential.
+
+---
+
+### Digital Marketing Supervisor — Arabian Oud (Riyadh + MENA markets) | 2014 – 2023
+This is where I learned scale for real: multi-market growth, high daily spend, and brand standards that don’t allow sloppy execution.
+
+**Scope (rough but real-world):**
+- Markets: **Saudi + 5 countries** (UAE, Egypt, Kuwait, Bahrain, Qatar)
+- Paid spend: **~$12k–$20k/day** across social/performance channels
+- Team leadership: **~12 people**
+- Growth: **organic-driven sales ~6x over ~2 years**
+
+**What I drove**
+- SEO strategy that wasn’t “content for content’s sake” — it was tied to categories, intent, and conversion.
+- Paid scaling across markets with budget control and consistent reporting.
+- Built a stronger operating rhythm for the team (priorities, QA, performance reviews).
+
+**Mini stories (Problem → Move → Result)**
+- **Problem:** Organic traffic existed, but it wasn’t pulling its weight commercially.  
+  **Move:** Rebuilt SEO around intent + category structure, cleaned technical issues, and aligned content with what actually sells.  
+  **Result:** Organic-led sales grew around **~6x in ~24 months** (compounding growth, not one-off spikes).
+
+- **Problem:** Scaling paid across multiple countries easily turns into waste.  
+  **Move:** Set guardrails: testing structure, creative iteration, performance dashboards, and tighter budget steering.  
+  **Result:** Sustained a daily spend level of **~$12k–$20k/day** across markets without turning the account into chaos.
+
+- **Problem:** High brand standards + fast execution = teams can burn out or drift.  
+  **Move:** Built a cleaner workflow: weekly planning, clear ownership, QA checks, and simple reporting that executives actually read.  
+  **Result:** A more stable delivery engine that shipped faster and cleaner.
+
+**Notable moment**
+- Arabian Oud got a Guinness World Records recognition (official record page).  
+  I was part of the growth machine during that era — where scale, brand credibility, and performance all had to work together.
+
+---
+
+### Digital Transformation Specialist — Iso-tec (KSA) | 2018 – 2023
+This chapter shaped how I see business “from above.” It wasn’t about marketing — it was about **how organizations run** and how digital can improve productivity and reduce waste.
+
+**Core focus**
+- Helped large Saudi organizations move toward ISO / quality readiness through “digital quality”: workflow clarity, documentation, measurement, and practical tech adoption.
+
+**Five major client examples (my role in 2 lines each)**
+1) **Al Abbasi Real Estate Group**  
+   Turned quality requirements into trackable digital workflows (ownership, documentation, follow-up).  
+   Reduced ambiguity and made compliance feel operational, not theoretical.
+
+2) **Global Technical Means Authority (client name as listed on Iso-tec site)**  
+   Worked on digital structure and measurement so quality standards weren’t just paperwork.  
+   Built clearer tracking for execution, escalation, and performance signals.
+
+3) **Hisham Al Sweedy Trading Co.**  
+   Helped map processes into a practical system: what happens, who owns it, how it’s checked.  
+   Less “tribal knowledge,” more repeatable operations.
+
+4) **Jouf University**  
+   Supported operational visibility: dashboards + clearer process trails for accountability.  
+   Made follow-up easier for leadership and reduced manual back-and-forth.
+
+5) **Food Quality Lab (Madinah / health-related sector project)**  
+   Supported digital readiness for accreditation-style work: documentation, checks, audit-friendly trails.  
+   Focused on cutting friction and raising consistency in day-to-day operations.
+
+**Mini stories (Problem → Move → Result)**
+- **Problem:** Organizations chase ISO, but daily operations stay messy.  
+  **Move:** Built digital “paths” for quality: clear steps, owners, tracking, and review points.  
+  **Result:** Cleaner operations and fewer hidden costs — typically **~10–20% less waste** in time/effort once workflows stop living in email chaos.
+
+- **Problem:** Leadership wants productivity gains, but teams don’t have tools.  
+  **Move:** Introduced practical tech usage tied to real KPIs (not “digital for digital”).  
+  **Result:** Faster cycle times and better accountability without adding bureaucracy.
+
+---
+
+### Digital Transformation Strategist — Kuwait Finance House | 03/2021 – 12/2021
+I worked on helping traditional banking operations move toward more efficient, digitally driven processes.
+
+**Scope (rough):**
+- Focused on analyzing existing workflows, identifying gaps, and designing practical transformation initiatives.
+- Balanced technology, compliance, and real business needs.
+
+**What I drove**
+- Collaborated with multiple departments to streamline operations.
+- Supported the bank’s shift toward more modern digital practices.
+- Focused on making complex systems simpler, more reliable, and easier to scale.
+
+---
+
+### Junior Marketing Specialist — PeoplePerHour | 06/2019 – 06/2022
+Supported client acquisition and early growth efforts on a freelance marketplace environment.
+
+**Scope (rough):**
+- Client needs analysis and service positioning.
+- Outreach, proposals, and basic market research.
+
+**What I drove**
+- Generated new business opportunities through targeted outreach.
+- Improved service positioning to attract more clients.
+- Learned the fundamentals of digital marketplaces and client acquisition.
+
+---
+
+### Earlier Foundation — TwinExcel | 2011 – 2017
+This is where the craft started: running campaigns, learning what moves the needle, and turning reporting into action.
+
+**Mini story**
+- **Problem:** “Posting content” doesn’t equal growth.  
+  **Move:** Learned to plan content + ads around goals and measurement from day one.  
+  **Result:** A performance mindset that stayed with me in every role after.
+
+---
+
+## Side / Project Work
+
+### ArabWorkers — Business Development / Growth (project-style, similar to DigiMora role)
+Worked on growth and partnerships: clearer offers, stronger packaging, and moving from “idea” to “sellable.”
+
+---
+
+## Education
+**B.Sc. Computer & Information Sciences — Cairo University (2003)**
+
+---
+
+## What I'm Exploring in 2026
+
+The game is changing fast. Here's what I'm paying attention to:
+
+**AI in E-commerce Operations**
+- AI agents handling tier-1 customer service (not just chatbots — actual problem-solving)
+- Inventory forecasting that learns from your data, not just industry averages
+- Content generation that sounds like your brand, not like a robot
+
+**No-Code Automation**
+- Building workflows in n8n and Make that used to need a dev team
+- Connecting tools that were never meant to talk to each other
+- Reducing "waiting for IT" from weeks to hours
+
+**Saudi Market Shifts**
+- Vision 2030 is changing consumer behavior faster than most companies realize
+- The "Saudi digital consumer" of 2026 is not the same person from 2020
+- Local payment methods, local logistics, local expectations — the winners will be the ones who understand this
+
+---
+
+## Toolset (practical)
+**Ads / Analytics:** Google Ads, Meta Business Suite, TikTok Ads Manager, GA  
+**SEO:** Ahrefs + technical/on-page/content workflows  
+**E-commerce:** Magento + CRO and merchandising structure  
+**Automation / CRM:** ActiveCampaign, Zapier, Make, n8n  
+**Project Management:** Trello, Jira  
+**Creative:** Photoshop, Premiere, After Effects  
+**AI / Gen Tools:** Midjourney, Runway, Freepik, (plus modern AI assistants in day-to-day work)
+
+---
+
+## Proof Links
+- Guinness World Records (Arabian Oud):  
+  https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327
+- Iso-tec Clients / Projects:  
+  https://www.iso-tec.com/%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D8%A7%D8%AA-%D8%A3%D9%8A%D8%B2%D9%88%D8%AA%D9%83/
