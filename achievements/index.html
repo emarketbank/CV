@@ -596,14 +596,8 @@
 
 <body>
     <!-- Language Switcher -->
-    <a href="index-ar.html" class="lang-switch">
-        <span>العربية</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-        </svg>
+    <a href="index-ar.html" class="lang-switch" aria-label="Switch to Arabic">
+        <span style="font-family: 'Tajawal'; font-weight: 700; font-size: 1.2rem;">ع</span>
     </a>
 
     <div class="ambient-glow"></div>
@@ -766,7 +760,7 @@
                 <h2>The Full Journey</h2>
                 <p>Every role, every company, every step of the way.</p>
             </div>
-            
+
             <div class="journey-timeline">
                 <!-- Qyadat -->
                 <div class="journey-item">
@@ -910,7 +904,7 @@
             transform: translateX(-20px);
             transition: all 0.5s ease;
         }
-        
+
         .journey-item.visible {
             opacity: 1;
             transform: translateX(0);
@@ -934,11 +928,12 @@
             border-radius: 50%;
             margin-top: 8px;
             position: absolute;
-            left: 45px; /* Aligned with line */
+            left: 45px;
+            /* Aligned with line */
             z-index: 2;
             box-shadow: 0 0 10px var(--purple-glow);
         }
-        
+
         .journey-item:hover .journey-marker {
             background: var(--teal-primary);
             transform: scale(1.3);
@@ -985,28 +980,32 @@
             .journey-timeline::before {
                 left: 20px;
             }
+
             .journey-year {
-                display: none; /* Hide year on side for mobile, maybe move inside? */
+                display: none;
+                /* Hide year on side for mobile, maybe move inside? */
             }
+
             .journey-marker {
                 left: 15px;
             }
+
             .journey-content {
                 margin-left: 35px;
             }
         }
     </style>
-    
+
     <script>
         // Observe journey items
         const journeyObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if(entry.isIntersecting) {
+                if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
         }, { threshold: 0.1 });
-        
+
         document.querySelectorAll('.journey-item').forEach(el => journeyObserver.observe(el));
     </script>
 
