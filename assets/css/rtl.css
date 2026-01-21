@@ -53,9 +53,7 @@ html[lang="ar"] .contact-fab {
 }
 
 /* Navigation / Header */
-html[lang="ar"] nav {
-    flex-direction: row-reverse;
-}
+
 
 /* Stats Context */
 html[lang="ar"] .stat-context {

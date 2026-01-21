@@ -78,11 +78,7 @@
     height: 32px;
 }
 
-.header-logo:hover {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 8px 30px rgba(45, 180, 180, 0.2);
-    border-color: var(--teal-primary);
-}
+
 
 
 
@@ -153,7 +149,8 @@
     background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 6px 12px;
+    padding: 4px 8px;
+    /* Reduced padding */
     border-radius: 100px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
@@ -163,10 +160,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
+    min-width: 32px;
+    /* Reduced width */
     width: auto;
-    padding: 0 12px;
-    height: 40px;
+    padding: 0 8px;
+    /* Reduced padding */
+    height: 32px;
+    /* Reduced height */
     border-radius: 100px;
     color: var(--text-secondary);
     transition: all 0.3s ease;
@@ -178,15 +178,18 @@
 }
 
 .header-controls .lang-switch:hover {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background: transparent;
+    /* Removed background to fix frame-in-frame */
     transform: translateY(-1px);
     color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    /* Added glow instead */
 }
 
 .lang-switch span {
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    /* Slightly smaller font */
 }
 
 
@@ -198,9 +201,7 @@
    6. RTL (Right-to-Left)
    ============================================ */
 
-[dir="rtl"] .header-container {
-    flex-direction: row-reverse;
-}
+
 
 
 /* ============================================
