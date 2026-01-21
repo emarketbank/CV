@@ -48,12 +48,12 @@
     justify-content: center;
     width: 50px;
     height: 50px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -81,17 +81,13 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    /* Space between pills */
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 6px;
     border-radius: 100px;
-    /* Stadium shape */
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow:
-        0 10px 40px -10px rgba(0, 0, 0, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
@@ -107,26 +103,14 @@
 }
 
 .nav-link:hover {
-    color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.03);
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* ACTIVE STATE - The "Pill" Look */
 .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
-    background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
-    /* Slight purple-ish tint for light mode base */
-    background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
-    /* Fallback */
-    /* Actual stylish gradient */
-    background: linear-gradient(135deg, rgba(45, 180, 180, 0.15), rgba(138, 43, 226, 0.15));
-    /* Brand tint */
-    background: var(--gray-100);
-    /* Ultra minimal */
-
-    /* Let's go with the user screenshot look: Very light grey/purple background pill */
-    background: linear-gradient(90deg, #F0F2F5, #F5F3FF);
-    color: var(--text-primary);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
@@ -153,16 +137,15 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     padding: 6px 12px;
     border-radius: 100px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
 }
 
-.header-controls .theme-toggle,
 .header-controls .lang-switch {
     display: flex;
     align-items: center;
@@ -179,12 +162,11 @@
     cursor: pointer;
 }
 
-.header-controls .theme-toggle:hover,
 .header-controls .lang-switch:hover {
-    background: white;
+    background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
-    color: var(--text-primary);
+    color: #fff;
 }
 
 .lang-switch span {
@@ -196,31 +178,6 @@
 /* ============================================
    5. DARK MODE ADAPTATIONS
    ============================================ */
-
-[data-theme="dark"] .header-logo,
-[data-theme="dark"] .header-nav,
-[data-theme="dark"] .header-controls {
-    background: rgba(30, 30, 35, 0.6);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .nav-link:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-}
-
-[data-theme="dark"] .nav-link.active {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
-[data-theme="dark"] .header-controls .theme-toggle:hover,
-[data-theme="dark"] .header-controls .lang-switch:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
 
 /* ============================================
    6. RTL (Right-to-Left)
