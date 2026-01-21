@@ -1,90 +1,98 @@
 /* ============================================
-   PREMIUM HEADER WITH NAVIGATION
-   Modern glassmorphism header with nav menu
+   ULTRA-MODERN FLOATING HEADER
+   Concept: Floating "Islands" with Pill Navigation
+   2026 Design Language
    ============================================ */
 
 /* ============================================
-   1. HEADER CONTAINER
+   1. HEADER STRUCTURE & LAYOUT
    ============================================ */
 
 .site-header {
     position: fixed;
-    top: 0;
+    top: 20px;
+    /* Floating from top */
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(var(--bg-body-rgb, 255, 255, 255), 0.65);
-    backdrop-filter: blur(25px) saturate(200%);
-    -webkit-backdrop-filter: blur(25px) saturate(200%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    /* No full bar */
+    border-bottom: none;
+    padding: 0;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    padding: 12px 0;
+    pointer-events: none;
+    /* Let clicks pass through empty space */
 }
 
-.site-header.scrolled {
-    padding: 8px 0;
-    background: rgba(var(--bg-body-rgb, 255, 255, 255), 0.85);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-    border-bottom-color: rgba(255, 255, 255, 0.15);
-}
-
+/* Container for the floating elements */
 .header-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 30px;
+    padding: 0 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    /* Space out the 3 islands: Logo, Nav, Controls */
+    pointer-events: auto;
+    /* Re-enable clicks on elements */
 }
 
 /* ============================================
-   2. LOGO/BRAND
+   2. LOGO (Island 1)
    ============================================ */
 
 .header-logo {
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .header-logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 30px rgba(45, 180, 180, 0.2);
+    border-color: var(--teal-primary);
 }
 
 .logo-text {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.1rem;
+    font-weight: 800;
     letter-spacing: -0.03em;
     background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -0.02em;
-}
-
-.logo-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-top: -4px;
 }
 
 /* ============================================
-   3. NAVIGATION MENU
+   3. NAVIGATION PILL (Island 2 - Center)
    ============================================ */
 
 .header-nav {
     display: flex;
     align-items: center;
-    gap: 6px;
-    position: relative;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 4px;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    gap: 4px;
+    /* Space between pills */
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    padding: 6px;
+    border-radius: 100px;
+    /* Stadium shape */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+        0 10px 40px -10px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
 }
 
 .nav-link {
@@ -93,287 +101,198 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
-    padding: 10px 20px;
-    border-radius: 50px;
+    padding: 10px 24px;
+    border-radius: 100px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 2;
 }
 
 .nav-link:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.03);
 }
 
+/* ACTIVE STATE - The "Pill" Look */
+.nav-link.active {
+    color: #fff;
+    background: linear-gradient(135deg, #e0e7ff, #f3e8ff);
+    /* Slight purple-ish tint for light mode base */
+    background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+    /* Fallback */
+    /* Actual stylish gradient */
+    background: linear-gradient(135deg, rgba(45, 180, 180, 0.15), rgba(138, 43, 226, 0.15));
+    /* Brand tint */
+    background: var(--gray-100);
+    /* Ultra minimal */
+
+    /* Let's go with the user screenshot look: Very light grey/purple background pill */
+    background: linear-gradient(90deg, #F0F2F5, #F5F3FF);
+    color: var(--text-primary);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Override for the robust brand gradient if preferred (making it pop like the screenshot example might imply) */
+/* Actually user screenshot showed a light pill. Let's stick to refined light pill. */
+/* But let's add a "brand dot" or subtle indicator if needed. */
+
+/* Active Text Color override */
 .nav-link.active {
     color: var(--text-primary);
-    background: linear-gradient(135deg,
-            rgba(43, 155, 155, 0.15),
-            rgba(138, 43, 226, 0.15));
-    box-shadow:
-        0 2px 8px rgba(43, 155, 155, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    font-weight: 700;
 }
 
-/* Active indicator (animated underline) */
+/* Hide the old line indicator */
 .nav-indicator {
-    position: absolute;
-    bottom: 2px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
-    border-radius: 2px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.header-nav:has(.nav-link.active) .nav-indicator {
-    opacity: 1;
+    display: none;
 }
 
 /* ============================================
-   4. HEADER CONTROLS
+   4. CONTROLS (Island 3)
    ============================================ */
 
 .header-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
-/* Hide old floating theme toggle and lang switch to prevent duplication */
-body:has(.site-header)>.theme-toggle:not(.site-header .theme-toggle),
-body:has(.site-header)>.lang-switch:not(.site-header .lang-switch) {
-    display: none !important;
-}
-
-/* Adjust existing theme toggle and lang switch to fit header */
-.site-header .theme-toggle,
-.site-header .lang-switch {
-    position: static;
-    margin: 0;
-}
-
-/* ============================================
-   5. MOBILE MENU TOGGLE
-   ============================================ */
-
-.mobile-menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
+.theme-toggle,
+.lang-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    background: transparent;
     border: none;
+    text-decoration: none;
+    /* for anchor */
     cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    transition: background 0.3s ease;
 }
 
-.mobile-menu-toggle:hover {
+.theme-toggle:hover,
+.lang-switch:hover {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+    color: var(--text-primary);
+}
+
+.lang-switch span {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+
+/* ============================================
+   5. DARK MODE ADAPTATIONS
+   ============================================ */
+
+[data-theme="dark"] .header-logo,
+[data-theme="dark"] .header-nav,
+[data-theme="dark"] .header-controls {
+    background: rgba(30, 30, 35, 0.6);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .nav-link:hover {
     background: rgba(255, 255, 255, 0.05);
+    color: #fff;
 }
 
-.mobile-menu-toggle span {
-    width: 24px;
-    height: 2px;
-    background: var(--text-primary);
-    border-radius: 2px;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+[data-theme="dark"] .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
-.mobile-menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translateY(7px);
+[data-theme="dark"] .theme-toggle:hover,
+[data-theme="dark"] .lang-switch:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
-.mobile-menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-
-.mobile-menu-toggle.active span:nth-child(3) {
-    transform: rotate(-45deg) translateY(-7px);
-}
 
 /* ============================================
-   6. MOBILE NAVIGATION
-   ============================================ */
-
-@media (max-width: 768px) {
-    .header-container {
-        padding: 0 20px;
-    }
-
-    .mobile-menu-toggle {
-        display: flex;
-    }
-
-    .header-nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 280px;
-        height: 100vh;
-        flex-direction: column;
-        gap: 0;
-        padding: 100px 30px 30px;
-        background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.95);
-        backdrop-filter: blur(30px);
-        border-radius: 0;
-        border: none;
-        border-left: 1px solid rgba(255, 255, 255, 0.1);
-        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 999;
-    }
-
-    .header-nav.mobile-open {
-        right: 0;
-    }
-
-    .nav-link {
-        width: 100%;
-        padding: 16px 20px;
-        border-radius: 12px;
-        font-size: 1.1rem;
-    }
-
-    .nav-indicator {
-        display: none;
-    }
-
-    /* Mobile overlay */
-    .mobile-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 998;
-    }
-
-    .mobile-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .logo-text {
-        font-size: 1.3rem;
-    }
-}
-
-/* ============================================
-   7. SCROLL ANIMATIONS
-   ============================================ */
-
-@keyframes headerSlideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.site-header {
-    animation: headerSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ============================================
-   8. THEME VARIATIONS
-   ============================================ */
-
-/* Dark theme adjustments */
-[data-theme="dark"] .site-header {
-    background: rgba(10, 15, 20, 0.75);
-}
-
-[data-theme="dark"] .header-nav {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.06);
-}
-
-/* Light theme adjustments */
-[data-theme="light"] .site-header {
-    background: rgba(255, 255, 255, 0.7);
-    border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="light"] .header-nav {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.06);
-}
-
-[data-theme="light"] .nav-link:hover {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-/* ============================================
-   9. RTL SUPPORT
+   6. RTL (Right-to-Left)
    ============================================ */
 
 [dir="rtl"] .header-container {
     flex-direction: row-reverse;
 }
 
-[dir="rtl"] .header-logo {
-    flex-direction: row-reverse;
+
+/* ============================================
+   7. RESPONSIVE / MOBILE
+   ============================================ */
+
+.mobile-menu-toggle {
+    display: none;
+    /* Similar style to controls */
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 
-[dir="rtl"] .header-nav {
-    flex-direction: row-reverse;
-}
+@media (max-width: 900px) {
+    .header-nav {
+        display: none;
+        /* Move to mobile menu logic */
+    }
 
-@media (max-width: 768px) {
-    [dir="rtl"] .header-nav {
-        right: auto;
-        left: -100%;
-        border-left: none;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    /* Mobile Nav Drawer Style override */
+    .header-nav.mobile-open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        right: 20px;
+        width: auto;
+        height: auto;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        align-items: stretch;
+        gap: 8px;
+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.2);
+        pointer-events: auto;
+    }
+
+    .header-nav.mobile-open .nav-link {
+        text-align: center;
     }
 
     [dir="rtl"] .header-nav.mobile-open {
-        right: auto;
-        left: 0;
+        left: 20px;
+        right: 20px;
     }
-}
 
-/* ============================================
-   10. ACCESSIBILITY
-   ============================================ */
-
-.nav-link:focus-visible {
-    outline: 2px solid var(--teal-primary);
-    outline-offset: 4px;
-}
-
-.mobile-menu-toggle:focus-visible {
-    outline: 2px solid var(--teal-primary);
-    outline-offset: 2px;
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-
-    .site-header,
-    .nav-link,
-    .header-nav,
-    .mobile-menu-toggle span {
-        transition: none;
-        animation: none;
+    .header-controls {
+        background: rgba(255, 255, 255, 0.8);
+        /* Ensure visibility */
     }
-}
 
-/* ============================================
-   11. BODY PADDING ADJUSTMENT
-   ============================================ */
-
-/* Add padding to body to prevent content from hiding under fixed header */
-body {
-    padding-top: 60px;
+    /* Adjust container padding */
+    .header-container {
+        padding: 0 20px;
+    }
 }
