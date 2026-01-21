@@ -162,8 +162,8 @@
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
 }
 
-.theme-toggle,
-.lang-switch {
+.header-controls .theme-toggle,
+.header-controls .lang-switch {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,8 +179,8 @@
     cursor: pointer;
 }
 
-.theme-toggle:hover,
-.lang-switch:hover {
+.header-controls .theme-toggle:hover,
+.header-controls .lang-switch:hover {
     background: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-1px);
@@ -215,8 +215,8 @@
     color: #fff;
 }
 
-[data-theme="dark"] .theme-toggle:hover,
-[data-theme="dark"] .lang-switch:hover {
+[data-theme="dark"] .header-controls .theme-toggle:hover,
+[data-theme="dark"] .header-controls .lang-switch:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
 }

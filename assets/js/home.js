@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     updateProgress();
 
-    const revealTargets = document.querySelectorAll('.reveal, .timeline-content, .skill-item');
+    const revealTargets = document.querySelectorAll('.reveal, .timeline-content, .skill-item, .stagger-item');
     if ('IntersectionObserver' in window) {
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
