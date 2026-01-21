@@ -46,15 +46,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: 50%;
+    border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+    padding: 8px;
+}
+
+.logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
 }
 
 .header-logo:hover {
@@ -63,15 +72,7 @@
     border-color: var(--teal-primary);
 }
 
-.logo-text {
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+
 
 /* ============================================
    3. NAVIGATION PILL (Island 2 - Center)
