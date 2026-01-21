@@ -46,24 +46,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 48px;
-    min-width: 48px;
-    padding: 6px 12px;
+    height: 60px;
+    min-width: 60px;
+    padding: 8px 16px;
     background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border-radius: 14px;
+    border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
 }
 
+/* Shrunk state on scroll */
+.site-header.scrolled .header-logo {
+    height: 48px;
+    min-width: 48px;
+    padding: 6px 12px;
+    border-radius: 12px;
+}
+
 .logo-img {
-    height: 32px;
+    height: 44px;
     width: auto;
     object-fit: contain;
-    transition: transform 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-header.scrolled .logo-img {
+    height: 32px;
 }
 
 .header-logo:hover {
