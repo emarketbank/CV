@@ -1247,12 +1247,34 @@
         document.querySelectorAll('.journey-item').forEach(el => journeyObserver.observe(el));
     </script>
 
-    <footer>
-        <div class="footer-links">
-            <a href="/CV/">Home</a>
-            <a href="/CV/portfolio/">Portfolio</a>
+    <footer class="portfolio-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="/CV/" class="footer-logo">
+                        <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
+                    </a>
+                    <p class="brand-tagline">Digital Growth Architect building scalable systems across the MENA region.</p>
+                </div>
+
+                <div class="footer-nav-group">
+                    <h5 class="footer-title">Explore</h5>
+                    <ul class="footer-links">
+                        <li><a href="/CV/" class="footer-link">Home</a></li>
+                        <li><a href="/CV/portfolio/" class="footer-link">Portfolio</a></li>
+                        <li><a href="/CV/achievements/" class="footer-link">Achievements</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-nav-group">
+                    <h5 class="footer-title">Connect</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
+                        <li><a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="footer-link">WhatsApp</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <p style="color: var(--text-secondary); font-size: 0.9rem;">© 2026 Mohamed Gamal | Excellence Delivered</p>
     </footer>
 
     <script>
