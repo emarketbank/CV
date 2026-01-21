@@ -53,6 +53,21 @@ html[lang="ar"] .contact-fab {
 }
 
 /* Navigation / Header */
+html[lang="ar"] .site-header {
+    direction: rtl;
+}
+
+html[lang="ar"] .header-container {
+    flex-direction: row-reverse;
+}
+
+html[lang="ar"] .header-nav {
+    direction: rtl;
+}
+
+html[lang="ar"] .header-controls {
+    direction: rtl;
+}
 
 
 /* Stats Context */
