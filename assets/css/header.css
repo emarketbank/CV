@@ -50,11 +50,11 @@
     height: 60px;
     min-width: 60px;
     padding: 8px 16px;
-    background: rgba(30, 30, 35, 0.6);
+    background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;

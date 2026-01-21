@@ -461,42 +461,6 @@ body {
     right: 30px;
 }
 
-/* Footer */
-.portfolio-footer {
-    padding: 40px 20px;
-    text-align: center;
-    background: var(--bg-body);
-    border-top: 1px solid var(--border-color);
-    margin-top: 60px;
-    position: relative;
-    z-index: 10;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.footer-link {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-    color: var(--text-primary);
-}
-
-.portfolio-footer p {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-}
-
 /* Contact Floating Button */
 .contact-fab {
     position: fixed;

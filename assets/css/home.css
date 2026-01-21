@@ -1203,39 +1203,6 @@ section {
     box-shadow: 0 15px 40px rgba(27, 124, 107, 0.35);
 }
 
-/* Footer */
-.site-footer {
-    padding: 40px 20px;
-    text-align: center;
-    background: var(--bg-body);
-    border-top: 1px solid var(--border-color);
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.footer-link {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-    color: var(--text-primary);
-}
-
-.site-footer p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
 /* Contact Floating Button */
 .contact-fab {
     position: fixed;
