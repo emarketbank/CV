@@ -910,7 +910,7 @@
 <body>
     <!-- Language Switcher -->
     <a href="index.html" class="lang-switch" aria-label="Switch to English">
-        <span style="font-family: 'Outfit'; font-weight: 700; font-size: 1rem;">EN</span>
+        <span style="font-family: 'Outfit'; font-weight: 700; font-size: 0.85rem;">English</span>
     </a>
 
     <div class="ambient-glow"></div>
@@ -1315,29 +1315,29 @@
             rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        const scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
+                    scrollObserver.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
         // Observe journey items
         document.querySelectorAll('.journey-item').forEach(item => {
-            observer.observe(item);
+            scrollObserver.observe(item);
         });
 
         // Observe achievement cards
         document.querySelectorAll('.achieve-card').forEach(card => {
-            observer.observe(card);
+            scrollObserver.observe(card);
         });
 
         // Observe record section
         const recordSection = document.querySelector('.record-section');
         if (recordSection) {
-            observer.observe(recordSection);
+            scrollObserver.observe(recordSection);
         }
 
         // Add stagger animation classes to journey items

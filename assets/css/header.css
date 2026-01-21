@@ -163,9 +163,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    min-width: 40px;
+    width: auto;
+    padding: 0 12px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 100px;
     color: var(--text-secondary);
     transition: all 0.3s ease;
     background: transparent;
