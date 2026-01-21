@@ -62,9 +62,9 @@
 
 /* Shrunk state on scroll */
 .site-header.scrolled .header-logo {
-    height: 48px;
-    min-width: 48px;
-    padding: 6px 12px;
+    /* height: 48px; Disabled to prevent layout shift */
+    /* min-width: 48px; Disabled to prevent layout shift */
+    /* padding: 6px 12px; Disabled to prevent layout shift */
     border-radius: 12px;
 }
 
