@@ -2003,3 +2003,177 @@ section {
         justify-content: center;
     }
 }
+
+/* --- 2026 FUTURE SECTION - ULTRA MODERN --- */
+.future-section {
+    background: var(--bg-deep);
+    position: relative;
+    overflow: hidden;
+    padding: 120px 10%;
+}
+
+/* Background Grid Effect */
+.future-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(43, 155, 155, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(43, 155, 155, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.future-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+    perspective: 1000px;
+    position: relative;
+    z-index: 2;
+}
+
+.future-card {
+    background: rgba(20, 25, 35, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 35px 25px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+/* Glassmorphism Highlight */
+.future-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Interactive Border Glow */
+.future-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent, rgba(43, 155, 155, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    transition: opacity 0.5s ease;
+}
+
+.future-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    background: rgba(25, 30, 40, 0.7);
+    box-shadow: 
+        0 20px 50px -10px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(43, 155, 155, 0.15);
+    border-color: rgba(43, 155, 155, 0.2);
+}
+
+.future-card:hover::after {
+    opacity: 1;
+    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+}
+
+/* Icon Styling */
+.card-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(43, 155, 155, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal-primary);
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 0 0 rgba(43, 155, 155, 0);
+}
+
+.future-card:hover .card-icon {
+    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+    color: #fff;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 0 25px rgba(43, 155, 155, 0.4);
+}
+
+.card-icon svg {
+    width: 32px;
+    height: 32px;
+    transition: all 0.5s ease;
+}
+
+.future-card:hover .card-icon svg {
+    transform: scale(1.1);
+}
+
+/* Content Styling */
+.card-content {
+    position: relative;
+    z-index: 2;
+}
+
+.card-content h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.4;
+    transition: color 0.3s ease;
+}
+
+.future-card:hover h3 {
+    background: linear-gradient(135deg, #fff 0%, var(--teal-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .future-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .future-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .future-card {
+        flex-direction: row;
+        text-align: left;
+        padding: 20px;
+    }
+    
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+    
+    .card-icon svg {
+        width: 24px;
+        height: 24px;
+    }
+}
