@@ -10,6 +10,8 @@
 
     /* Core Hues */
     --teal-primary: #2B9B9B;
+    --primary-teal: #00F0FF; /* Ultra 2026 */
+    --primary-purple: #7000FF; /* Ultra 2026 */
     --teal-glow: rgba(45, 180, 180, 0.15);
     --teal-light: #6FCBCB;
     --teal-deep: #1E6F6F;

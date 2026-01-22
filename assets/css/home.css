@@ -2164,7 +2164,7 @@ section {
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: -1;
+    z-index: 0; /* Updated from -1 to ensure visibility above body bg */
     perspective: 1000px;
 }
 

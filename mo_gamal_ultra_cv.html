@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohamed Gamal | Growth Systems Architect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #050505;
+            --surface-obsidian: rgba(17, 17, 17, 0.6);
+            --surface-card: rgba(255, 255, 255, 0.03);
+            --accent-green: #00FF94;
+            --accent-blue: #00C2FF;
+            --text-white: #F0F0F0;
+            --text-slate: #8892B0;
+            --border-dim: rgba(255, 255, 255, 0.08);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            color: var(--text-slate);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-white);
+            font-weight: 700;
+        }
+
+        a {
+            color: var(--text-white);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-green);
+            transition: width 0.3s var(--ease-out-expo);
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* --- Components --- */
+        .section-header {
+            margin-bottom: 4rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header::before {
+            content: '0' counter(section-counter);
+            position: absolute;
+            top: -1.5rem;
+            left: -1rem;
+            font-family: 'Space Grotesk';
+            font-size: 4rem;
+            opacity: 0.05;
+            font-weight: 700;
+        }
+
+        body {
+            counter-reset: section-counter;
+        }
+
+        section {
+            counter-increment: section-counter;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        /* --- Background Effects --- */
+        #noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+            transition: transform 0.5s var(--ease-out-expo);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content {
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--accent-green);
+            font-family: 'Space Grotesk';
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-dim);
+            border-radius: 50px;
+            background: rgba(0, 255, 148, 0.05);
+        }
+
+        .hero p.tagline {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: var(--text-slate);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            opacity: 0.5;
+        }
+
+        /* --- Metrics Grid --- */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .metric-card {
+            background: var(--surface-card);
+            padding: 2.5rem;
+            border: 1px solid var(--border-dim);
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s var(--ease-out-expo), border-color 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+        }
+
+        .metric-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-white);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk';
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* --- Experience Cards (The System) --- */
+        .experience-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4rem;
+        }
+
+        .job-card {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid var(--border-dim);
+        }
+
+        .job-card::before {
+            content: '';
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-void);
+            border: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .job-card:hover::before {
+            background: var(--accent-blue);
+            box-shadow: 0 0 20px var(--accent-blue);
+        }
+
+        .job-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .job-title {
+            font-size: 1.75rem;
+            color: var(--text-white);
+            margin-bottom: 0.25rem;
+        }
+
+        .job-meta {
+            font-family: 'Space Grotesk';
+            color: var(--accent-green);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .mini-stories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .story-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-dim);
+            transition: all 0.3s ease;
+        }
+
+        .story-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--accent-green);
+        }
+
+        .story-problem {
+            color: #FF5D5D;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .story-move {
+            color: var(--text-white);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .story-result {
+            color: var(--accent-green);
+            font-size: 0.9rem;
+            border-top: 1px dashed var(--border-dim);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* --- Future Tech (Glass Cards) --- */
+        .future-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-card {
+            padding: 2rem;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border-dim);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .tech-card ul {
+            list-style: none;
+        }
+
+        .tech-card li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.2rem;
+            position: relative;
+        }
+
+        .tech-card li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 6rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-dim);
+            margin-top: 4rem;
+        }
+
+        .contact-cmd {
+            font-family: 'Space Grotesk';
+            font-size: 2rem;
+            color: var(--text-white);
+            margin-bottom: 2rem;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: 1px solid var(--text-white);
+            color: var(--text-white);
+            text-transform: uppercase;
+            font-family: 'Space Grotesk';
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            transition: all 0.3s var(--ease-out-expo);
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .btn:hover {
+            background: var(--text-white);
+            color: var(--bg-void);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- Animations --- */
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
+        }
+
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
+        }
+
+        .reveal-on-scroll.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .section-header h2 { font-size: 2rem; }
+            .job-card { padding-left: 1rem; margin-left: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="noise"></div>
+    <div class="gradient-orb" style="width: 500px; height: 500px; background: #00FF94; top: -100px; right: -100px; opacity: 0.1;"></div>
+    <div class="gradient-orb" style="width: 400px; height: 400px; background: #00C2FF; bottom: 0; left: -100px; opacity: 0.1;"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="subtitle reveal-on-scroll">Mohamed Gamal</div>
+            <h1 class="reveal-on-scroll">Growth Systems<br>Architect</h1>
+            <p class="tagline reveal-on-scroll">Turning marketing chaos into scalable, high-performance revenue engines.</p>
+        </div>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <!-- The Hook -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header reveal-on-scroll">
+                <h2>The Short Version</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4rem;">
+                <div class="reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <p style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 2rem; border-left: 4px solid var(--accent-green); padding-left: 1.5rem;">
+                        "In 2020, I was part of the team that broke a Guinness World Record — 5 million orders. But the real story is the system we built that made it possible."
+                    </p>
+                    <p>I've spent 10+ years figuring out how to turn marketing chaos into growth machines that run without burning teams out.</p>
+                </div>
+                <div class="reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--accent-blue);">What I Actually Do</h3>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+                        <li>► <strong>Build repeatable growth engines</strong> (not one-off campaigns)</li>
+                        <li>► <strong>Turn SEO into revenue</strong> (compound interest, not just rankings)</li>
+                        <li>► <strong>Scale paid without chaos</strong> (governance & reporting)</li>
+                        <li>► <strong>Automate the boring stuff</strong> (n8n, CRM triggers)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics -->
+    <section id="metrics">
+        <div class="container">
+            <div class="section-header reveal-on-scroll">
+                <h2>Impact Logs</h2>
+            </div>
+            <div class="metrics-grid">
+                <div class="metric-card reveal-on-scroll">
+                    <div class="metric-value">6x</div>
+                    <div class="metric-label">Organic Revenue Growth</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Arabian Oud (SEO driven)</p>
+                </div>
+                <div class="metric-card reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <div class="metric-value">$20k</div>
+                    <div class="metric-label">Daily Paid Spend</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">Managed across 6 markets</p>
+                </div>
+                <div class="metric-card reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <div class="metric-value">7x</div>
+                    <div class="metric-label">Contract Growth</div>
+                    <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">DigiMora BD Transformation</p>
+                </div>
+                <div class="metric-card reveal-on-scroll" style="transition-delay: 0.3s;">
+                    <div class="metric-value">5M</div>
+                    <div class="metric-label">Orders Processed</div>
+                    <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" style="font-size: 0.8rem; color: var(--accent-green); margin-top: 0.5rem; display: block; text-decoration: none;">Guinness Record Verified ↗</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience">
+        <div class="container">
+            <div class="section-header reveal-on-scroll">
+                <h2>System Logs</h2>
+            </div>
+            
+            <div class="experience-stack">
+                
+                <!-- Role 1 -->
+                <div class="job-card reveal-on-scroll">
+                    <div class="job-header">
+                        <h3 class="job-title">Marketing Manager</h3>
+                        <div class="job-meta">Qyadat (Riyadh) | 2023 – Present</div>
+                        <p>Running marketing as a team sport: ~9 people, B2B+B2C mix.</p>
+                    </div>
+                    <div class="mini-stories">
+                        <div class="story-card">
+                            <span class="story-problem">Problem: "Just another tool"</span>
+                            <div class="story-move">Move: Reframed Mora WhatsApp around retention & support.</div>
+                            <div class="story-result">Result: Clearer offer, serious B2B conversations.</div>
+                        </div>
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Context Switching</span>
+                            <div class="story-move">Move: Standardized planning & reusable playbooks.</div>
+                            <div class="story-result">Result: Consistent output across 6+ industries.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 2 -->
+                <div class="job-card reveal-on-scroll">
+                    <div class="job-header">
+                        <h3 class="job-title">E-commerce Supervisor</h3>
+                        <div class="job-meta">Gento Shop | 2023 – 2025</div>
+                        <p>Building a cleaner operating system for e-commerce ops & logistics.</p>
+                    </div>
+                    <div class="mini-stories">
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Scattered Inventory</span>
+                            <div class="story-move">Move: Unified warehouse digital system + mobile layer.</div>
+                            <div class="story-result">Result: 60-80% less manual chasing.</div>
+                        </div>
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Reactive Support</span>
+                            <div class="story-move">Move: Smart support flows & structured routing.</div>
+                            <div class="story-result">Result: Support became a system, not firefighting.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 3 -->
+                <div class="job-card reveal-on-scroll">
+                    <div class="job-header">
+                        <h3 class="job-title">Business Development Manager</h3>
+                        <div class="job-meta">DigiMora | 2022 – 2024</div>
+                        <p>Rebuilt deal qualification and sold outcomes, not tasks.</p>
+                    </div>
+                    <div class="mini-stories">
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Shaky Margins</span>
+                            <div class="story-move">Move: Stronger qualification & outcome-based proposals.</div>
+                            <div class="story-result">Result: ~7x external contracting performance.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 4 -->
+                <div class="job-card reveal-on-scroll">
+                    <div class="job-header">
+                        <h3 class="job-title">Digital Marketing Supervisor</h3>
+                        <div class="job-meta">Arabian Oud (MENA) | 2014 – 2023</div>
+                        <p>Scale for real. $20k/day spend, 6 markets, Guinness World Record.</p>
+                    </div>
+                    <div class="mini-stories">
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Weak Organic Sales</span>
+                            <div class="story-move">Move: Rebuilt SEO around intent & category structure.</div>
+                            <div class="story-result">Result: 6x organic sales growth in 24 months.</div>
+                        </div>
+                        <div class="story-card">
+                            <span class="story-problem">Problem: Scaling Waste</span>
+                            <div class="story-move">Move: Strict testing guardrails & budget steering.</div>
+                            <div class="story-result">Result: Sustained $20k/day spend efficiently.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role 5 -->
+                <div class="job-card reveal-on-scroll">
+                    <div class="job-header">
+                        <h3 class="job-title">Digital Transformation Specialist</h3>
+                        <div class="job-meta">Iso-tec (KSA) | 2018 – 2023 <a href="https://www.iso-tec.com/%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D8%A7%D8%AA-%D8%A3%D9%8A%D8%B2%D9%88%D8%AA%D9%83/" target="_blank" style="margin-left: 10px; font-size: 0.8em; opacity: 0.7;">(View Projects ↗)</a></div>
+                        <p>Moving large orgs to ISO readiness via digital workflows.</p>
+                    </div>
+                    <div class="mini-stories">
+                        <div class="story-card">
+                            <span class="story-problem">Problem: "Quality" = Paperwork</span>
+                            <div class="story-move">Move: Built digital paths for ownership & tracking.</div>
+                            <div class="story-result">Result: 10-20% less operational waste.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Toolset & Education -->
+    <section id="arsenal">
+        <div class="container">
+            <div class="section-header reveal-on-scroll">
+                <h2>The Arsenal</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem;">
+                
+                <div class="reveal-on-scroll">
+                    <h3 style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-dim); padding-bottom: 0.5rem;">Command Center</h3>
+                    <ul style="list-style: none; color: var(--text-slate); font-size: 0.95rem; line-height: 1.8;">
+                        <li>Google Ads / Meta Business</li>
+                        <li>TikTok Ads Manager / GA4</li>
+                        <li>Ahrefs (Technical SEO)</li>
+                        <li>Magento (Merchandising)</li>
+                    </ul>
+                </div>
+
+                <div class="reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-dim); padding-bottom: 0.5rem;">Automation</h3>
+                    <ul style="list-style: none; color: var(--text-slate); font-size: 0.95rem; line-height: 1.8;">
+                        <li>ActiveCampaign / CRM</li>
+                        <li>Zapier / Make / n8n</li>
+                        <li>Jira / Trello</li>
+                        <li>Midjourney / Runway (Gen AI)</li>
+                    </ul>
+                </div>
+
+                <div class="reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <h3 style="font-size: 1.25rem; color: var(--text-white); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-dim); padding-bottom: 0.5rem;">Education</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="color: var(--text-white); font-weight: 600;">B.Sc. Computer & Information Sciences</div>
+                        <div style="color: var(--accent-green); font-size: 0.9rem;">Cairo University (2003)</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Future 2026 -->
+    <section id="future">
+        <div class="container">
+            <div class="section-header reveal-on-scroll">
+                <h2>Exploring in 2026</h2>
+            </div>
+            <div class="future-grid">
+                <div class="tech-card reveal-on-scroll">
+                    <h3 style="color: var(--accent-green);">AI in Operations</h3>
+                    <ul>
+                        <li>Agents handling Tier-1 service</li>
+                        <li>Inventory forecasting via ML</li>
+                        <li>Brand-voice content generation</li>
+                    </ul>
+                </div>
+                <div class="tech-card reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <h3 style="color: var(--accent-blue);">No-Code Auto</h3>
+                    <ul>
+                        <li>n8n & Make complex workflows</li>
+                        <li>Connecting siloed tools</li>
+                        <li>Cutting "IT wait time" from weeks to hours</li>
+                    </ul>
+                </div>
+                <div class="tech-card reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <h3 style="color: #FF00E5;">Saudi Vision</h3>
+                    <ul>
+                        <li>Local payment/logistics nuance</li>
+                        <li>Evolving consumer behavior</li>
+                        <li>Digital readiness for 2030</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container reveal-on-scroll">
+            <div class="contact-cmd">> READY_TO_SCALE ? EXECUTE_CONTACT() : WAIT</div>
+            <div class="contact-links">
+                <a href="mailto:emarketbank@gmail.com" class="btn">Email Me</a>
+                <a href="https://linkedin.com/in/mohamadgamal" target="_blank" class="btn">LinkedIn</a>
+                <a href="tel:+201555141282" class="btn">Call</a>
+            </div>
+            <div style="margin-top: 3rem; color: #444; font-size: 0.8rem;">
+                SYSTEM STATUS: ONLINE | CAIRO, EGYPT | © 2026 MOHAMED GAMAL
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth Reveal on Scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Mouse Parallax Effect for Orbs
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.gradient-orb');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 20;
+                const xOffset = (0.5 - x) * speed;
+                const yOffset = (0.5 - y) * speed;
+                orb.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
