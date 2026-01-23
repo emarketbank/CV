@@ -9,7 +9,7 @@
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0; /* Base Layer */
+    z-index: 11; /* Lifted above main background */
     perspective: 1000px;
 }
 
@@ -23,7 +23,7 @@
 .signal-icon {
     width: 40px;
     height: 40px;
-    color: rgba(255, 255, 255, 0.05); /* Ghostly white */
+    color: rgba(255, 255, 255, 0.15); /* Increased visibility */
     backdrop-filter: blur(4px);
     transition: all 0.3s ease;
 }
