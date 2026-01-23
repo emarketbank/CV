@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    /* --- SCROLL PROGRESS & ANIMATIONS --- */
     const progressLine = document.getElementById('progressLine');
     let scrollTicking = false;
 
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealTargets.forEach(el => el.classList.add('visible'));
     }
 
+    /* --- PARALLAX EFFECT --- */
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReducedMotion) {
         const ambients = document.querySelectorAll('.ambient');
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /* --- VIDEO LOGIC --- */
     const videoScreen = document.getElementById('videoScreen');
     const video = document.getElementById('showreelVideo');
     const overlay = document.getElementById('pauseOverlay');
@@ -99,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         video.addEventListener('pause', () => overlay.classList.add('show'));
     }
 
+    /* --- CONTACT MODAL --- */
     const contactModal = document.getElementById('contactModal');
     const contactFab = document.querySelector('.contact-fab');
     const modalClose = document.querySelector('.modal-close');
@@ -142,11 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hideContactModal();
         }
     });
-});
 
-/* --- ULTRA 2026 INTERACTION LOGIC --- */
-document.addEventListener('DOMContentLoaded', () => {
-    // Custom Cursor Logic
+    /* --- ULTRA 2026 INTERACTION LOGIC (CUSTOM CURSOR) --- */
     const cursorDot = document.querySelector('[data-cursor-dot]');
     const cursorOutline = document.querySelector('[data-cursor-outline]');
     const ambientLight = document.getElementById('ambientLight');

@@ -36,14 +36,12 @@ function initScrollRevelations() {
     }, observerOptions);
 
     // Select elements to reveal
-    const revealElements = document.querySelectorAll('.metric-node, .section-placeholder, .connect-heading, .placeholder-title');
+    const revealElements = document.querySelectorAll('.reveal-on-scroll, .glass-panel, .ultra-section-header');
 
     revealElements.forEach((el, index) => {
         // Add a base style for the animation start state via JS to keep CSS clean if JS fails
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = `opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${index * 0.1}s, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${index * 0.1}s`;
-
+        // el.classList.add('reveal-on-scroll'); // Ensure class exists if not present
+        
         observer.observe(el);
     });
 

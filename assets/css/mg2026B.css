@@ -1,583 +1,181 @@
-/* --- ULTRA 2026 DESIGN TOKENS (V2 - Human Anchor) --- */
-:root {
-    /* Colors */
-    --bg-deep: #030304;
-    --bg-glass: rgba(255, 255, 255, 0.02);
-    --primary-teal: #00F0FF;
-    --primary-purple: #7000FF;
-    --text-main: #FFFFFF;
-    --text-muted: #8892b0;
-    
-    /* Typography */
-    --font-display: 'Outfit', sans-serif;
-    --font-tech: 'Space Grotesk', monospace;
-    
-    /* Easing */
-    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-}
+/* --- ULTRA 2026 EXTENSIONS (Sections & Grids) --- */
 
-/* Reset & Base */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    cursor: none; /* Desktop only */
-}
-
-body {
-    background-color: var(--bg-deep);
-    color: var(--text-main);
-    font-family: var(--font-display);
-    overflow-x: hidden;
-    min-height: 100vh;
-}
-
-/* --- CUSTOM CURSOR (Desktop Only) --- */
-@media (hover: hover) and (pointer: fine) {
-    .cursor-dot,
-    .cursor-outline {
-        position: fixed;
-        top: 0;
-        left: 0;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        z-index: 9999;
-        pointer-events: none;
-    }
-
-    .cursor-dot {
-        width: 6px;
-        height: 6px;
-        background-color: var(--primary-teal);
-    }
-
-    .cursor-outline {
-        width: 30px;
-        height: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        transition: width 0.2s, height 0.2s, background-color 0.2s;
-    }
-
-    body.hovering .cursor-outline {
-        width: 50px;
-        height: 50px;
-        background-color: rgba(0, 240, 255, 0.05);
-        border-color: var(--primary-teal);
-    }
-}
-
-/* --- BACKGROUND SYSTEM --- */
-.noise-overlay {
-    position: fixed;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 9000;
-}
-
-/* Slower, subtler ambient light */
-.ambient-light {
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(112, 0, 255, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    filter: blur(100px);
-    z-index: -1;
-    pointer-events: none;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transition: transform 1.5s cubic-bezier(0.1, 0.5, 0.5, 1); /* Smoother lag */
-}
-
-/* --- SOCIAL SIGNALS (Background Activity - Ultra) --- */
-.social-particles {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: -1;
-    perspective: 1000px;
-}
-
-.signal {
-    position: absolute;
-    opacity: 0;
-    filter: blur(0px); /* Sharp icons, blurred glows */
-    animation: floatUltra linear infinite;
-    will-change: transform, opacity;
-}
-
-.signal-icon {
-    width: 40px;
-    height: 40px;
-    color: rgba(255, 255, 255, 0.05); /* Ghostly white */
-    backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
-}
-
-.signal-icon svg {
+/* Layout */
+.ultra-container {
     width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
-}
-
-/* 1. Heart (Soft Red Pulse) */
-.signal-1 {
-    color: rgba(255, 60, 100, 0.15);
-    left: 10%;
-    bottom: -10%;
-    width: 50px;
-    height: 50px;
-    animation-duration: 20s;
-    animation-delay: -5s; /* Negative delay for instant visibility */
-}
-
-/* 2. TikTok (Cyan/Pink Glitch Feel) */
-.signal-2 {
-    color: rgba(0, 240, 255, 0.12);
-    right: 15%;
-    bottom: -15%;
-    width: 60px;
-    height: 60px;
-    animation-duration: 25s;
-    animation-delay: -12s;
-}
-
-/* 3. Network (Tech Blue) */
-.signal-3 {
-    color: rgba(112, 0, 255, 0.15);
-    left: 80%;
-    bottom: -20%;
-    width: 45px;
-    height: 45px;
-    animation-duration: 22s;
-    animation-delay: -8s;
-}
-
-/* 4. Thumb (Gold/Success) */
-.signal-4 {
-    color: rgba(255, 215, 0, 0.12);
-    left: 20%;
-    bottom: -25%;
-    width: 55px;
-    height: 55px;
-    animation-duration: 28s;
-    animation-delay: -20s;
-}
-
-/* 7. Snapchat (Ghost White/Yellow) */
-.signal-7 {
-    color: rgba(255, 252, 0, 0.15); /* Snap Yellow */
-    left: 45%;
-    bottom: -15%;
-    width: 48px;
-    height: 48px;
-    animation-duration: 24s;
-    animation-delay: -2s;
-}
-
-/* 8. Google Maps (Location Red/Green) */
-.signal-8 {
-    color: rgba(52, 168, 83, 0.15); /* Google Greenish */
-    right: 35%;
-    bottom: -30%;
-    width: 52px;
-    height: 52px;
-    animation-duration: 32s;
-    animation-delay: -15s;
-}
-
-/* 9. Shopping Cart (E-commerce Orange) */
-.signal-9 {
-    color: rgba(255, 100, 0, 0.15);
-    left: 5%;
-    bottom: -10%;
-    width: 58px;
-    height: 58px;
-    animation-duration: 26s;
-    animation-delay: -10s;
-}
-
-/* 10. ChatGPT (OpenAI Green) */
-.signal-10 {
-    color: rgba(16, 163, 127, 0.15);
-    left: 28%;
-    bottom: -15%;
-    width: 45px;
-    height: 45px;
-    animation-duration: 22s;
-    animation-delay: -4s;
-}
-
-/* 11. Gemini (Blue/Purple Gradient feel) */
-.signal-11 {
-    color: rgba(78, 168, 246, 0.2);
-    right: 22%;
-    bottom: -10%;
-    width: 50px;
-    height: 50px;
-    animation-duration: 28s;
-    animation-delay: -18s;
-}
-
-/* 12. Jira (Blue) */
-.signal-12 {
-    color: rgba(38, 132, 255, 0.15);
-    left: 55%;
-    bottom: -20%;
-    width: 42px;
-    height: 42px;
-    animation-duration: 25s;
-    animation-delay: -22s;
-}
-
-/* 13. Amazon (Orange/Black) */
-.signal-13 {
-    color: rgba(255, 153, 0, 0.15);
-    right: 8%;
-    bottom: -12%;
-    width: 55px;
-    height: 55px;
-    animation-duration: 30s;
-    animation-delay: -7s;
-}
-
-/* 14. Google (Multi-color abstract -> White/Blue) */
-.signal-14 {
-    color: rgba(255, 255, 255, 0.12);
-    left: 12%;
-    bottom: -18%;
-    width: 48px;
-    height: 48px;
-    animation-duration: 23s;
-    animation-delay: -16s;
-}
-
-/* 15. Claude (Anthropic Sand) */
-.signal-15 {
-    color: rgba(217, 180, 143, 0.15);
-    right: 42%;
-    bottom: -22%;
-    width: 44px;
-    height: 44px;
-    animation-duration: 27s;
-    animation-delay: -3s;
-}
-
-/* 16. YouTube (Red) */
-.signal-16 {
-    color: rgba(255, 0, 0, 0.15);
-    left: 38%;
-    bottom: -14%;
-    width: 52px;
-    height: 52px;
-    animation-duration: 21s;
-    animation-delay: -14s;
-}
-
-/* 17. Instagram (Pink/Purple) */
-.signal-17 {
-    color: rgba(193, 53, 132, 0.15);
-    right: 28%;
-    bottom: -8%;
-    width: 46px;
-    height: 46px;
-    animation-duration: 29s;
-    animation-delay: -9s;
-}
-
-/* 18. Facebook (Blue) */
-.signal-18 {
-    color: rgba(24, 119, 242, 0.15);
-    left: 65%;
-    bottom: -16%;
-    width: 48px;
-    height: 48px;
-    animation-duration: 24s;
-    animation-delay: -11s;
-}
-
-/* 19. KSA Flag (Green) */
-.signal-19 {
-    color: rgba(0, 100, 0, 0.2);
-    left: 75%;
-    bottom: -25%;
-    width: 60px;
-    height: 60px;
-    animation-duration: 35s;
-    animation-delay: -1s;
-}
-
-/* 20. Egypt Flag (Gold/Red hint) */
-.signal-20 {
-    color: rgba(200, 160, 50, 0.15);
-    right: 55%;
-    bottom: -10%;
-    width: 58px;
-    height: 58px;
-    animation-duration: 33s;
-    animation-delay: -13s;
-}
-
-/* 21. UAE Flag (Red/Green hint) */
-.signal-21 {
-    color: rgba(0, 120, 50, 0.15);
-    left: 2%;
-    bottom: -15%;
-    width: 56px;
-    height: 56px;
-    animation-duration: 31s;
-    animation-delay: -6s;
-}
-
-/* 22. Box (Logistics Blue) */
-.signal-22 {
-    color: rgba(100, 149, 237, 0.15);
-    right: 5%;
-    bottom: -20%;
-    width: 54px;
-    height: 54px;
-    animation-duration: 26s;
-    animation-delay: -19s;
-}
-
-/* 23. Tag (Sales Red) */
-.signal-23 {
-    color: rgba(220, 20, 60, 0.15);
-    left: 50%;
-    bottom: -30%;
-    width: 40px;
-    height: 40px;
-    animation-duration: 22s;
-    animation-delay: -21s;
-}
-
-/* 5. Deep Ambient Glow (Purple) */
-.signal-5 {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(112, 0, 255, 0.06) 0%, transparent 60%);
-    border-radius: 50%;
-    filter: blur(60px);
-    left: 60%;
-    top: 20%;
-    animation: pulseGlow 15s ease-in-out infinite alternate;
-}
-
-/* 6. Deep Ambient Glow (Teal) */
-.signal-6 {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, transparent 60%);
-    border-radius: 50%;
-    filter: blur(80px);
-    left: -10%;
-    bottom: -20%;
-    animation: pulseGlow 20s ease-in-out infinite alternate-reverse;
-}
-
-@keyframes floatUltra {
-    0% {
-        transform: translateY(0) rotate(0deg) scale(0.9);
-        opacity: 0;
-    }
-    15% {
-        opacity: 0.6;
-    }
-    50% {
-        transform: translateY(-40vh) rotate(20deg) scale(1.1);
-        opacity: 0.4;
-    }
-    85% {
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(-100vh) rotate(45deg) scale(0.8);
-        opacity: 0;
-    }
-}
-
-@keyframes pulseGlow {
-    0% { opacity: 0.4; transform: scale(1); }
-    100% { opacity: 0.8; transform: scale(1.2); }
-}
-
-/* --- HERO SECTION --- */
-.hero-section {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 100px 5%;
-}
-
-.hero-content {
-    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
     position: relative;
     z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 1000px;
 }
 
-/* 1. Subline (Small & Calm) */
-.hero-subline {
+.ultra-section {
+    padding: 120px 0;
+    position: relative;
+}
+
+.ultra-section-header {
+    margin-bottom: 60px;
+}
+
+.ultra-overline {
     font-family: var(--font-tech);
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: var(--primary-teal);
+    font-size: 0.8rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeDown 1s var(--ease-smooth) 0.2s forwards;
+    margin-bottom: 16px;
+    display: block;
 }
 
-/* 2. Massive Name (Stroke -> Fill) */
-.hero-title-wrapper {
-    display: flex;
-    flex-direction: column;
-    line-height: 0.85;
-    margin-bottom: 2.5rem;
+.ultra-heading {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 24px;
 }
 
-.hero-title {
-    font-size: clamp(3.5rem, 9vw, 8.5rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+/* Glass Card System */
+.glass-panel {
+    background: var(--bg-glass);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px;
+    transition: transform 0.4s var(--ease-smooth), border-color 0.4s ease, box-shadow 0.4s ease;
     position: relative;
-    opacity: 0;
-    animation: revealText 1s var(--ease-smooth) 0.4s forwards;
-    display: inline-block;
+    overflow: hidden;
 }
 
-.hero-title .filled {
+.glass-panel:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.glass-panel::before {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 0%;
-    height: 100%;
-    color: #fff;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid var(--primary-teal);
-    animation: fillText 1.2s var(--ease-smooth) 1.2s forwards; /* Delayed fill */
-    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.2));
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    opacity: 0.5;
 }
 
-@keyframes fillText {
-    to { width: 100%; border-right-color: transparent; }
-}
-
-/* 3. Human Anchor (Signature Image) */
-.human-anchor {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
-    opacity: 0;
-    transform: scale(0.9);
-    animation: fadeScale 1s var(--ease-smooth) 2s forwards; /* Appears after text fill */
-    position: relative;
-}
-
-.human-anchor img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(100%) contrast(1.1); /* Desaturated & slightly punchy */
-    opacity: 0.9;
-    transition: all 0.5s ease;
-}
-
-/* Subtle Vignette Overlay */
-.human-anchor::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.4) 100%);
-    pointer-events: none;
-}
-
-/* 4. Micro-line */
-.micro-line {
-    font-family: var(--font-tech);
-    font-size: 0.95rem;
+/* Story Section (Scrollytelling) */
+.story-text {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.6;
     color: var(--text-muted);
     font-weight: 300;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s var(--ease-smooth) 2.2s forwards;
+    max-width: 900px;
 }
 
-/* 5. Magnetic CTA */
-.cta-wrapper {
-    opacity: 0;
-    animation: fadeUp 0.8s var(--ease-smooth) 2.4s forwards;
-}
-
-.btn-magnetic {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 18px 36px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 100px;
+.story-text strong, .story-text span.highlight {
     color: #fff;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+
+/* Bento Grid System */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(180px, auto);
+    gap: 24px;
+}
+
+/* Metric Cards */
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Centered by default */
+    text-align: center;
+}
+
+.metric-card.wide {
+    grid-column: span 6;
+}
+
+.metric-card.tall {
+    grid-column: span 3;
+    grid-row: span 2;
+}
+
+.metric-card.standard {
+    grid-column: span 3;
+}
+
+.metric-number {
     font-family: var(--font-tech);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    text-decoration: none;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.5) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-.btn-magnetic:hover {
-    border-color: var(--primary-teal);
-    background: rgba(255,255,255,0.06);
+.metric-label {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--primary-teal);
+    margin-bottom: 8px;
 }
 
-/* Animations */
-@keyframes fadeDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes revealText { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
-@keyframes fadeScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+.metric-desc {
+    font-family: var(--font-tech);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    opacity: 0.8;
+}
 
-/* --- RESPONSIVE / MOBILE FIRST --- */
+/* Scroll Reveal States (Used by JS) */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s var(--ease-smooth);
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .bento-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .metric-card.wide { grid-column: span 6; }
+    .metric-card.tall { grid-column: span 3; }
+    .metric-card.standard { grid-column: span 3; }
+}
+
 @media (max-width: 768px) {
-    *, *::before, *::after { cursor: auto !important; } /* Disable custom cursor */
-    .cursor-dot, .cursor-outline { display: none; }
+    .ultra-section { padding: 80px 0; }
     
-    .hero-title { font-size: 13vw; }
-    .hero-title-wrapper { margin-bottom: 2rem; }
-    
-    .human-anchor {
-        width: 60px;
-        height: 60px;
+    .bento-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
     }
     
-    .micro-line {
-        font-size: 0.85rem;
-        max-width: 280px;
-        margin-left: auto;
-        margin-right: auto;
+    .metric-card.wide, .metric-card.tall, .metric-card.standard {
+        grid-column: span 1;
+        grid-row: span 1;
+        min-height: 200px;
     }
     
-    /* Ensure ambient light is very faint on mobile to save battery/perf */
-    .ambient-light { opacity: 0.5; }
+    .story-text {
+        text-align: left;
+    }
 }

@@ -1,36 +1,43 @@
-# implementation_plan.md
+# خطة عمل Ultra 2026 (Action Plan)
 
-# Ultra 2026 CV Redesign
+## الهدف
+تحويل صفحة `mg2026B.html` من مجرد واجهة افتتاحية (Hero) إلى موقع كامل يحتوي على محتوى `index.html` ولكن بتصميم "Ultra" المستقبلي.
 
-This document outlines the phased approach to redesigning the CV homepage into a "Luminous Void" Ultra 2026 experience.
+## المرحلة 1: التأسيس والهيكلة (Foundation)
+*   **الهدف:** تجهيز الهيكل الأساسي للصفحة لاستقبال المحتوى.
+*   **المهام:**
+    1.  إنشاء حاوية رئيسية (`main.ultra-container`) للتحكم في تدفق المحتوى.
+    2.  ربط ملف `ultra_2026.js` بشكل صحيح وتفعيله.
+    3.  إعداد نظام الشبكة (Grid System) الحديث (Bento Grid) ليكون أساس التوزيع.
 
-## Phase 1: Foundation & "The Hook" (Completed)
-- [x] **Concept**: "Luminous Void" - Focus on depth, typography, and negative space.
-- [x] **Core Styling**: `ultra_2026.css` with Space Grotesk/Outfit fonts and new design tokens.
-- [x] **Core Interaction**: `ultra_2026.js` scroll reveals and parallax.
-- [x] **Structure**: `index_ultra_2026.html` skeleton.
+## المرحلة 2: تحويل ونقل المحتوى (Content Transformation)
+سنقوم بنقل المحتوى من `index.html` ولكن سنغير طريقة عرضه جذرياً:
 
-## Phase 1.5: Calibration & Polish (Completed)
-- [x] **Messaging Refinement**:
-    - **Hero**: Changed subtitle to "From fragmented marketing efforts to revenue systems that scale."
-    - **Evidence**: Added context to metrics (e.g., "with controlled CAC & attribution").
-    - **Connection**: Added "Let’s talk systems, not services."
-- [x] **Visual Depth**:
-    - **Background**: Implemented `noise-overlay` for texture.
-    - **Lighting**: Added 3 distinct `glow-orb` elements (Cyan, Deep Blue, White) with independent breathing animations.
-    - **Parallax**: Updated JS to move orbs at different speeds for 3D depth.
+1.  **قصة النمو (The Story):**
+    *   *القديم:* نص عادي.
+    *   *الجديد:* "Scrollytelling" - النص يظهر تدريجياً مع تأثيرات ضوئية أثناء التمرير.
 
-## Phase 2: The Narrative (Next Steps)
-We are now ready to fill the placeholders with targeted content.
+2.  **الأرقام والإحصائيات (Metrics):**
+    *   *القديم:* بطاقات عادية.
+    *   *الجديد:* عدادات رقمية ضخمة (Neon Counters) مع خلفيات زجاجية (Glassmorphism).
 
-### Upcoming Changes
-#### [MODIFY] index_ultra_2026.html
-- **01 / The Story**: Implement "From Campaigns to Systems" narrative.
-- **02 / Strategic Arsenal**: Design "Frameworks" section (Growth Architecture, etc.).
-- **03 / Vision 2026**: Add positioning content.
+3.  **الخبرات (Timeline):**
+    *   *القديم:* خط زمني عمودي تقليدي.
+    *   *الجديد:* "Data Stream" - خط زمني تفاعلي يضيء عند الوصول لكل محطة.
 
-## Verification Plan
-### Manual Verification
-- **Visuals**: Check background noise visibility and orb movement smoothness.
-- **Content**: Verify new subtitles and metric context lines appear correctly.
-- **Responsiveness**: Ensure large typography scales down for mobile.
+4.  **العملاء (Clients):**
+    *   *القديم:* شبكة شعارات.
+    *   *الجديد:* شريط متحرك لا نهائي (Infinite Marquee) بتأثير ضبابي (Blur) على الجوانب.
+
+5.  **المعرض (Showreel):**
+    *   *القديم:* فيديو داخل إطار آيباد.
+    *   *الجديد:* فيديو بمساحة كاملة (Cinematic Mode) يعمل تلقائياً عند التمرير.
+
+## المرحلة 3: الجودة والتأثيرات (Visuals & Motion)
+*   **الإضاءة المحيطة (Ambient Lighting):** التأكد من أن الإضاءة الخلفية (التي تتبع الماوس) تعمل على طول الصفحة وليس فقط في البداية.
+*   **الضجيج (Noise Texture):** الحفاظ على طبقة "Noise" فوق كل الأقسام لتوحيد الطابع البصري.
+*   **التفاعل (Micro-interactions):** إضافة تأثيرات مغناطيسية (Magnetic Buttons) لكل الأزرار والروابط.
+
+## المرحلة 4: الأداء (Performance)
+*   التأكد من أن الأنيميشن لا يسبب بطء (Lag) باستخدام `Will-change` و `Transform` فقط.
+*   تحسين تجربة الموبايل (نقل التأثيرات المعقدة لنسخ أبسط).

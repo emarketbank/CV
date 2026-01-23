@@ -62,9 +62,6 @@
 
 /* Shrunk state on scroll */
 .site-header.scrolled .header-logo {
-    /* height: 48px; Disabled to prevent layout shift */
-    /* min-width: 48px; Disabled to prevent layout shift */
-    /* padding: 6px 12px; Disabled to prevent layout shift */
     border-radius: 12px;
 }
 
@@ -125,10 +122,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Override for the robust brand gradient if preferred (making it pop like the screenshot example might imply) */
-/* Actually user screenshot showed a light pill. Let's stick to refined light pill. */
-/* But let's add a "brand dot" or subtle indicator if needed. */
-
 /* Active Text Color override */
 .nav-link.active {
     color: var(--text-primary);
@@ -182,11 +175,9 @@
 
 .header-controls .lang-switch:hover {
     background: transparent;
-    /* Removed background to fix frame-in-frame */
     transform: translateY(-1px);
     color: #fff;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    /* Added glow instead */
 }
 
 .lang-switch span {
