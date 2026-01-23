@@ -1,0 +1,61 @@
+/* --- ADVANCED INTERACTIONS: Spotlight & Video Expansion --- */
+
+/* 1. Spotlight Effect on Glass Panels */
+.glass-panel {
+    /* Existing styles remain, adding specific positioning for spotlight */
+    position: relative;
+    background: rgba(255, 255, 255, 0.01); /* Darker base */
+    overflow: hidden;
+}
+
+/* The Spotlight Radial Gradient (Added via JS, styled here) */
+.spotlight-overlay {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+    z-index: 2;
+}
+
+.glass-panel:hover .spotlight-overlay {
+    opacity: 1;
+}
+
+/* Border enhancement on hover */
+.glass-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1px; /* Border width */
+    background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0, 240, 255, 0.4), transparent 40%);
+    -webkit-mask: 
+       linear-gradient(#fff 0 0) content-box, 
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.glass-panel:hover::after {
+    opacity: 1;
+}
+
+/* 2. Cinematic Video Initial State */
+.cinema-container {
+    transform: scale(0.9); /* Start smaller */
+    border-radius: 40px;
+    transition: transform 0.1s linear; /* Fast response for scroll sync */
+    will-change: transform, border-radius;
+}
+
+.cinema-container.expanded {
+    /* Class for fallback or final state */
+    transform: scale(1);
+    border-radius: 20px;
+}

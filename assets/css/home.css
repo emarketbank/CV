@@ -130,7 +130,7 @@ section {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 110px 10%;
+    padding: 60px 10%;
     position: relative;
 }
 
@@ -265,19 +265,19 @@ section {
 /* Hero Section - Premium */
 .hero {
     text-align: center;
-    padding-top: 140px;
-    padding-bottom: 120px;
+    padding-top: 220px; /* Increased to clear the fixed header */
+    padding-bottom: 80px;
     position: relative;
     overflow: hidden;
-    min-height: 100vh;
+    min-height: 90vh;
 }
 
 .hero-grid {
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 60px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); /* Better ratio */
+    gap: 80px; /* Increased gap to prevent clashing */
     align-items: center;
     width: 100%;
     max-width: 1200px;
@@ -288,33 +288,47 @@ section {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
+    gap: 24px;
     text-align: left;
 }
 
+.hero-brand-logo {
+    margin-bottom: 5px;
+}
+
+.hero-brand-logo img {
+    height: 110px; /* Larger logo as it's the main heading now */
+    width: auto;
+    filter: drop-shadow(0 0 30px rgba(43, 155, 155, 0.3));
+}
+
 .hero-eyebrow {
-    font-size: 0.8rem;
-    letter-spacing: 0.45em;
+    font-size: 0.9rem;
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 600;
+    color: var(--teal-primary);
+    font-weight: 800;
+    margin-bottom: 5px;
 }
 
 .hero h1 {
     font-family: var(--font-display);
-    font-size: clamp(2.8rem, 5vw, 4.8rem);
-    font-weight: 700;
+    font-size: clamp(3.2rem, 6vw, 5.2rem);
+    font-weight: 800;
     line-height: 1.05;
-    margin-bottom: 0;
+    margin-bottom: 10px;
+    color: #fff;
     position: relative;
     z-index: 2;
 }
 
-.hero h1 .gradient-text {
-    background: linear-gradient(135deg, var(--teal-deep) 10%, var(--purple-primary) 100%);
+.tagline.gradient-text {
+    background: linear-gradient(135deg, var(--teal-primary) 0%, var(--purple-primary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-weight: 700;
 }
 
 .hero .tagline {
@@ -445,25 +459,24 @@ section {
     width: 190px;
     height: 190px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
-    padding: 6px;
+    /* Super clean gradient border */
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    padding: 4px;
     position: relative;
     z-index: 2;
     margin: 0 auto 32px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-.hero-visual .avatar-wrap {
-    margin: 0;
-}
-
-.avatar-wrap .avatar {
-    width: 100%;
-    height: 100%;
+/* Orbital Rings Effect */
+.avatar-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -20px;
     border-radius: 50%;
-    background: url('https://i.ibb.co/9kVY3hyT/52.png') center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid rgba(43, 155, 155, 0.1);
+    animation: spinSlow 15s linear infinite;
+    pointer-events: none;
 }
 
 .avatar-wrap::after {
@@ -471,23 +484,27 @@ section {
     position: absolute;
     inset: -10px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(27, 124, 107, 0.45), rgba(199, 121, 45, 0.35));
-    z-index: -1;
-    animation: avatarGlow 3s ease-in-out infinite;
+    border: 1px solid rgba(139, 106, 175, 0.1);
+    animation: spinSlow 10s linear infinite reverse;
+    pointer-events: none;
 }
 
-@keyframes avatarGlow {
+@keyframes spinSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
 
-    0%,
-    100% {
-        opacity: 0.4;
-        transform: scale(1);
-    }
+.hero-brand-logo img {
+    height: 110px;
+    width: auto;
+    /* Advanced Backlight Glow */
+    filter: drop-shadow(0 0 30px rgba(43, 155, 155, 0.4)) drop-shadow(0 0 10px rgba(112, 0, 255, 0.3));
+    animation: floatLogo 6s ease-in-out infinite;
+}
 
-    50% {
-        opacity: 0.8;
-        transform: scale(1.06);
-    }
+@keyframes floatLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
 .hero-card {
@@ -640,12 +657,16 @@ section {
 }
 
 .story-text {
-    font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+    font-size: 1.2rem; /* Increased for better presence */
     color: var(--text-secondary);
-    line-height: 1.9;
-    text-align: center;
-    max-width: 760px;
+    line-height: 1.7;
+    text-align: left;
+    max-width: 850px; /* Slightly wider to accommodate larger text */
     margin: 0 auto;
+}
+
+.story-text p {
+    margin-bottom: 20px; /* Spacing between paragraphs */
 }
 
 .story-text .highlight {

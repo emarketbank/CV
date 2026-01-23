@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/mg2026B.css">
+    <link rel="stylesheet" href="assets/css/mg2026B-interactions.css">
 </head>
 <body>
 
@@ -131,24 +132,56 @@
         <div class="signal signal-6"></div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero-section" style="height: 100vh; overflow: hidden;">
-        <div class="hero-content">
+    <!-- FLOATING LANG ORB (Ultra Minimal) -->
+    <a href="index-ar.html" class="lang-orb">
+        <span>AR</span>
+    </a>
+
+    <!-- ULTRA HEADER (Centered Capsule) -->
+    <header class="ultra-header centered">
+        <!-- Nav -->
+        <nav class="header-nav">
+            <a href="portfolio/index.html" class="nav-link">Portfolio</a>
+            <span class="nav-separator">///</span>
+            <a href="achievements/index.html" class="nav-link">Achievements</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION (Redesigned: Center Stage) -->
+    <section class="hero-section">
+        <div class="hero-center-stage">
             
-            <!-- Main Title (Scaled Down) -->
-            <div class="hero-title-wrapper" style="transform: scale(0.6); margin: 0;">
-                <div class="hero-title">
-                    MOHAMED
-                    <div class="filled">MOHAMED</div>
+            <!-- Logo (Keep this as anchor) -->
+            <div class="hero-logo-container reveal-on-scroll">
+                <img src="https://emarketbank.github.io/CV/assets/images/arabic-logo-mg.png" alt="Mohamed Gamal" class="hero-main-logo">
+            </div>
+
+            <!-- Slogan (Quantum Decrypt - Adopted Style) -->
+            <div class="ultra-slogan-container">
+                <div class="ultra-slogan-text effect-decrypt" data-text="Digital Growth Architect">Digital Growth Architect</div>
+            </div>
+
+            <!-- CTA -->
+            <div class="cta-wrapper" style="margin-top: 2.5rem; margin-bottom: 3.5rem;">
+                <a href="#experience" class="btn-magnetic">Explore System</a>
+            </div>
+
+            <!-- Hero Stats Row (Glass Pills) -->
+            <div class="hero-stats-row">
+                <div class="glass-stat-pill reveal-on-scroll" style="transition-delay: 0.1s;">
+                    <span class="stat-val">6x</span>
+                    <span class="stat-key">Revenue</span>
                 </div>
-                <div class="hero-title" style="margin-top: -1.5vw;">
-                    GAMAL
-                    <div class="filled" style="animation-delay: 1.4s;">GAMAL</div>
+                <div class="glass-stat-pill reveal-on-scroll" style="transition-delay: 0.2s;">
+                    <span class="stat-val">5M+</span>
+                    <span class="stat-key">Orders</span>
+                </div>
+                <div class="glass-stat-pill reveal-on-scroll" style="transition-delay: 0.3s;">
+                    <span class="stat-val">$20k</span>
+                    <span class="stat-key">Daily Ads</span>
                 </div>
             </div>
 
-            <!-- Intro Subtext -->
-             <div class="micro-line">Growth Systems Architect • MENA Region</div>
         </div>
     </section>
 
@@ -380,58 +413,49 @@
 
     <!-- Script for Interactions -->
     <script>
-        // --- 1. Custom Cursor Logic (Desktop) ---
-        const cursorDot = document.querySelector('[data-cursor-dot]');
+        // --- 1. Modern Halo Cursor Logic ---
         const cursorOutline = document.querySelector('[data-cursor-outline]');
         const ambientLight = document.getElementById('ambientLight');
         
-        // Only activate on non-touch devices
         if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
             window.addEventListener('mousemove', function(e) {
                 const posX = e.clientX;
                 const posY = e.clientY;
 
-                // Dot moves instantly
-                cursorDot.style.left = `${posX}px`;
-                cursorDot.style.top = `${posY}px`;
-
-                // Outline moves with lag
+                // Outline follows with a slight, smooth lag
                 cursorOutline.animate({
                     left: `${posX}px`,
                     top: `${posY}px`
-                }, { duration: 500, fill: "forwards" });
+                }, { duration: 400, fill: "forwards", easing: "ease-out" });
 
-                // Ambient Light follows smoothly
+                // Ambient Light follows very slowly
                 ambientLight.animate({
                     left: `${posX}px`,
                     top: `${posY}px`
-                }, { duration: 4000, fill: "forwards" }); // Very slow drift
+                }, { duration: 3000, fill: "forwards" });
             });
 
-            // Hover States
-            document.querySelectorAll('a, button').forEach(el => {
+            // Hover States for all interactive elements
+            const interactives = document.querySelectorAll('a, button, .glass-stat-pill, .stream-node, .holo-card');
+            interactives.forEach(el => {
                 el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
                 el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
             });
         }
 
         // --- 2. Magnetic Button Logic ---
-        const btn = document.getElementById('heroBtn');
-        
-        if (window.matchMedia("(hover: hover)").matches) {
+        const btns = document.querySelectorAll('.btn-magnetic');
+        btns.forEach(btn => {
             btn.addEventListener('mousemove', (e) => {
                 const rect = btn.getBoundingClientRect();
                 const x = e.clientX - rect.left - rect.width / 2;
                 const y = e.clientY - rect.top - rect.height / 2;
-                
-                // Subtle magnetic pull (reduced range)
                 btn.style.transform = `translate(${x * 0.2}px, ${y * 0.3}px)`;
             });
-
             btn.addEventListener('mouseleave', () => {
                 btn.style.transform = 'translate(0px, 0px)';
             });
-        }
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,156 @@
+/* --- SLOGAN LAB (For Review) --- */
+.slogan-lab {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 40px 0;
+    width: 100%;
+}
+
+.slogan-option {
+    text-align: left;
+    padding: 20px;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.01);
+}
+
+.option-label {
+    font-family: var(--font-tech);
+    font-size: 0.7rem;
+    color: var(--primary-teal);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+.slogan-text {
+    font-family: var(--font-tech);
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    width: fit-content;
+}
+
+/* 1. Quantum Decrypt */
+/* Logic handled in JS, styling cursor here */
+.effect-decrypt::after {
+    content: '_';
+    animation: blink 0.5s infinite;
+    color: var(--primary-teal);
+}
+
+/* 2. Cinematic Focus */
+.effect-focus {
+    animation: cin-focus 4s ease-out infinite alternate;
+}
+
+@keyframes cin-focus {
+    0% {
+        filter: blur(10px);
+        letter-spacing: 0.5em;
+        opacity: 0;
+    }
+    40%, 100% {
+        filter: blur(0);
+        letter-spacing: 0.1em;
+        opacity: 1;
+    }
+}
+
+/* 3. Blueprint Stroke */
+.effect-blueprint {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    position: relative;
+    animation: blueprint-fill 4s ease-in-out infinite alternate;
+}
+
+@keyframes blueprint-fill {
+    0% {
+        -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+        color: transparent;
+        text-shadow: none;
+    }
+    50% {
+        -webkit-text-stroke: 1px var(--primary-teal);
+        color: rgba(0, 240, 255, 0.1);
+        text-shadow: 0 0 10px var(--primary-teal);
+    }
+    100% {
+        -webkit-text-stroke: 0;
+        color: #fff;
+        text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+}
+
+/* 4. Prismatic Pulse */
+.effect-prism {
+    position: relative;
+    color: #fff;
+    animation: prism-glitch 5s infinite;
+}
+
+.effect-prism::before, .effect-prism::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.effect-prism::before {
+    color: #ff00c1;
+    z-index: -1;
+    animation: prism-shift-1 5s infinite;
+}
+
+.effect-prism::after {
+    color: #00fff9;
+    z-index: -2;
+    animation: prism-shift-2 5s infinite;
+}
+
+@keyframes prism-glitch {
+    0%, 90% { transform: skew(0deg); }
+    92% { transform: skew(10deg); }
+    94% { transform: skew(-10deg); }
+    96% { transform: skew(0deg); }
+}
+
+@keyframes prism-shift-1 {
+    0%, 90% { transform: translate(0,0); }
+    92% { transform: translate(-2px, 2px); }
+    94% { transform: translate(2px, -2px); }
+    96% { transform: translate(0,0); }
+}
+
+@keyframes prism-shift-2 {
+    0%, 90% { transform: translate(0,0); }
+    92% { transform: translate(2px, 2px); }
+    94% { transform: translate(-2px, -2px); }
+    96% { transform: translate(0,0); }
+}
+
+/* 5. Liquid Mask */
+.effect-liquid {
+    overflow: hidden;
+    display: inline-flex;
+}
+
+.liquid-char {
+    display: inline-block;
+    transform: translateY(100%);
+    animation: liquid-rise 3s cubic-bezier(0.2, 1, 0.3, 1) infinite;
+}
+
+@keyframes liquid-rise {
+    0% { transform: translateY(100%); opacity: 0; }
+    40%, 90% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-100%); opacity: 0; }
+}

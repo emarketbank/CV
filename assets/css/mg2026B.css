@@ -21,7 +21,10 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    cursor: none; /* Desktop only */
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -32,37 +35,47 @@ body {
     min-height: 100vh;
 }
 
+/* Force SVG sizing to prevent "huge icons" */
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.signal-icon svg {
+    width: 40px !important;
+    height: 40px !important;
+}
+
+.holo-icon svg {
+    width: 32px !important;
+    height: 32px !important;
+}
+
 /* --- CUSTOM CURSOR (Desktop Only) --- */
 @media (hover: hover) and (pointer: fine) {
-    .cursor-dot,
+    .cursor-dot { display: none; } /* Dot removed for standard feel */
+
     .cursor-outline {
         position: fixed;
         top: 0;
         left: 0;
-        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 1px solid rgba(0, 240, 255, 0.3); /* Subtle Teal */
         border-radius: 50%;
         z-index: 9999;
         pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s var(--ease-smooth), height 0.3s var(--ease-smooth), background 0.3s, border-color 0.3s;
     }
 
-    .cursor-dot {
-        width: 6px;
-        height: 6px;
-        background-color: var(--primary-teal);
-    }
-
-    .cursor-outline {
-        width: 30px;
-        height: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        transition: width 0.2s, height 0.2s, background-color 0.2s;
-    }
-
+    /* When hovering over clickable elements */
     body.hovering .cursor-outline {
-        width: 50px;
-        height: 50px;
-        background-color: rgba(0, 240, 255, 0.05);
+        width: 45px;
+        height: 45px;
+        background: rgba(0, 240, 255, 0.05);
         border-color: var(--primary-teal);
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
 }
 
@@ -405,121 +418,153 @@ body {
     100% { opacity: 0.8; transform: scale(1.2); }
 }
 
-/* --- HERO SECTION --- */
-.hero-section {
-    min-height: 100vh;
-    width: 100%;
+/* --- ULTRA COMPACT HEADER --- */
+.ultra-header {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 50px;
+    background: rgba(10, 10, 12, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 100px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    padding: 100px 5%;
+    padding: 0 30px;
+    z-index: 5000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.hero-content {
-    text-align: center;
-    position: relative;
-    z-index: 10;
+.ultra-header:hover {
+    background: rgba(10, 10, 12, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* 2. Nav (Center) */
+.header-nav {
     display: flex;
-    flex-direction: column;
+    gap: 30px;
     align-items: center;
-    width: 100%;
-    max-width: 1000px;
 }
 
-/* 1. Subline (Small & Calm) */
-.hero-subline {
+.nav-link {
     font-family: var(--font-tech);
-    color: var(--text-muted);
     font-size: 0.85rem;
-    letter-spacing: 0.2em;
+    color: var(--text-muted);
     text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    opacity: 0;
-    animation: fadeDown 1s var(--ease-smooth) 0.2s forwards;
-}
-
-/* 2. Massive Name (Stroke -> Fill) */
-.hero-title-wrapper {
-    display: flex;
-    flex-direction: column;
-    line-height: 0.85;
-    margin-bottom: 2.5rem;
-}
-
-.hero-title {
-    font-size: clamp(3.5rem, 9vw, 8.5rem);
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+    letter-spacing: 0.1em;
+    text-decoration: none;
     position: relative;
-    opacity: 0;
-    animation: revealText 1s var(--ease-smooth) 0.4s forwards;
-    display: inline-block;
+    transition: color 0.3s ease;
 }
 
-.hero-title .filled {
+.nav-link:hover {
+    color: #fff;
+}
+
+.nav-link::after {
+    content: '';
     position: absolute;
-    top: 0;
+    bottom: -4px;
     left: 0;
     width: 0%;
-    height: 100%;
-    color: #fff;
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid var(--primary-teal);
-    animation: fillText 1.2s var(--ease-smooth) 1.2s forwards; /* Delayed fill */
-    filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.2));
+    height: 1px;
+    background: var(--primary-teal);
+    transition: width 0.3s ease;
 }
 
-@keyframes fillText {
-    to { width: 100%; border-right-color: transparent; }
+.nav-link:hover::after {
+    width: 100%;
 }
 
-/* 3. Human Anchor (Signature Image) */
-.human-anchor {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
+/* --- CENTERED CAPSULE HEADER --- */
+.ultra-header.centered {
+    width: auto;
+    min-width: 300px;
+    justify-content: center; /* Force Center */
+}
+
+/* --- HERO REDESIGN (Centered & Impressive) --- */
+.hero-section {
+    padding-top: 180px; /* Space for fixed header */
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    overflow: hidden; /* Prevent horizontal scroll */
+}
+
+.hero-center-stage {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+/* Impressive Logo Motion */
+.hero-logo-container {
+    margin-bottom: 30px;
     opacity: 0;
     transform: scale(0.9);
-    animation: fadeScale 1s var(--ease-smooth) 2s forwards; /* Appears after text fill */
-    position: relative;
+    animation: logoReveal 1.2s var(--ease-smooth) 0.2s forwards;
 }
 
-.human-anchor img {
+.hero-main-logo {
+    max-width: 350px; /* Impressive but controlled size */
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(100%) contrast(1.1); /* Desaturated & slightly punchy */
-    opacity: 0.9;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.2)) brightness(1.2);
     transition: all 0.5s ease;
 }
 
-/* Subtle Vignette Overlay */
-.human-anchor::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.4) 100%);
-    pointer-events: none;
+.hero-main-logo:hover {
+    filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5)) brightness(1.4);
+    transform: translateY(-5px);
 }
 
-/* 4. Micro-line */
-.micro-line {
-    font-family: var(--font-tech);
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    font-weight: 300;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s var(--ease-smooth) 2.2s forwards;
+@keyframes logoReveal {
+    to { 
+        opacity: 1; 
+        transform: scale(1);
+    }
 }
+
+/* Stats in Hero (Compact Row) */
+.hero-stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 60px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.5s forwards;
+}
+
+.hero-stat-item {
+    text-align: center;
+}
+
+.h-stat-num {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--font-tech);
+    margin-bottom: 5px;
+}
+
+.h-stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
 
 /* 5. Magnetic CTA */
 .cta-wrapper {
@@ -563,6 +608,22 @@ body {
     *, *::before, *::after { cursor: auto !important; } /* Disable custom cursor */
     .cursor-dot, .cursor-outline { display: none; }
     
+    .ultra-header {
+        top: 15px;
+        height: 50px;
+        padding: 0 15px;
+        width: 95%;
+    }
+    
+    .header-nav { display: none; } /* Hide nav links on mobile for simplicity */
+    
+    .hero-section { padding-top: 140px; }
+    
+    .hero-stats-row {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
     .hero-title { font-size: 13vw; }
     .hero-title-wrapper { margin-bottom: 2rem; }
     
@@ -595,12 +656,12 @@ body {
 }
 
 .ultra-section {
-    padding: 120px 0;
+    padding: 60px 0;
     position: relative;
 }
 
 .ultra-section-header {
-    margin-bottom: 60px;
+    margin-bottom: 30px;
 }
 
 .ultra-overline {
@@ -746,8 +807,6 @@ body {
 }
 
 @media (max-width: 768px) {
-    .ultra-section { padding: 80px 0; }
-    
     .bento-grid {
         grid-template-columns: 1fr;
         grid-auto-rows: auto;
@@ -1069,3 +1128,208 @@ body {
         gap: 40px;
     }
 }
+
+/* --- FLOATING LANG ORB --- */
+.lang-orb {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    z-index: 5001;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.lang-orb:hover {
+    background: var(--primary-teal);
+    border-color: var(--primary-teal);
+    color: #000;
+    box-shadow: 0 0 20px var(--primary-teal);
+    transform: rotate(360deg);
+}
+
+.nav-separator {
+    color: rgba(255, 255, 255, 0.1);
+    font-family: var(--font-tech);
+    letter-spacing: -2px;
+}
+
+/* --- HERO SLOGAN (Sophisticated Sheen) --- */
+.ultra-slogan-container {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 10px 0;
+    display: inline-block;
+}
+
+.ultra-slogan-text {
+    font-family: var(--font-tech);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    text-transform: uppercase;
+    letter-spacing: 0.35em; /* Wider spacing for elegance */
+    font-weight: 500;
+    
+    /* The Nebula Gradient */
+    background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.6) 0%,
+        rgba(255, 255, 255, 0.9) 40%,
+        var(--primary-teal) 50%,
+        rgba(255, 255, 255, 0.9) 60%,
+        rgba(255, 255, 255, 0.6) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* The Slow, Fluid Motion */
+    animation: sheenFlow 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    
+    /* Subtle Glow */
+    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.15));
+}
+
+@keyframes sheenFlow {
+    0% { background-position: 100% 50%; }
+    100% { background-position: -100% 50%; }
+}
+
+/* --- GLASS STAT PILLS --- */
+.glass-stat-pill {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 24px;
+    border-radius: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.glass-stat-pill:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary-teal);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 240, 255, 0.1);
+}
+
+.stat-val {
+    font-family: var(--font-tech);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #fff;
+    line-height: 1.1;
+}
+
+.stat-key {
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+}
+
+@keyframes shimmerText {
+    0% { background-position: -100%; }
+    100% { background-position: 200%; }
+}
+
+@keyframes scanPass {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+}
+
+/* Mobile Adapt */
+@media (max-width: 768px) {
+    .ultra-header.centered {
+        width: 90%;
+        padding: 0 20px;
+    }
+    
+    .lang-orb {
+        top: 20px;
+        right: 20px;
+    }
+    
+    .hero-stats-row {
+        flex-direction: row; /* Keep row on mobile if possible, or wrap */
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .glass-stat-pill {
+        min-width: 90px;
+        padding: 10px 15px;
+    }
+}
+
+/* --- HERO SLOGAN (Quantum Decrypt - OFFICIAL) --- */
+
+.ultra-slogan-container {
+
+    position: relative;
+
+    margin-bottom: 20px;
+
+    padding: 10px 0;
+
+    display: inline-block;
+
+}
+
+
+
+.ultra-slogan-text {
+
+    font-family: var(--font-tech);
+
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.35em;
+
+    font-weight: 500;
+
+    color: var(--primary-teal);
+
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+
+}
+
+
+
+.effect-decrypt::after {
+
+    content: '_';
+
+    animation: blink 0.5s infinite;
+
+    color: var(--primary-teal);
+
+}
+
+
+
+@keyframes blink { 50% { opacity: 0; } }
+
+
+
+/* --- GLASS STAT PILLS --- */

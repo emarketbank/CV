@@ -13,7 +13,103 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollRevelations();
     initAmbientFollow();
     initVoidParticles();
+    initSpotlightEffect();
+    initVideoScroll();
+    initSloganLab();
 });
+
+/**
+ * SLOGAN LOGIC (Quantum Decrypt)
+ * Handles the 'shuffling' text effect for the main slogan.
+ */
+function initSloganLab() {
+    const decryptEl = document.querySelector('.effect-decrypt');
+    if (!decryptEl) return;
+
+    const originalText = decryptEl.getAttribute('data-text');
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>[]{}";
+    let interval;
+    
+    function startDecrypt() {
+        let iteration = 0;
+        clearInterval(interval);
+        
+        interval = setInterval(() => {
+            decryptEl.innerText = originalText
+                .split("")
+                .map((letter, index) => {
+                    if(index < iteration) return originalText[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join("");
+            
+            if(iteration >= originalText.length) clearInterval(interval);
+            iteration += 1/3;
+        }, 30);
+    }
+    
+    startDecrypt();
+    setInterval(startDecrypt, 8000); // Shuffle every 8 seconds for a premium feel
+}
+
+
+/**
+ * SPOTLIGHT EFFECT
+ * Tracks mouse position over glass panels to create a flashlight effect on borders and background.
+ */
+function initSpotlightEffect() {
+    const panels = document.querySelectorAll('.glass-panel');
+
+    panels.forEach(panel => {
+        // Create the spotlight overlay element if it doesn't exist
+        if (!panel.querySelector('.spotlight-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.classList.add('spotlight-overlay');
+            panel.appendChild(overlay);
+        }
+
+        panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Set CSS variables for the gradient position
+            panel.style.setProperty('--mouse-x', `${x}px`);
+            panel.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+}
+
+/**
+ * VIDEO SCROLL EXPANSION
+ * Expands the cinematic video container from 90% to 100% width as it scrolls into view.
+ */
+function initVideoScroll() {
+    const videoSection = document.querySelector('.cinema-container');
+    if (!videoSection) return;
+
+    window.addEventListener('scroll', () => {
+        const rect = videoSection.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        
+        // Calculate how far the element is from the center of the viewport
+        // Range: 0 (center) to 1 (edge)
+        const distanceToCenter = rect.top + rect.height / 2 - windowHeight / 2;
+        const normalize = Math.max(0, 1 - Math.abs(distanceToCenter) / (windowHeight / 1.5));
+
+        // Scale from 0.9 to 1.0 based on scroll position
+        const scale = 0.9 + (normalize * 0.1);
+        
+        // Clamp scale between 0.9 and 1.0
+        const finalScale = Math.min(Math.max(scale, 0.9), 1.0);
+        
+        videoSection.style.transform = `scale(${finalScale})`;
+        
+        // Optional: Adjust Border Radius (40px -> 20px)
+        const borderRadius = 40 - (normalize * 20);
+        videoSection.style.borderRadius = `${borderRadius}px`;
+    });
+}
 
 /**
  * Handles the "Reveal on Scroll" logic using IntersectionObserver.
