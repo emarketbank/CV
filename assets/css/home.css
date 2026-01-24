@@ -89,14 +89,14 @@ section {
 }
 
 /* 🛡️ Section Protection Shield - High Blur & Darkening */
-.tools-protection {
-    background: rgba(3, 3, 5, 0.85) !important;
-    backdrop-filter: blur(40px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
+.section-protection {
+    background: rgba(3, 3, 5, 0.98) !important;
+    backdrop-filter: blur(60px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(60px) saturate(150%) !important;
     position: relative;
-    z-index: 20; /* Elevate above nebula icons */
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 25;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero-proof {
@@ -1039,29 +1039,33 @@ section {
     font-family: var(--font-display);
 }
 
-.section-header h2 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    color: var(--text-primary);
-    font-family: var(--font-display);
-    letter-spacing: -0.02em;
+h2.overline {
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.4em !important;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    margin-bottom: 0 !important;
+    position: relative;
+    display: inline-block;
 }
 
-.section-header .section-desc {
-    font-size: 1rem;
-    color: var(--text-muted);
-    margin-top: 15px;
-    font-weight: 400;
-}
-
+/* 🌌 Architectural Underline */
 .section-header::after {
     content: '';
     display: block;
-    width: 70px;
-    height: 3px;
-    margin: 18px auto 0;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+    width: 100px;
+    height: 1px; /* Hairline */
+    margin: 25px auto 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--teal-primary) 50%, 
+        transparent 100%);
+    box-shadow: 0 0 15px var(--teal-primary);
+    opacity: 0.6;
 }
 
 .section-desc a {
@@ -1135,10 +1139,10 @@ section {
 }
 
 .story-text p {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    line-height: 1.6;
-    margin-bottom: 40px;
-    font-weight: 500;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    line-height: 1.8;
+    margin-bottom: 30px;
+    font-weight: 400;
 }
 
 .timeline {
