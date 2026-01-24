@@ -17,6 +17,28 @@ class MGAgent {
     }
 
     createUI() {
+        // Detect page language from HTML tag
+        const pageLang = document.documentElement.lang || 'en';
+        const isArabic = pageLang === 'ar';
+
+        // Language-specific branding
+        const branding = {
+            ar: {
+                name: 'كابتن جيمي',
+                subtitle: 'مساعدك الذكي',
+                welcome: 'أهلاً! أنا كابتن جيمي، مساعد محمد الذكي. دوري أوصّلك له بسرعة. إزاي أقدر أساعدك؟',
+                placeholder: 'محتاج تتواصل مع محمد؟ اسأل أي حاجة...'
+            },
+            en: {
+                name: 'Capt. Jimmy',
+                subtitle: 'Smart Assistant',
+                welcome: "Hi! I'm Captain Jimmy, Mohamed's smart assistant. I'm here to connect you with him quickly. How can I help?",
+                placeholder: 'Want to reach Mohamed? Ask anything...'
+            }
+        };
+
+        const brand = isArabic ? branding.ar : branding.en;
+
         const chatHTML = `
             <div class="ai-chat-container" id="aiChat">
                 <div class="ai-chat-header">
@@ -28,8 +50,8 @@ class MGAgent {
                         <span class="ai-status-dot"></span>
                     </div>
                     <div class="ai-info">
-                        <h3>كابتن جيمي | Capt. Jimmy</h3>
-                        <span>مساعدك الذكي | Smart Assistant</span>
+                        <h3>${brand.name}</h3>
+                        <span>${brand.subtitle}</span>
                     </div>
                     <button class="ai-close" id="closeChat" aria-label="Close Chat">
                         <i class="ri-close-line"></i>
@@ -37,7 +59,7 @@ class MGAgent {
                 </div>
                 <div class="ai-chat-messages" id="aiMessages">
                     <div class="message ai-msg">
-                        <div class="msg-content">أهلاً! أنا كابتن جيمي، مساعد محمد الذكي. دوري أوصّلك له بسرعة. إزاي أقدر أساعدك؟<br><br>Hi! I'm Captain Jimmy, Mohamed's smart assistant. I'm here to connect you with him quickly. How can I help?</div>
+                        <div class="msg-content">${brand.welcome}</div>
                         <span class="msg-time">Just now</span>
                     </div>
                 </div>
@@ -363,11 +385,15 @@ class MGAgent {
     }
 
     updateUILanguage(lang) {
+        // Update placeholder based on detected language from user message
         const placeholders = {
             ar: 'اكتب سؤالك هنا...',
             en: 'Type your question here...'
         };
-        document.getElementById('aiInput').placeholder = placeholders[lang];
+        const input = document.getElementById('aiInput');
+        if (input) {
+            input.placeholder = placeholders[lang] || placeholders.en;
+        }
     }
 
     async handleSend() {
