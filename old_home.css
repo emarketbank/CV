@@ -63,40 +63,19 @@ main {
 
 section {
     position: relative;
-    padding: 70px 10%;
+    padding: 100px 10%;
     margin-bottom: 0px;
     transition: background 0.8s var(--theme-transition), backdrop-filter 0.8s var(--theme-transition);
 }
 
 .skills-section {
-    padding-top: 40px !important;
-    padding-bottom: 40px !important;
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
 }
 
 .story-section {
-    padding-top: 40px !important;
-    padding-bottom: 40px !important;
-}
-
-.experience-section {
-    padding-top: 50px !important;
-    padding-bottom: 50px !important;
-}
-
-.tools-section {
-    padding-top: 50px !important;
-    padding-bottom: 50px !important;
-}
-
-/* 🛡️ Section Protection Shield - High Blur & Darkening */
-.section-protection {
-    background: rgba(3, 3, 5, 0.98) !important;
-    backdrop-filter: blur(60px) saturate(150%) !important;
-    -webkit-backdrop-filter: blur(60px) saturate(150%) !important;
-    position: relative;
-    z-index: 25;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
 }
 
 .hero-proof {
@@ -466,10 +445,7 @@ section {
     transform: translateY(0) scale(1);
     filter: blur(0);
     animation: revealSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform: translateY(calc(var(--bio-intensity, 0) * 10px)); /* Apply subtle lift based on intensity */
-    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
 }
-
 
 /* Staggered reveal for children */
 .reveal.visible>*:nth-child(1) {
@@ -527,13 +503,106 @@ section {
     }
 }
 
-/* --- HERO SECTION STYLES REMOVED IN FAVOR OF HERO-2026.CSS --- */
+/* Hero Section - Premium */
 
-.section-header {
-    text-align: center;
-    margin-bottom: 46px;
+.hero {
+
+    text-align: left;
+
+    padding-top: clamp(140px, 18vh, 220px);
+
+    padding-bottom: clamp(60px, 10vh, 120px);
+
     position: relative;
+
+    overflow: hidden;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
 }
+
+
+
+.hero-grid {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: grid;
+
+    grid-template-columns: 1.2fr 0.8fr;
+
+    gap: 60px;
+
+    align-items: center;
+
+    width: 100%;
+
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+}
+
+
+
+.hero-copy {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    text-align: left;
+
+}
+
+.hero-brand-logo {
+    margin-bottom: 20px;
+    margin-left: 0;
+    position: relative;
+    z-index: 10001;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.hero-brand-logo img {
+    height: 110px;
+    width: auto;
+    filter: drop-shadow(0 15px 40px rgba(43, 155, 155, 0.4));
+    animation: floatLogo 6s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(1deg);
+    }
+}
+
+/* 🌌 NEBULA PORTAL CONTAINER (De-Boxed) */
+.hero-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    position: relative;
+    padding: 20px;
     /* Removed Glass Box for Floating Effect */
     background: transparent;
     border: none;
@@ -935,7 +1004,7 @@ section {
 
 .section-header {
     text-align: center;
-    margin-bottom: 25px !important;
+    margin-bottom: 30px !important;
     position: relative;
 }
 
@@ -949,33 +1018,29 @@ section {
     font-family: var(--font-display);
 }
 
-h2.overline {
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem) !important;
-    font-weight: 900 !important;
-    letter-spacing: 0.4em !important;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.4) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
-    margin-bottom: 0 !important;
-    position: relative;
-    display: inline-block;
+.section-header h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
 }
 
-/* 🌌 Architectural Underline */
+.section-header .section-desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 15px;
+    font-weight: 400;
+}
+
 .section-header::after {
     content: '';
     display: block;
-    width: 100px;
-    height: 1px; /* Hairline */
-    margin: 25px auto 0;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--teal-primary) 50%, 
-        transparent 100%);
-    box-shadow: 0 0 15px var(--teal-primary);
-    opacity: 0.6;
+    width: 70px;
+    height: 3px;
+    margin: 18px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
 }
 
 .section-desc a {
@@ -988,71 +1053,25 @@ h2.overline {
     text-decoration: underline;
 }
 
-.story-section {
-    position: relative;
-    padding: 160px 10%;
-    overflow: hidden;
-    background: transparent;
-}
-
-/* 🌌 GHOST METRICS */
-.story-ghost-metrics {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-}
-
-.ghost-metric {
-    position: absolute;
-    font-size: clamp(8rem, 15vw, 20rem);
-    font-weight: 900;
-    color: rgba(255, 255, 255, 0.02);
-    font-family: var(--font-display);
-    line-height: 1;
-    white-space: nowrap;
-    user-select: none;
-    will-change: transform;
-}
-
-.ghost-metric:nth-child(1) { top: 10%; left: -5%; }
-.ghost-metric:nth-child(2) { bottom: 5%; right: -5%; }
-.ghost-metric:nth-child(3) { top: 40%; right: 10%; font-size: 10rem; opacity: 0.01; }
-.ghost-metric:nth-child(4) { bottom: 20%; left: 15%; font-size: 12rem; opacity: 0.01; }
-
-/* ✨ SCRUB TEXT (ILLUMINATION) */
-.scrub-text {
-    opacity: 0.15; /* Base muted state */
-    transition: opacity 0.1s linear, color 0.1s linear;
-    position: relative;
-    z-index: 2;
-}
-
-.scrub-text.active {
-    opacity: 1;
-    color: #fff;
-}
-
-.scrub-text .highlight {
-    color: var(--teal-primary);
-    transition: text-shadow 0.4s ease;
-}
-
-.scrub-text.active .highlight {
-    text-shadow: 0 0 20px rgba(43, 155, 155, 0.3);
-}
-
 .story-text {
-    max-width: 900px;
+    font-size: 1.2rem;
+    /* Increased for better presence */
+    color: var(--text-secondary);
+    line-height: 1.7;
+    text-align: left;
+    max-width: 850px;
+    /* Slightly wider to accommodate larger text */
     margin: 0 auto;
 }
 
 .story-text p {
-    font-size: clamp(1rem, 1.4vw, 1.25rem);
-    line-height: 1.8;
-    margin-bottom: 30px;
-    font-weight: 400;
+    margin-bottom: 20px;
+    /* Spacing between paragraphs */
+}
+
+.story-text .highlight {
+    color: var(--teal-deep);
+    font-weight: 600;
 }
 
 .timeline {
@@ -2126,68 +2145,32 @@ h2.overline {
     /* Neon Glow */
 }
 
-/* Stats Grid - Bento Layout 2026 */
+/* Stats Grid - Key Metrics - Ultra Premium Dark */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: minmax(180px, auto);
-    gap: 20px;
+    gap: 30px;
     max-width: 1200px;
-    margin: 50px auto 0;
-    perspective: 1200px;
+    margin: 0 auto;
+    perspective: 1000px;
 }
 
 .stat-card {
     background: rgba(8, 10, 15, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 30px;
-    border-radius: 28px;
+    padding: 50px 35px;
+    border-radius: 24px;
+    text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.5s ease;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
     z-index: 10;
-}
-
-/* Bento Sizing */
-.stat-card:nth-child(1) {
-    grid-column: span 2;
-    grid-row: span 2;
-    background: linear-gradient(135deg, rgba(43, 155, 155, 0.1), rgba(8, 10, 15, 0.4));
-}
-
-.stat-card:nth-child(2) {
-    grid-column: span 2;
-    grid-row: span 1;
-}
-
-.stat-card:nth-child(3) {
-    grid-column: span 1;
-    grid-row: span 1;
-}
-
-.stat-card:nth-child(4) {
-    grid-column: span 1;
-    grid-row: span 1;
-}
-
-.stat-card .stat-number {
-    font-size: clamp(2.5rem, 4vw, 4rem);
-    font-weight: 800;
-    color: #fff;
-    line-height: 1;
-    margin-bottom: 8px;
-    font-family: var(--font-display);
-    letter-spacing: -1px;
-    transition: transform 0.5s ease;
-}
-
-.stat-card:nth-child(1) .stat-number {
-    font-size: clamp(4rem, 6vw, 6rem);
 }
 
 /* 🌌 Aceternity Glowing Effect Layer */
@@ -2640,10 +2623,11 @@ h2.overline {
 
 /* --- INTERACTIVE FUTURE RIBBON (2026 Perspective) --- */
 .future-card {
-    background: rgba(5, 5, 8, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
+    background: transparent;
+    /* Invisible UI Principle */
+    border: 1px solid transparent;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
     border-radius: 24px;
     padding: 30px 40px;
     min-width: 320px;
@@ -2663,11 +2647,11 @@ h2.overline {
 }
 
 .future-card:hover {
-    background: rgba(8, 10, 15, 0.95);
-    border-color: rgba(43, 155, 155, 0.4);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--shadow-deep);
     transform: translateY(-5px);
 }
 

@@ -15,31 +15,31 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
         rel="stylesheet">
 
-        <link rel="stylesheet" href="assets/css/theme.css">
-
-        <link rel="stylesheet" href="assets/css/mg2026B.css">
-
-        <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/hero-2026.css">
+    <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/motion-effects.css">
-    <script src="assets/js/motion-effects.js" defer></script>
     <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/rtl.css"> <!-- RTL Styles -->
+    <link rel="stylesheet" href="assets/css/rtl.css">
     <script src="assets/js/home.js" defer></script>
+    <script src="assets/js/motion-effects.js" defer></script>
     <script src="assets/js/header.js" defer></script>
     <script src="assets/js/ultra_2026.js" defer></script>
+    <script src="assets/js/ai-agent.js" defer></script>
 </head>
 
 <body>
-    <!-- BACKGROUND SYSTEM (AURORA MESH) -->
-    <div class="aurora-container">
-        <div class="aurora-blob"></div>
-        <div class="aurora-blob"></div>
-        <div class="aurora-blob"></div>
-    </div>
-    <!-- Separate Floating Language Switch -->
-    <a href="index.html" class="lang-switch-floating" aria-label="Switch to English">
-        <span class="lang-code">EN</span>
-    </a>
+    <!-- Custom Cursor (Desktop Only) -->
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <!-- Background Foundation System (Ultra 2026) -->
+    <div class="bg-base-layer"></div>
+    <div class="bg-grid-texture"></div>
+    <div class="bg-horizon-anchor"></div>
+    <div class="bg-floor-perspective"></div>
+    <div class="bg-static-fog"></div>
+    <div class="noise-grain"></div>
 
     <!-- Premium Header -->
     <header class="site-header">
@@ -51,6 +51,12 @@
                 <a href="/CV/achievements/" class="nav-link">إنجازاتي</a>
             </nav>
 
+            <div class="header-divider"></div>
+
+            <a href="index.html" class="lang-switch-compact" aria-label="Switch to English">
+                <span class="lang-code">EN</span>
+            </a>
+
             <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" aria-label="القائمة">
                 <span></span>
@@ -60,59 +66,86 @@
         </div>
     </header>
 
-    <!-- Ambient Background -->
-    <div class="ambient ambient-1"></div>
-    <div class="ambient ambient-2"></div>
-
     <!-- Progress Line -->
     <div class="progress-line" id="progressLine"></div>
 
     <main>
-        <!-- Hero -->
+        <!-- Hero Section (Reimagined 2026) -->
         <section class="hero">
-            <div class="particles">
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-            </div>
-            <!-- Hero Logo Added -->
-            <div class="hero-brand-logo reveal" style="margin-bottom: 20px;">
-                <img src="assets/images/arabic-logo-mg.png" alt="محمد جمال" style="height: 110px; width: auto; filter: drop-shadow(0 0 25px rgba(43,155,155,0.4));">
-            </div>
-
-            <div class="avatar-wrap">
-                <div class="avatar"></div>
-            </div>
-            <p class="tagline gradient-text" style="font-size: 1.8rem; font-weight: 700;">أحول التسويق إلى منظومة نمو مستدامة</p>
-            
-            <div class="hero-tags">
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <div class="hero-grid content-wrap--wide">
+                <!-- Left Column: Content - Second in HTML for RTL Left Position -->
+                <div class="hero-text-block">
+                    <div class="hero-copy reveal">
+                        <p class="hero-eyebrow">مهندس نمو رقمي</p>
+                        <h1 class="tagline gradient-text">أحول التسويق إلى منظومة نمو مستدامة</h1>
                     </div>
-                    <span>بناء أنظمة النمو</span>
-                </div>
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+
+                    <!-- 3 Ultra-Modern Signature Badges (Arabic) -->
+                    <div class="hero-signature-badges reveal">
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>بناء أنظمة النمو بدلاً من الحملات</span>
+                        </div>
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>الموازنة بين الأداء وقوة العلامة</span>
+                        </div>
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>استراتيجيات توسع إقليمي مدروسة</span>
+                        </div>
                     </div>
-                    <span>أنظمة التجارة الإلكترونية</span>
-                </div>
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+
+                    <div class="hero-tags-group reveal">
+                        <div class="hero-tag magnetic-card">
+                            <i class="ri-rocket-line"></i>
+                            <span>بناء أنظمة النمو</span>
+                        </div>
+                        <div class="hero-tag magnetic-card">
+                            <i class="ri-shopping-cart-2-line"></i>
+                            <span>أنظمة التجارة الإلكترونية</span>
+                        </div>
+                        <div class="hero-tag magnetic-card">
+                            <i class="ri-global-line"></i>
+                            <span>التحول الرقمي</span>
+                        </div>
+                        <div class="hero-tag magnetic-card">
+                            <i class="ri-pie-chart-line"></i>
+                            <span>تطوير الأداء</span>
+                        </div>
                     </div>
-                    <span>التحول الرقمي</span>
+
+                    <div class="hero-proof reveal">
+                        <div class="proof-item stagger-item">
+                            <span class="proof-number">5M</span>
+                            <span class="proof-label">طلب تم تنفيذه في جمعة بيضاء واحدة</span>
+                        </div>
+                        <div class="proof-item stagger-item">
+                            <span class="proof-number">6x</span>
+                            <span class="proof-label">نمو في الإيرادات العضوية خلال 24 شهرًا</span>
+                        </div>
+                        <div class="proof-item stagger-item">
+                            <span class="proof-number">12+</span>
+                            <span class="proof-label">سوق إقليمي تمت قيادتها في المنطقة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visuals (Stacked) - First in HTML for RTL Right Position -->
+                <div class="hero-visual-block">
+                    <div class="hero-visual-stack reveal">
+                        <div class="hero-brand-logo">
+                            <img src="assets/images/arabic-logo-mg.png" alt="محمد جمال">
+                        </div>
+                        <div class="avatar-wrap">
+                            <div class="avatar"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-
-
+            <!-- Scroll Indicator -->
             <div class="scroll-hint">
-                <div class="mouse-wheel"></div>
                 <div class="scroll-arrow"></div>
             </div>
         </section>

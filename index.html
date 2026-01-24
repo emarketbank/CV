@@ -17,10 +17,12 @@
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/motion-effects.css">
     <link rel="stylesheet" href="assets/css/header.css">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.0.9/build/spline-viewer.js"></script>
     <script src="assets/js/home.js" defer></script>
     <script src="assets/js/motion-effects.js" defer></script>
     <script src="assets/js/header.js" defer></script>
     <script src="assets/js/ultra_2026.js" defer></script>
+    <script src="assets/js/ai-agent.js" defer></script>
 </head>
 
 <body>
@@ -108,57 +110,33 @@
     <div class="progress-line" id="progressLine"></div>
 
     <main>
-        <!-- Hero -->
+        <!-- Hero Section (Reimagined 2026) -->
         <section class="hero">
-            <!-- Surface Layer -->
-
             <div class="hero-grid content-wrap--wide">
-                <div class="hero-copy">
-                    <p class="hero-eyebrow">Digital Growth Architect</p>
-                    <p class="tagline gradient-text">I turn marketing into a sustainable growth engine</p>
+                <!-- Left Column: Content -->
+                <div class="hero-text-block">
+                    <div class="hero-copy reveal">
+                        <p class="hero-eyebrow">Digital Growth Architect</p>
+                        <h1 class="tagline gradient-text">I turn marketing into a sustainable growth engine</h1>
+                    </div>
 
-                    <div class="hero-tags">
-                        <div class="hero-tag">
-                            <div class="tag-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                                </svg>
-                            </div>
-                            <span>Growth Architecture</span>
+                    <!-- 3 Ultra-Modern Signature Badges (New 2026 Style) -->
+                    <div class="hero-signature-badges reveal">
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>Sustainable Revenue Growth</span>
                         </div>
-                        <div class="hero-tag">
-                            <div class="tag-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                                    <line x1="3" y1="6" x2="21" y2="6" />
-                                    <path d="M16 10a4 4 0 0 1-8 0" />
-                                </svg>
-                            </div>
-                            <span>E-commerce Systems</span>
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>ROI-Driven Performance</span>
                         </div>
-                        <div class="hero-tag">
-                            <div class="tag-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
-                                    <rect x="9" y="9" width="6" height="6" />
-                                    <line x1="9" y1="1" x2="9" y2="4" />
-                                    <line x1="15" y1="1" x2="15" y2="4" />
-                                    <line x1="9" y1="20" x2="9" y2="23" />
-                                    <line x1="15" y1="20" x2="15" y2="23" />
-                                    <line x1="20" y1="9" x2="23" y2="9" />
-                                    <line x1="20" y1="14" x2="23" y2="14" />
-                                    <line x1="1" y1="9" x2="4" y2="9" />
-                                    <line x1="1" y1="14" x2="4" y2="14" />
-                                </svg>
-                            </div>
-                            <span>Digital Transformation</span>
+                        <div class="sig-badge">
+                            <span class="sig-dot"></span>
+                            <span>Scaling Brands in MENA</span>
                         </div>
                     </div>
 
-                    <div class="hero-proof">
+                    <div class="hero-proof reveal">
                         <div class="proof-item stagger-item">
                             <span class="proof-number">5M</span>
                             <span class="proof-label">Orders processed in one Black Friday</span>
@@ -173,38 +151,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero-visual">
-                    <div class="hero-brand-logo">
-                        <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal">
-                    </div>
 
-                    <div class="hero-tags">
-                        <div class="hero-tag magnetic-card">
-                            <i class="ri-rocket-line"></i>
-                            <span>Growth Architecture</span>
+                <!-- Right Column: Visuals (Stacked) -->
+                <div class="hero-visual-block">
+                    <div class="hero-visual-stack reveal">
+                        <div class="hero-brand-logo">
+                            <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal">
                         </div>
-                        <div class="hero-tag magnetic-card">
-                            <i class="ri-shopping-cart-2-line"></i>
-                            <span>E-commerce Systems</span>
+                        <div class="avatar-wrap">
+                            <div class="avatar"></div>
                         </div>
-                        <div class="hero-tag magnetic-card">
-                            <i class="ri-global-line"></i>
-                            <span>Digital Transformation</span>
-                        </div>
-                        <div class="hero-tag magnetic-card">
-                            <i class="ri-pie-chart-line"></i>
-                            <span>Performance Scaling</span>
-                        </div>
-                    </div>
-
-                    <div class="avatar-wrap reveal">
-                        <div class="avatar"></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Scroll Indicator -->
             <div class="scroll-hint">
-                <div class="mouse-wheel"></div>
                 <div class="scroll-arrow"></div>
             </div>
         </section>

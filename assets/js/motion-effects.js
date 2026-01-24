@@ -86,26 +86,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // 3. ENHANCED REVEAL ON SCROLL
+    // 3. ENHANCED REVEAL ON SCROLL (BIO-FLOW)
     // ============================================
 
-    const revealElements = document.querySelectorAll('.reveal-modern, .reveal-clip, .stagger-item');
+    const revealElements = document.querySelectorAll('.reveal, .stagger-item');
 
     const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
+        entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                // Add stagger delay for multiple items
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                    entry.target.style.animationPlayState = 'running';
-                }, index * 50); // 50ms stagger
-
+                entry.target.classList.add('visible');
+                
+                // Bio-Flow: Add slight float-up based on scroll speed
+                const rect = entry.target.getBoundingClientRect();
+                const intensity = Math.min(Math.abs(window.scrollY - entry.target.offsetTop) / 1000, 1);
+                entry.target.style.setProperty('--bio-intensity', intensity);
+                
                 revealObserver.unobserve(entry.target);
             }
         });
     }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
     });
 
     revealElements.forEach(el => {

@@ -52,6 +52,48 @@ html[lang="ar"] .contact-fab {
     left: 25px;
 }
 
+/* 🚀 HERO RTL OVERRIDES */
+html[lang="ar"] .hero-grid {
+    grid-template-columns: 0.75fr 1.25fr; /* Visual Stack(Right) | Text Block(Left) */
+}
+
+html[lang="ar"] .hero-text-block {
+    align-items: flex-end; /* لليسار في RTL */
+    text-align: left;
+    margin-top: 20px;
+}
+
+html[lang="ar"] .hero-tags-group {
+    justify-content: flex-end; /* لليسار في RTL */
+}
+
+html[lang="ar"] .hero-signature-badges {
+    justify-content: flex-end; /* لليسار في RTL */
+}
+
+html[lang="ar"] .hero-proof {
+    justify-content: flex-end; /* لليسار في RTL */
+}
+
+html[lang="ar"] .proof-item {
+    text-align: left;
+}
+
+html[lang="ar"] .hero-eyebrow::after {
+    left: auto;
+    right: 0;
+    background: linear-gradient(-90deg, var(--teal-primary), transparent);
+}
+
+html[lang="ar"] .sig-badge {
+    flex-direction: row-reverse;
+}
+
+html[lang="ar"] .hero-tag::after {
+    margin-left: 0;
+    margin-right: 10px;
+}
+
 /* Navigation / Header */
 html[lang="ar"] .site-header {
     direction: rtl;
