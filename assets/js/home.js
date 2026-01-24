@@ -183,4 +183,156 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    /* --- SPOTLIGHT EFFECT LOGIC --- */
+    const spotlightCards = document.querySelectorAll('.stat-card, .future-card, .industry-card, .client-item, .hero-card, .proof-item, .edu-row');
+    
+    spotlightCards.forEach(card => {
+        card.classList.add('spotlight-card'); // Ensure CSS class is applied
+        
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    /* --- MAGNETIC ELEMENTS LOGIC --- */
+    const magneticElements = document.querySelectorAll('.magnetic-card, .btn-primary, .btn-ghost');
+    
+    magneticElements.forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            // Intensity of the pull
+            const intensity = 0.2; 
+            
+            el.style.transform = `translate(${x * intensity}px, ${y * intensity}px)`;
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            el.style.transform = 'translate(0px, 0px)';
+        });
+    /* --- DRAGGABLE INFINITE MARQUEE (PHYSICS BASED) --- */
+    const track = document.querySelector('.marquee-track');
+    const container = document.querySelector('.marquee-container');
+
+    if (track && container) {
+        let currentPos = 0;
+        let isDragging = false;
+        let startX = 0;
+        let prevPos = 0;
+        let animationId;
+        
+        // Configuration
+        const baseSpeed = 0.5; // Auto-scroll speed
+        let speed = baseSpeed;
+        let velocity = 0;
+        
+        // Calculate the width of one set of items (half the track since we duplicated)
+        // We assume the track has 2 identical sets of items
+        const getHalfWidth = () => track.scrollWidth / 2;
+        let halfWidth = getHalfWidth();
+
+        // Recalculate on resize
+        window.addEventListener('resize', () => {
+            halfWidth = getHalfWidth();
+        });
+
+        // Main Animation Loop
+        const animate = () => {
+            // Apply velocity or base speed
+            if (!isDragging) {
+                // Decay velocity back to base speed (Inertia)
+                speed += (baseSpeed - speed) * 0.05;
+                currentPos -= speed;
+            }
+
+            // Infinite Loop Logic
+            // If we've scrolled past the first set, reset to 0 (seamless jump)
+            if (currentPos <= -halfWidth) {
+                currentPos += halfWidth;
+                prevPos += halfWidth; // Adjust drag reference
+            } else if (currentPos > 0) {
+                currentPos -= halfWidth;
+                prevPos -= halfWidth;
+            }
+
+            // Apply Transform
+            track.style.transform = `translateX(${currentPos}px)`;
+
+            animationId = requestAnimationFrame(animate);
+        };
+
+        // Start Animation
+        animationId = requestAnimationFrame(animate);
+
+        // --- Drag Events (Mouse & Touch) ---
+
+        const startDrag = (x) => {
+            isDragging = true;
+            startX = x;
+            prevPos = currentPos;
+            track.style.cursor = 'grabbing';
+            // Cancel inertia smoothing temporarily
+            speed = 0; 
+        };
+
+        const moveDrag = (x) => {
+            if (!isDragging) return;
+            const diff = x - startX;
+            currentPos = prevPos + diff;
+            
+            // Calculate velocity for inertia
+            // Simple way: track movement per frame (or rough approximation)
+            // Here we just let the position update directly
+        };
+
+        const endDrag = (x) => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.cursor = 'grab';
+            
+            // Calculate throw velocity based on the last movement
+            // Ideally we'd track points, but for this "feel":
+            // We just let the animate loop pull 'speed' back to 'baseSpeed'
+            // To add a "throw", we could calculate the diff from the last few frames.
+            // For now, smooth return to base speed feels high-end.
+            
+            // Optional: Calculate 'speed' based on drag release to give it a "push"
+            // speed = (lastDiff) * friction... (Simplification for robustness)
+        };
+
+        // Mouse Events
+        container.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent text selection
+            startDrag(e.pageX);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            moveDrag(e.pageX);
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            endDrag(e.pageX);
+        });
+
+        // Touch Events
+        container.addEventListener('touchstart', (e) => {
+            startDrag(e.touches[0].pageX);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            moveDrag(e.touches[0].pageX);
+        });
+
+        window.addEventListener('touchend', () => {
+            endDrag(0); // x not needed for logic, just state change
+        });
+    }
 });

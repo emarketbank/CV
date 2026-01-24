@@ -230,6 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 9. CURSOR TRAIL EFFECT (Optional)
     // ============================================
 
+    /* 
+    // DISABLED: Conflicts with home.js cursor system
     if (!prefersReducedMotion && window.innerWidth > 768) {
         const cursorTrail = [];
         const trailLength = 20;
@@ -280,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         animateTrail();
     }
+    */
 
     console.log('✨ Ultra Modern Motion Effects initialized');
 });
