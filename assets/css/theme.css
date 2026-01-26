@@ -112,22 +112,6 @@ h1, h2, h3, h4, h5, h6 {
     overflow: hidden;
 }
 
-.ultra-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    /* Smoother, larger gradient for mouse follow */
-    background: radial-gradient(1000px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.04), transparent 50%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.ultra-card:hover::after {
-    opacity: 1;
-}
-
 .ultra-card:hover {
     transform: translateY(-4px) scale(1.002); /* More subtle movement */
     background: rgba(255, 255, 255, 0.04);

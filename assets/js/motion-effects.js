@@ -5,73 +5,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // ============================================
-    // 1. MAGNETIC HOVER EFFECT
-    // ============================================
-
-    const magneticCards = document.querySelectorAll('.magnetic-card, .magnetic-glow');
-
-    magneticCards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-
-            const deltaX = (x - centerX) / centerX;
-            const deltaY = (y - centerY) / centerY;
-
-            // Magnetic pull effect (max 15px movement)
-            const moveX = deltaX * 15;
-            const moveY = deltaY * 15;
-
-            card.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.02)`;
-
-            // Update glow position for magnetic-glow elements
-            if (card.classList.contains('magnetic-glow')) {
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            }
-        });
-
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translate(0, 0) scale(1)';
-        });
-    });
-
-    // ============================================
-    // 2. 3D TILT EFFECT
-    // ============================================
-
-    const tiltElements = document.querySelectorAll('.tilt-3d');
-
-    tiltElements.forEach(el => {
-        el.addEventListener('mousemove', (e) => {
-            const rect = el.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-
-            const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg
-            const rotateY = ((x - centerX) / centerX) * 10;
-
-            el.style.transform = `
-                perspective(1000px) 
-                rotateX(${rotateX}deg) 
-                rotateY(${rotateY}deg) 
-                scale3d(1.02, 1.02, 1.02)
-            `;
-        });
-
-        el.addEventListener('mouseleave', () => {
-            el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-        });
-    });
-
-    // ============================================
     // 3. ENHANCED REVEAL ON SCROLL (BIO-FLOW)
     // ============================================
 
@@ -180,11 +113,5 @@ document.addEventListener('DOMContentLoaded', () => {
         // Disable heavy animations
         document.body.classList.add('reduced-motion');
     }
-
-    // GPU acceleration hints for animated elements
-    const animatedElements = document.querySelectorAll('.magnetic-card, .tilt-3d, .parallax-float');
-    animatedElements.forEach(el => {
-        el.classList.add('gpu-accelerated');
-    });
 
 });

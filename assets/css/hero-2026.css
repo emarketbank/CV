@@ -30,8 +30,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 80px;
-    max-width: 1200px;
+    gap: 60px; /* Reduced gap */
+    max-width: 1050px; /* Tighter container for better edges */
     width: 100%;
     position: relative;
     z-index: 10;
@@ -40,9 +40,11 @@
 /* --- 📝 Left Column: Typography --- */
 .hero-text-block {
     flex: 1.2;
-    max-width: 600px;
+    max-width: 500px; /* Constrained width for better reading flow */
     display: flex;
     flex-direction: column;
+    margin-top: 40px; /* Moved down as requested */
+    margin-left: 50px; /* Shifted further right */
 }
 
 .hero-eyebrow {
@@ -52,15 +54,16 @@
     letter-spacing: 3px;
     color: var(--teal-primary);
     margin-bottom: 20px;
+    display: inline-block;
 }
 
 .tagline {
-    font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-size: clamp(2.5rem, 3.5vw, 3.5rem); /* Slightly adjusted scale */
     font-weight: 800;
-    line-height: 1.05;
+    line-height: 1.1; /* Tight & punchy */
     margin-bottom: 30px;
     color: #fff;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
 }
 
 .tagline.gradient-text {
@@ -73,17 +76,17 @@
 .hero-signature-badges {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 45px;
+    gap: 10px;
+    margin-bottom: 40px;
 }
 
 .sig-badge {
-    padding: 10px 18px;
+    padding: 6px 12px; /* Tighter padding */
     background: rgba(10, 12, 18, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Bevel */
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 100px;
-    font-size: 0.8rem;
+    font-size: 0.7rem; /* Smaller font */
     font-weight: 500;
     color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -99,7 +102,7 @@
     height: 6px;
     border-radius: 50%;
     background-color: var(--teal-primary);
-    margin-right: 10px;
+    margin-right: 8px;
     box-shadow: 0 0 8px var(--teal-primary);
 }
 
@@ -109,35 +112,40 @@
     color: #fff;
 }
 
+/* --- 📊 Metrics Box (Grouped) --- */
 .hero-proof {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 30px;
+    gap: 15px;
+    /* Boxed Layout for Coordination */
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px 24px;
+    backdrop-filter: blur(8px);
 }
 
 .proof-item {
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
+    opacity: 0; /* Hidden initially for animation */
+    /* Remove visibility: visible override so animation works */
 }
 
 .proof-number {
     display: block;
-    font-size: 1.8rem;
-    font-weight: 900;
+    font-size: 1.6rem;
+    font-weight: 800;
     color: #fff;
     letter-spacing: -1px;
     margin-bottom: 4px;
+    line-height: 1;
 }
 
 .proof-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 /* --- 🖼️ Right Column: Visual (STATIC MINIMALIST DEPTH) --- */
@@ -147,6 +155,7 @@
     justify-content: center;
     position: relative;
     padding-top: 60px;
+    transform: translateX(80px); /* Shifted further right */
 }
 
 .hero-visual-stack {
@@ -161,7 +170,7 @@
 /* The Brand Logo - Refined Shadow */
 .hero-brand-logo {
     position: absolute;
-    top: -80px;
+    top: -85px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 30;
@@ -171,55 +180,77 @@
 }
 
 .hero-brand-logo img {
-    width: 340px; 
+    width: 250px; 
     height: auto;
     max-width: 90vw;
     display: block;
 }
 
-/* The Avatar Portal (DEPTH TUNNEL) */
+/* The Avatar Portal (MINIMAL ULTRA GLASS) */
 .avatar-wrap {
-    width: 100%;
-    height: 100%;
-    margin-top: 30px;
+    width: 240px; /* Slightly smaller for modern balance */
+    height: 240px;
+    margin-top: 20px;
     position: relative;
     z-index: 10;
-    padding: 8px; /* Gap for inner ring */
-    border-radius: 50%;
-    /* Outer Ring */
-    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    
+    /* The Glass Block */
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(24px) saturate(120%);
+    -webkit-backdrop-filter: blur(24px) saturate(120%);
+    
+    /* Squircle-ish Shape */
+    border-radius: 40px;
+    
+    /* Premium Bezel (1px gradient border via box-shadow/border trick) */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.2); /* Top light catch */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4); /* Bottom shadow for weight */
+    
+    /* Soft Elevation */
     box-shadow: 
-        inset 0 0 20px rgba(0,0,0,0.5),
-        0 20px 50px -10px rgba(0,0,0,0.8);
+        0 20px 40px -10px rgba(0, 0, 0, 0.5),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
 }
 
-/* Inner Ring/Glow */
-.avatar-wrap::after {
+/* Static Ambient Glow (Behind) */
+.avatar-wrap::before {
     content: '';
     position: absolute;
-    inset: -15px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    inset: 10%;
+    background: radial-gradient(circle, var(--teal-primary) 0%, var(--purple-primary) 60%, transparent 100%);
+    filter: blur(60px);
+    opacity: 0.25; /* Subtle colored ambiance */
     z-index: -1;
-    opacity: 0.6;
+    transform: translateY(10px);
 }
 
 .avatar {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    /* Matching shape inner */
+    border-radius: 32px; 
+    
     background-image: url('../images/mo.PNG');
     background-size: cover;
     background-position: center top;
-    /* Inner Bevel for Embedding */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 
-        inset 0 10px 20px rgba(0,0,0,0.8), /* Inner shadow top */
-        inset 0 -10px 20px rgba(0,0,0,0.5); /* Inner shadow bottom */
+    
+    /* Lighter Vignette */
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
+    
+    /* Clean finish */
     position: relative;
     z-index: 2;
+    /* Balanced Dark Mode integration */
+    filter: brightness(0.9) contrast(1.1) saturate(0.95);
 }
+
+
 
 /* Simple Static Glow (Backlight) */
 .avatar-wrap::before {

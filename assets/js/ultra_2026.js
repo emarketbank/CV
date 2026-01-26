@@ -5,12 +5,13 @@
 
 class ArchitectMotion {
     constructor() {
-        this.scrambleChars = '!<>-_\/[]{}—=+*^?#________';
+        // Cleaner, more "system" like characters
+        this.scrambleChars = '/>_-\|[]{}'; 
         this.eyebrow = document.querySelector('.hero-eyebrow');
         this.tagline = document.querySelector('.tagline');
         
         if (this.eyebrow) this.initElement(this.eyebrow, 500);
-        if (this.tagline) this.initElement(this.tagline, 1200);
+        if (this.tagline) this.initElement(this.tagline, 800);
     }
 
     initElement(el, startDelay) {
@@ -23,7 +24,7 @@ class ArchitectMotion {
         const charSpans = originalText.split('').map(char => {
             const span = document.createElement('span');
             span.style.display = 'inline-block';
-            span.style.minWidth = char === ' ' ? '0.3em' : 'auto';
+            span.style.minWidth = char === ' ' ? '0.25em' : 'auto'; // Tighter spaces
             span.innerText = char;
             span.style.opacity = '0';
             el.appendChild(span);
@@ -36,15 +37,19 @@ class ArchitectMotion {
 
         setTimeout(() => {
             charSpans.forEach((obj, index) => {
-                const delay = Math.random() * 800 + (index * 30); // Random stagger
+                // Wave effect: characters start scrambling in a sequence
+                const delay = (index * 25); 
                 this.animateChar(obj, delay);
             });
         }, startDelay);
     }
 
     animateChar(obj, delay) {
-        const duration = 600; // Scramble duration
+        const duration = 800; // Time spent scrambling
         let start = null;
+
+        // Start invisible
+        obj.span.style.opacity = '0';
 
         const step = (timestamp) => {
             if (!start) start = timestamp;
@@ -55,16 +60,36 @@ class ArchitectMotion {
                 return;
             }
 
+            // Reveal and start scrambling
+            if (obj.span.style.opacity === '0') {
+                obj.span.style.opacity = '1';
+                obj.span.classList.add('scrambling-char');
+            }
+
             const progress = (elapsed - delay) / duration;
 
             if (progress < 1) {
-                obj.span.style.opacity = '1';
-                obj.span.innerText = this.scrambleChars[Math.floor(Math.random() * this.scrambleChars.length)];
-                obj.span.className = 'scrambling-char';
+                // Scramble logic: change char every few frames
+                if (Math.floor(elapsed / 50) % 2 === 0) {
+                     obj.span.innerText = this.scrambleChars[Math.floor(Math.random() * this.scrambleChars.length)];
+                     // Tech accent color during scramble
+                     obj.span.style.fontFamily = 'monospace';
+                     obj.span.style.color = 'var(--teal-primary)';
+                     // FORCE VISIBILITY against parent's gradient text fill
+                     obj.span.style.webkitTextFillColor = 'var(--teal-primary)';
+                }
                 requestAnimationFrame(step);
             } else {
+                // Final reveal
                 obj.span.innerText = obj.char;
-                obj.span.className = 'char-flash';
+                obj.span.classList.remove('scrambling-char');
+                obj.span.classList.add('char-flash'); // Optional final flash
+                
+                // Revert to original styles to allow Gradient to shine through
+                obj.span.style.color = ''; 
+                obj.span.style.fontFamily = ''; 
+                obj.span.style.webkitTextFillColor = ''; // Return to transparent for gradient
+                
                 obj.revealed = true;
             }
         };

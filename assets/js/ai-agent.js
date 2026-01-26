@@ -5,15 +5,20 @@
 
 const AGENT_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
-    timeoutMs: 9000,
+    timeoutMs: 25000,  // 25 seconds (increased from 9s)
     maxHistory: 12,
+    maxRetries: 2,
+    retryDelayMs: 1500,
+    storageKey: 'jimmy_chat_history',
     typingText: {
         ar: 'ثواني وبرد عليك...',
         en: 'Thinking...'
     },
     errorText: {
-        ar: 'حصلت مشكلة مؤقتة. جرّب تاني بعد لحظة.',
-        en: 'Something went wrong. Please try again in a moment.'
+        ar: 'حصلت مشكلة في الاتصال. بنحاول تاني...',
+        en: 'Connection issue. Retrying...',
+        arFinal: 'الخدمة مش متاحة حالياً. جرّب كمان شوية.',
+        enFinal: 'Service temporarily unavailable. Please try again later.'
     }
 };
 
@@ -23,6 +28,7 @@ class MGAgent {
         this.userLanguage = null;
         this.isSending = false;
         this.elements = {};
+        this.retryCount = 0;
         this.init();
     }
 
@@ -30,6 +36,36 @@ class MGAgent {
         this.createUI();
         this.cacheElements();
         this.addEventListeners();
+        this.loadFromStorage();
+    }
+
+    loadFromStorage() {
+        try {
+            const saved = localStorage.getItem(AGENT_CONFIG.storageKey);
+            if (saved) {
+                const data = JSON.parse(saved);
+                this.messages = data.messages || [];
+                this.userLanguage = data.language || null;
+                // Re-render saved messages
+                this.messages.forEach(msg => {
+                    this.addMessage(msg.content, msg.role === 'user' ? 'user' : 'ai', false, true);
+                });
+            }
+        } catch (e) {
+            console.warn('Failed to load chat history:', e);
+        }
+    }
+
+    saveToStorage() {
+        try {
+            const data = {
+                messages: this.messages.slice(-AGENT_CONFIG.maxHistory),
+                language: this.userLanguage
+            };
+            localStorage.setItem(AGENT_CONFIG.storageKey, JSON.stringify(data));
+        } catch (e) {
+            console.warn('Failed to save chat history:', e);
+        }
     }
 
     createUI() {
@@ -189,7 +225,7 @@ class MGAgent {
         if (send) send.disabled = isSending;
     }
 
-    async fetchResponse(payload) {
+    async fetchResponse(payload, attempt = 1) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), AGENT_CONFIG.timeoutMs);
 
@@ -216,6 +252,14 @@ class MGAgent {
             }
 
             return data;
+        } catch (err) {
+            // Retry on timeout or server error
+            if (attempt < AGENT_CONFIG.maxRetries) {
+                console.warn(`Request attempt ${attempt} failed, retrying...`, err.message);
+                await new Promise(r => setTimeout(r, AGENT_CONFIG.retryDelayMs * attempt));
+                return this.fetchResponse(payload, attempt + 1);
+            }
+            throw err;
         } finally {
             clearTimeout(timeoutId);
         }
@@ -237,6 +281,7 @@ class MGAgent {
         this.messages.push({ role: 'user', content: text });
         this.trimHistory();
         this.addMessage(text, 'user');
+        this.saveToStorage();
         input.value = '';
 
         // Show typing indicator (Dots bubble)
@@ -255,9 +300,12 @@ class MGAgent {
             this.trimHistory();
             this.removeMessage(typingId);
             this.addMessage(reply, 'ai');
+            this.saveToStorage();
         } catch (err) {
             this.removeMessage(typingId);
-            const fallback = AGENT_CONFIG.errorText[this.userLanguage] || AGENT_CONFIG.errorText.en;
+            // Show final error message
+            const errorKey = this.userLanguage === 'ar' ? 'arFinal' : 'enFinal';
+            const fallback = AGENT_CONFIG.errorText[errorKey] || AGENT_CONFIG.errorText.enFinal;
             this.addMessage(fallback, 'ai');
             console.error('AI Agent error:', err.message || err);
         } finally {
@@ -265,12 +313,12 @@ class MGAgent {
         }
     }
 
-    addMessage(text, sender, isTyping = false) {
+    addMessage(text, sender, isTyping = false, skipAnimation = false) {
         const { messages } = this.elements;
         if (!messages) return null;
 
         const msg = document.createElement('div');
-        msg.className = `message ${sender}-msg`;
+        msg.className = `message ${sender}-msg${skipAnimation ? '' : ''}`;
         if (isTyping) {
             msg.id = `typing-${Date.now()}`;
         }
@@ -285,7 +333,15 @@ class MGAgent {
             content.textContent = text;
         }
 
+        // Add timestamp
+        const time = document.createElement('span');
+        time.className = 'msg-time';
+        time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
         msg.appendChild(content);
+        if (!isTyping) {
+            msg.appendChild(time);
+        }
         messages.appendChild(msg);
         messages.scrollTop = messages.scrollHeight;
         return msg.id || null;

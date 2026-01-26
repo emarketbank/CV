@@ -195,66 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    /* --- SPOTLIGHT EFFECT LOGIC --- */
-    const spotlightCards = document.querySelectorAll('.stat-card, .future-card, .industry-card, .client-item, .hero-card, .proof-item, .edu-row, .skill-chip, .cert-badge');
-    
-    spotlightCards.forEach(card => {
-        card.classList.add('spotlight-card'); // Ensure CSS class is applied
-        
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        });
-    });
-
-    /* --- MAGNETIC ELEMENTS LOGIC --- */
-    const magneticElements = document.querySelectorAll('.magnetic-card, .btn-primary, .btn-ghost');
-    
-    magneticElements.forEach(el => {
-        el.addEventListener('mousemove', (e) => {
-            const rect = el.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Intensity of the pull
-            const intensity = 0.2; 
-            
-            el.style.transform = `translate(${x * intensity}px, ${y * intensity}px)`;
-        });
-        
-        el.addEventListener('mouseleave', () => {
-            el.style.transform = 'translate(0px, 0px)';
-        });
-    }); // Fixed missing closing brace
-
-    /* --- 3D AVATAR TILT --- */
-    const avatarWrap = document.querySelector('.avatar-wrap');
-    if (avatarWrap) {
-        avatarWrap.addEventListener('mousemove', (e) => {
-            const rect = avatarWrap.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // Calculate rotation
-            // Center is (width/2, height/2)
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            const rotateX = ((y - centerY) / centerY) * -15; // Invert Y for correct tilt
-            const rotateY = ((x - centerX) / centerX) * 15;
-            
-            avatarWrap.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-        });
-        
-        avatarWrap.addEventListener('mouseleave', () => {
-            avatarWrap.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
-        });
-    }
-
 
     /* --- DRAGGABLE INFINITE MARQUEE (PHYSICS BASED - ULTRA SMOOTH) --- */
     const marqueeContainers = document.querySelectorAll('.marquee-container');

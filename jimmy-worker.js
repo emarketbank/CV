@@ -17,6 +17,11 @@ let configCache = null;
 let configCacheTime = 0;
 const CACHE_TTL_MS = 60000; // 60 seconds
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_BASE_DELAY_MS = 1000;
+const DEFAULT_TIMEOUT_MS = 15000; // 15 seconds
+
 function buildChatHeaders() {
   return {
     "Content-Type": "application/json; charset=utf-8",
@@ -211,6 +216,10 @@ function withTimeout(ms) {
   return { signal: controller.signal, cancel: () => clearTimeout(id) };
 }
 
+function generateRequestId() {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+}
+
 async function safeFetch(url, options, timeoutMs) {
   const t = withTimeout(timeoutMs);
   try {
@@ -220,7 +229,38 @@ async function safeFetch(url, options, timeoutMs) {
   }
 }
 
-async function callGemini(env, messages, systemPrompt, temperature, modelOverride) {
+async function safeFetchWithRetry(url, options, timeoutMs, requestId) {
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await safeFetch(url, options, timeoutMs);
+
+      // Success or client error (4xx) - don't retry
+      if (res.ok || (res.status >= 400 && res.status < 500)) {
+        return res;
+      }
+
+      // Server error (5xx) - retry with backoff
+      console.warn(`[${requestId}] Attempt ${attempt}/${MAX_RETRIES} failed: ${res.status}`);
+      lastError = new Error(`HTTP ${res.status}`);
+
+    } catch (err) {
+      console.warn(`[${requestId}] Attempt ${attempt}/${MAX_RETRIES} error: ${err.message}`);
+      lastError = err;
+    }
+
+    // Wait before retry (exponential backoff)
+    if (attempt < MAX_RETRIES) {
+      const delay = RETRY_BASE_DELAY_MS * Math.pow(2, attempt - 1);
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+
+  throw lastError || new Error("Max retries exceeded");
+}
+
+async function callGemini(env, messages, systemPrompt, temperature, modelOverride, requestId) {
   const model = modelOverride || env.GEMINI_MODEL || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
 
@@ -236,28 +276,38 @@ async function callGemini(env, messages, systemPrompt, temperature, modelOverrid
     payload.generationConfig = { temperature };
   }
 
-  const res = await safeFetch(
+  const timeoutMs = Number(env.GEMINI_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
+  console.log(`[${requestId}] Calling Gemini (${model}), timeout: ${timeoutMs}ms`);
+
+  const res = await safeFetchWithRetry(
     url,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     },
-    Number(env.GEMINI_TIMEOUT_MS || 6500)
+    timeoutMs,
+    requestId
   );
 
   const text = await res.text();
   if (!res.ok) {
-    console.error("Gemini error:", res.status, text);
+    console.error(`[${requestId}] Gemini error:`, res.status, text);
     throw new Error("Gemini failed");
   }
 
   const data = JSON.parse(text);
+  console.log(`[${requestId}] Gemini response received`);
   return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 }
 
-async function callOpenAI(env, messages, systemPrompt, temperature, modelOverride) {
-  const res = await safeFetch(
+async function callOpenAI(env, messages, systemPrompt, temperature, modelOverride, requestId) {
+  const model = modelOverride || env.OPENAI_MODEL || "gpt-4o-mini";
+  const timeoutMs = Number(env.OPENAI_TIMEOUT_MS || DEFAULT_TIMEOUT_MS);
+
+  console.log(`[${requestId}] Calling OpenAI (${model}), timeout: ${timeoutMs}ms`);
+
+  const res = await safeFetchWithRetry(
     "https://api.openai.com/v1/chat/completions",
     {
       method: "POST",
@@ -266,50 +316,53 @@ async function callOpenAI(env, messages, systemPrompt, temperature, modelOverrid
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: modelOverride || env.OPENAI_MODEL || "gpt-4o-mini",
+        model,
         messages: [{ role: "system", content: systemPrompt }, ...messages],
         temperature,
       }),
     },
-    Number(env.OPENAI_TIMEOUT_MS || 8000)
+    timeoutMs,
+    requestId
   );
 
   const text = await res.text();
   if (!res.ok) {
-    console.error("OpenAI error:", res.status, text);
+    console.error(`[${requestId}] OpenAI error:`, res.status, text);
     throw new Error("OpenAI failed");
   }
 
   const data = JSON.parse(text);
+  console.log(`[${requestId}] OpenAI response received`);
   return data?.choices?.[0]?.message?.content ?? "";
 }
 
-async function routeAI(env, messages, systemPrompt, temperature, activeModel) {
+async function routeAI(env, messages, systemPrompt, temperature, activeModel, requestId) {
   const primary = (env.PRIMARY_AI || "gemini").toLowerCase();
   const active = parseActiveModel(activeModel, primary);
   const activeProvider = normalizeProvider(active.provider, primary);
 
   const order = activeProvider === "openai" ? ["openai", "gemini"] : ["gemini", "openai"];
+  console.log(`[${requestId}] AI routing: order=${order.join("->")}, active=${activeModel || "default"}`);
 
   for (const provider of order) {
     try {
       if (provider === "gemini") {
         if (!env.GEMINI_API_KEY) continue;
         const modelOverride = activeProvider === "gemini" ? active.model : null;
-        return await callGemini(env, messages, systemPrompt, temperature, modelOverride);
+        return await callGemini(env, messages, systemPrompt, temperature, modelOverride, requestId);
       }
 
       if (provider === "openai") {
         if (!env.OPENAI_API_KEY) continue;
         const modelOverride = activeProvider === "openai" ? active.model : null;
-        return await callOpenAI(env, messages, systemPrompt, temperature, modelOverride);
+        return await callOpenAI(env, messages, systemPrompt, temperature, modelOverride, requestId);
       }
     } catch (err) {
-      console.error(`Provider ${provider} failed`, err.message);
+      console.error(`[${requestId}] Provider ${provider} failed:`, err.message);
     }
   }
 
-  throw new Error("Services are temporarily unavailable.");
+  throw new Error("All AI providers are currently unavailable. Please try again.");
 }
 
 export default {
@@ -330,6 +383,20 @@ export default {
       }
 
       return jsonResponse({ error: "Not Found" }, 404, { "Content-Type": "application/json" });
+    }
+
+    // Health check endpoint
+    if (url.pathname === "/health") {
+      const health = {
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        providers: {
+          gemini: !!env.GEMINI_API_KEY,
+          openai: !!env.OPENAI_API_KEY
+        },
+        config_loaded: !!(await loadConfig(env))
+      };
+      return jsonResponse(health, 200, buildChatHeaders());
     }
 
     if (url.pathname === "/admin") {
@@ -404,11 +471,19 @@ export default {
       Number(env.DEFAULT_TEMPERATURE || 0.6)
     );
 
+    const requestId = generateRequestId();
+    console.log(`[${requestId}] New chat request, messages: ${messages.length}`);
+
     try {
-      const out = await routeAI(env, messages, systemPrompt, temperature, config?.active_model);
-      return jsonResponse({ response: out }, 200, buildChatHeaders());
+      const out = await routeAI(env, messages, systemPrompt, temperature, config?.active_model, requestId);
+      return jsonResponse({ response: out, request_id: requestId }, 200, buildChatHeaders());
     } catch (err) {
-      return jsonResponse({ response: err.message }, 503, buildChatHeaders());
+      console.error(`[${requestId}] Request failed:`, err.message);
+      return jsonResponse({
+        response: err.message,
+        request_id: requestId,
+        error_type: "service_unavailable"
+      }, 503, buildChatHeaders());
     }
   },
 };
