@@ -44,14 +44,14 @@ class MGAgent {
             ar: {
                 name: 'كابتن جيمي',
                 subtitle: 'ضابط النظام الذكي',
-                welcome: 'أهلاً يا صديقي! أنا كابتن جيمي 👮‍♂️. موجود هنا عشان أساعدك تستكشف خبرات محمد جمال وتفاصيل شغله. اؤمرني؟',
+                welcome: 'أهلاً! أنا كابتن جيمي 👮‍♂️. اؤمرني، حابب تعرف إيه عن خبرات محمد؟',
                 placeholder: 'اسألني عن الخبرات، المشاريع، أو طريقة العمل...',
                 time: 'الآن'
             },
             en: {
                 name: 'Captain Jemy',
                 subtitle: 'System Officer',
-                welcome: "Welcome aboard! I'm Captain Jemy 👮‍♂️, your intelligent guide. I'm here to help you navigate Mohamed's experience and skills. How can I assist?",
+                welcome: "Welcome! I'm Captain Jemy 👮‍♂️. How can I help you explore Mohamed's work?",
                 placeholder: 'Ask about experience, skills, or projects...',
                 time: 'Just now'
             }
@@ -66,7 +66,7 @@ class MGAgent {
                     <div class="ai-header-aurora"></div>
                     <div class="ai-avatar-wrap">
                         <div class="ai-avatar-inner">
-                            <img src="assets/images/captain-jemy.png" alt="${brand.name}">
+                            <img src="https://raw.githubusercontent.com/emarketbank/CV/refs/heads/main/assets/images/Cjimmy.png" alt="${brand.name}">
                         </div>
                         <span class="ai-status-dot"></span>
                     </div>
@@ -97,7 +97,7 @@ class MGAgent {
             <div class="ai-core-trigger" id="toggleChat" aria-label="Talk to Captain Jemy">
                 <div class="core-node">
                     <div class="core-inner"></div>
-                    <img src="assets/images/captain-jemy.png" alt="AI Agent">
+                    <img src="https://raw.githubusercontent.com/emarketbank/CV/refs/heads/main/assets/images/Cjimmy.png" alt="AI Agent">
                 </div>
                 <div class="core-orbit"></div>
                 <div class="core-pulse"></div>

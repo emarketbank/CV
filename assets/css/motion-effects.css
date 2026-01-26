@@ -321,34 +321,44 @@
 }
 
 /* ============================================
-   11. PERFORMANCE OPTIMIZATIONS
+   11. INFINITE SCROLL MARQUEE (New)
    ============================================ */
-
-/* GPU acceleration hints */
-.gpu-accelerated {
-    will-change: transform, opacity;
-    transform: translateZ(0);
-    backface-visibility: hidden;
+.marquee-container {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+    padding: 20px 0;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    cursor: grab;
 }
 
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
+.marquee-container:active {
+    cursor: grabbing;
+}
 
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+.marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 40px;
+    /* Basic animation, will be overridden by JS for drag */
+    animation: marqueeScroll 40s linear infinite;
+    will-change: transform;
+}
 
-    .magnetic-card,
-    .tilt-3d,
-    .parallax-float,
-    .blob-morph {
-        animation: none !important;
-        transform: none !important;
-    }
+/* Hover Pause (Optional, JS will handle better) */
+/* .marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+} */
+
+@keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* For duplicate content to work seamlessly */
+.client-item, .skill-chip, .future-card, .tool-tag {
+    flex-shrink: 0;
 }
 
 /* ============================================
@@ -368,4 +378,19 @@
 /* Ease in out expo */
 .ease-expo {
     transition: all 0.6s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+/* Performance fix for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .marquee-track {
+        animation: none !important;
+        transform: none !important;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
