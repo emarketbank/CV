@@ -239,8 +239,8 @@ class MGAgent {
         this.addMessage(text, 'user');
         input.value = '';
 
-        const typingText = AGENT_CONFIG.typingText[this.userLanguage] || AGENT_CONFIG.typingText.en;
-        const typingId = this.addMessage(typingText, 'ai', true);
+        // Show typing indicator (Dots bubble)
+        const typingId = this.addMessage('', 'ai', true);
         this.setSendingState(true);
 
         try {
@@ -248,7 +248,7 @@ class MGAgent {
             const reply = data?.response?.trim();
 
             if (!reply) {
-                throw new Error('Empty response.');
+                throw new Error('Empty response');
             }
 
             this.messages.push({ role: 'assistant', content: reply });
@@ -277,9 +277,15 @@ class MGAgent {
 
         const content = document.createElement('div');
         content.className = 'msg-content';
-        content.textContent = text;
-        msg.appendChild(content);
 
+        if (isTyping) {
+            content.className += ' typing-dots';
+            content.innerHTML = '<span></span><span></span><span></span>';
+        } else {
+            content.textContent = text;
+        }
+
+        msg.appendChild(content);
         messages.appendChild(msg);
         messages.scrollTop = messages.scrollHeight;
         return msg.id || null;

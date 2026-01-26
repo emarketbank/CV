@@ -12,6 +12,11 @@ const DEFAULT_ALLOWED_MODELS = [
   "openai:gpt-4o-mini",
 ];
 
+// Cache for KV config to reduce reads and latency
+let configCache = null;
+let configCacheTime = 0;
+const CACHE_TTL_MS = 60000; // 60 seconds
+
 function buildChatHeaders() {
   return {
     "Content-Type": "application/json; charset=utf-8",
@@ -144,10 +149,15 @@ function isAuthorized(request, env) {
 }
 
 async function loadConfig(env) {
+  const now = Date.now();
+  if (configCache && (now - configCacheTime) < CACHE_TTL_MS) {
+    return configCache;
+  }
+
   const config = await env.JIMMY_KV.get(CONFIG_KEY, { type: "json" });
   if (!config) return null;
 
-  return {
+  const parsedConfig = {
     system_role: (config.system_role || "").toString(),
     knowledge_base: (config.knowledge_base || "").toString(),
     active_model: (config.active_model || "").toString(),
@@ -155,6 +165,10 @@ async function loadConfig(env) {
     updated_at: (config.updated_at || "").toString(),
     updated_by: (config.updated_by || "").toString(),
   };
+
+  configCache = parsedConfig;
+  configCacheTime = now;
+  return parsedConfig;
 }
 
 async function saveConfig(env, payload, updatedBy) {
@@ -183,6 +197,11 @@ async function saveConfig(env, payload, updatedBy) {
   };
 
   await env.JIMMY_KV.put(CONFIG_KEY, JSON.stringify(config));
+
+  // Invalidate cache immediately on save
+  configCache = null;
+  configCacheTime = 0;
+
   return { ok: true, config, ignored_active_model: rawActiveModel && !normalizedActiveModel };
 }
 
@@ -206,7 +225,7 @@ async function callGemini(env, messages, systemPrompt, temperature, modelOverrid
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const payload = {
-    system_instruction: { parts: [{ text: systemPrompt }] },
+    systemInstruction: { parts: [{ text: systemPrompt }] },
     contents: messages.map((m) => ({
       role: m.role === "user" ? "user" : "model",
       parts: [{ text: m.content }],
