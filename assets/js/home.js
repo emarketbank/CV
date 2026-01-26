@@ -25,22 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     updateProgress();
 
-    const revealTargets = document.querySelectorAll('.reveal, .timeline-content, .skill-chip, .stagger-item');
-    if ('IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { root: null, rootMargin: '0px', threshold: 0.15 });
-
-        revealTargets.forEach(el => revealObserver.observe(el));
-    } else {
-        revealTargets.forEach(el => el.classList.add('visible'));
-    }
-
     /* --- COUNTER ANIMATION (STATS) --- */
     const statNumbers = document.querySelectorAll('.stat-number, .proof-number');
 
@@ -95,12 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     statNumbers.forEach(el => statObserver.observe(el));
 
-    /* --- PARALLAX EFFECT --- */
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!prefersReducedMotion) {
-    /* Parallax Removed for Static Ground */
-    }
-
     /* --- VIDEO LOGIC --- */
     const videoScreen = document.getElementById('videoScreen');
     const video = document.getElementById('showreelVideo');
@@ -129,72 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         video.addEventListener('pause', () => overlay.classList.add('show'));
     }
 
-    /* --- CONTACT MODAL --- */
-    const contactModal = document.getElementById('contactModal');
-    const contactFab = document.querySelector('.contact-fab');
-    const modalClose = document.querySelector('.modal-close');
-
-    const showContactModal = () => {
-        if (!contactModal) {
-            return;
-        }
-
-        contactModal.classList.add('show');
-        contactModal.setAttribute('aria-hidden', 'false');
-    };
-
-    const hideContactModal = () => {
-        if (!contactModal) {
-            return;
-        }
-
-        contactModal.classList.remove('show');
-        contactModal.setAttribute('aria-hidden', 'true');
-    };
-
-    // Removed direct FAB listener as it is now a tel: link
-    
-    if (modalClose) {
-        modalClose.addEventListener('click', hideContactModal);
-    }
-
-    if (contactModal) {
-        contactModal.addEventListener('click', (e) => {
-            if (e.target === contactModal) {
-                hideContactModal();
-            }
-        });
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            hideContactModal();
-        }
-    });
-
-    /* --- SIDE WHATSAPP VISIBILITY LOGIC --- */
-    const whatsappSideFab = document.getElementById('whatsappSideFab');
-    const footer = document.querySelector('.site-footer-2026');
-
-    if (whatsappSideFab && footer) {
-        const footerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    whatsappSideFab.classList.add('visible');
-                } else {
-                    whatsappSideFab.classList.remove('visible');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        footerObserver.observe(footer);
-    }
-
     /* --- BACK TO TOP LOGIC --- */
     const backToTop = document.getElementById('backToTop');
     if (backToTop) {
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 500) {
+            if (window.scrollY > 400) {
                 backToTop.classList.add('visible');
             } else {
                 backToTop.classList.remove('visible');
@@ -209,11 +126,10 @@ document.addEventListener('DOMContentLoaded', () => {
     /* --- ULTRA 2026 INTERACTION LOGIC (CUSTOM CURSOR) --- */
     const cursorDot = document.querySelector('[data-cursor-dot]');
     const cursorOutline = document.querySelector('[data-cursor-outline]');
-    const ambientLight = document.getElementById('ambientLight');
     
     // Only activate on non-touch devices
     if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-        if (cursorDot && cursorOutline && ambientLight) {
+        if (cursorDot && cursorOutline) {
             window.addEventListener('mousemove', function(e) {
                 const posX = e.clientX;
                 const posY = e.clientY;
@@ -228,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     top: `${posY}px`
                 }, { duration: 500, fill: "forwards" });
 
-                // Ambient Light removed for Static Ground
             });
 
             // Hover States

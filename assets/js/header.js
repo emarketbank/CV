@@ -5,11 +5,28 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // ============================================
+    // 3. ANIMATED INDICATOR
+    // ============================================
+    const indicator = document.querySelector('.nav-indicator');
+
+    function updateIndicator(activeLink) {
+        if (!indicator || !activeLink) return;
+
+        const linkRect = activeLink.getBoundingClientRect();
+        const navRect = activeLink.closest('.header-nav')?.getBoundingClientRect() || { left: 0 };
+
+        const left = linkRect.left - navRect.left;
+        const width = linkRect.width;
+
+        indicator.style.left = `${left}px`;
+        indicator.style.width = `${width}px`;
+    }
+
+    // ============================================
     // 1. STICKY HEADER ON SCROLL
     // ============================================
 
     const header = document.querySelector('.site-header');
-    let lastScroll = 0;
     let ticking = false;
 
     const updateHeader = () => {
@@ -21,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
             header?.classList.remove('scrolled');
         }
 
-        lastScroll = currentScroll;
         ticking = false;
     };
 
@@ -35,16 +51,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================
     // 2. ACTIVE LINK DETECTION
     // ============================================
-
     const navLinks = document.querySelectorAll('.nav-link');
-    const currentPath = window.location.pathname;
+
+    const normalizePath = (path) => {
+        if (!path) return '';
+        let normalized = path;
+
+        try {
+            normalized = new URL(path, window.location.origin).pathname;
+        } catch (err) {
+            normalized = path;
+        }
+
+        normalized = normalized.replace(/\/index\.html$/, '');
+        if (normalized.length > 1 && normalized.endsWith('/')) {
+            normalized = normalized.slice(0, -1);
+        }
+
+        return normalized;
+    };
+
+    const currentPath = normalizePath(window.location.pathname);
 
     navLinks.forEach(link => {
-        const linkPath = new URL(link.href).pathname;
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#')) {
+            return;
+        }
+
+        const linkPath = normalizePath(href);
 
         // Check if current page matches link
-        if (currentPath === linkPath ||
-            (currentPath.includes(linkPath) && linkPath !== '/')) {
+        if (linkPath && currentPath === linkPath) {
             link.classList.add('active');
         }
 
@@ -53,25 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateIndicator(link);
         }
     });
-
-    // ============================================
-    // 3. ANIMATED INDICATOR
-    // ============================================
-
-    const indicator = document.querySelector('.nav-indicator');
-
-    function updateIndicator(activeLink) {
-        if (!indicator || !activeLink) return;
-
-        const linkRect = activeLink.getBoundingClientRect();
-        const navRect = activeLink.closest('.header-nav').getBoundingClientRect();
-
-        const left = linkRect.left - navRect.left;
-        const width = linkRect.width;
-
-        indicator.style.left = `${left}px`;
-        indicator.style.width = `${width}px`;
-    }
 
     // Update indicator on hover
     navLinks.forEach(link => {
@@ -203,5 +222,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    console.log('✨ Premium Header initialized');
 });

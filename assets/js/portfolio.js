@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = 'hidden';
 
         // Auto play
-        lightboxVideo.play().catch(e => console.log('Autoplay blocked:', e));
+        lightboxVideo.play().catch(() => {});
     };
 
     const closeVideoLightbox = () => {
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxVideo.src = sourceVideo.src;
         videoLightboxTitle.textContent = title;
         videoLightboxDesc.textContent = desc;
-        lightboxVideo.play().catch(e => console.log('Autoplay blocked:', e));
+        lightboxVideo.play().catch(() => {});
     };
 
     // Event Listeners
@@ -276,4 +276,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-

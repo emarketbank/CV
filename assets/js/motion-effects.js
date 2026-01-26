@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update glow position for magnetic-glow elements
             if (card.classList.contains('magnetic-glow')) {
-                const glow = card.querySelector('::after') || card;
                 card.style.setProperty('--mouse-x', `${x}px`);
                 card.style.setProperty('--mouse-y', `${y}px`);
             }
@@ -38,19 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         card.addEventListener('mouseleave', () => {
             card.style.transform = 'translate(0, 0) scale(1)';
-        });
-    });
-
-    // Enhanced magnetic glow with CSS custom properties
-    const magneticGlowElements = document.querySelectorAll('.magnetic-glow');
-    magneticGlowElements.forEach(el => {
-        el.addEventListener('mousemove', (e) => {
-            const rect = el.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            el.style.setProperty('--mouse-x', `${x}px`);
-            el.style.setProperty('--mouse-y', `${y}px`);
         });
     });
 
@@ -150,8 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
 
-            // Skip if external link or same page
+            // Skip if external link, same page, or user intends new tab/window
             if (!href || href.startsWith('#')) return;
+            if (link.target === '_blank' || link.hasAttribute('download')) return;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
             e.preventDefault();
 
@@ -191,7 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (prefersReducedMotion) {
         // Disable heavy animations
         document.body.classList.add('reduced-motion');
-        console.log('Reduced motion mode enabled');
     }
 
     // GPU acceleration hints for animated elements
@@ -200,63 +187,4 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.add('gpu-accelerated');
     });
 
-    // ============================================
-    // 9. CURSOR TRAIL EFFECT (Optional)
-    // ============================================
-
-    /* 
-    // DISABLED: Conflicts with home.js cursor system
-    if (!prefersReducedMotion && window.innerWidth > 768) {
-        const cursorTrail = [];
-        const trailLength = 20;
-
-        // Create trail elements
-        for (let i = 0; i < trailLength; i++) {
-            const trail = document.createElement('div');
-            trail.className = 'cursor-trail';
-            trail.style.cssText = `
-                position: fixed;
-                width: ${20 - i}px;
-                height: ${20 - i}px;
-                border-radius: 50%;
-                background: radial-gradient(circle, rgba(43, 155, 155, ${0.3 - i * 0.015}), transparent);
-                pointer-events: none;
-                z-index: 9999;
-                transition: transform 0.1s ease-out;
-            `;
-            document.body.appendChild(trail);
-            cursorTrail.push({ el: trail, x: 0, y: 0 });
-        }
-
-        let mouseX = 0, mouseY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        const animateTrail = () => {
-            let x = mouseX;
-            let y = mouseY;
-
-            cursorTrail.forEach((trail, index) => {
-                trail.el.style.left = `${x - trail.el.offsetWidth / 2}px`;
-                trail.el.style.top = `${y - trail.el.offsetHeight / 2}px`;
-
-                const nextTrail = cursorTrail[index + 1] || cursorTrail[0];
-                x += (nextTrail.x - x) * 0.3;
-                y += (nextTrail.y - y) * 0.3;
-
-                trail.x = x;
-                trail.y = y;
-            });
-
-            requestAnimationFrame(animateTrail);
-        };
-
-        animateTrail();
-    }
-    */
-
-    console.log('✨ Ultra Modern Motion Effects initialized');
 });
