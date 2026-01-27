@@ -71,8 +71,8 @@ const CONFIG = {
   // للمطور: نفّذ Waterfall بالموديلات بالترتيب ده بدون retries وبمهلة إجمالية ثابتة CONFIG.timeouts.total_ms.
   // للمطور: الوقت يتوزع حسب المتبقي، وأول موديل يرجّع نص صالح يوقف السلسلة ويرجع الرد.
   model_waterfall: [
-    { provider: "openai", model: "gpt-5.2" },
     { provider: "openai", model: "gpt-5.1" },
+    { provider: "openai", model: "gpt-4.1-mini" },
     { provider: "gemini", model: "gemini-3-flash" },
     { provider: "gemini", model: "gemini-2.5-flash" },
     { provider: "gemini", model: "gemini-2.5-pro" },
@@ -358,28 +358,81 @@ async function safeFetch(url, options, timeoutMs) {
   }
 }
 
+function extractOpenAIText(data) {
+  if (typeof data?.output_text === "string" && data.output_text.trim()) {
+    return data.output_text.trim();
+  }
+
+  const output = Array.isArray(data?.output) ? data.output : [];
+  const parts = [];
+
+  for (const item of output) {
+    if (item?.type !== "message" || !Array.isArray(item?.content)) continue;
+    for (const part of item.content) {
+      if (part?.type === "output_text" && typeof part.text === "string") {
+        parts.push(part.text);
+      }
+    }
+  }
+
+  return parts.join("\n").trim();
+}
+
+function buildOpenAIPayload(model, messages, system, temperature) {
+  const inputItems = messages.map(m => ({
+    role: m.role,
+    content: [{ type: "input_text", text: m.content }],
+  }));
+
+  const payload = {
+    model,
+    input: inputItems,
+    instructions: system,
+  };
+
+  if (typeof temperature === "number") {
+    payload.temperature = temperature;
+  }
+
+  return payload;
+}
+
 async function callOpenAI(env, model, messages, system, temperature, timeoutMs) {
+  const headers = {
+    Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+    "Content-Type": "application/json",
+  };
+
+  const payload = buildOpenAIPayload(model, messages, system, temperature);
+
   const res = await safeFetch(
-    "https://api.openai.com/v1/chat/completions",
+    "https://api.openai.com/v1/responses",
     {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "system", content: system }, ...messages],
-        temperature: typeof temperature === "number" ? temperature : undefined,
-      }),
+      headers,
+      body: JSON.stringify(payload),
     },
     timeoutMs
   );
 
-  const text = await res.text();
-  if (!res.ok) throw new Error("provider_error");
-  const data = JSON.parse(text);
-  return data?.choices?.[0]?.message?.content ?? "";
+  const bodyText = await res.text();
+  if (!res.ok) {
+    const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
+    throw new Error(`openai:${model}:${res.status}:${snippet}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(bodyText);
+  } catch {
+    throw new Error(`openai:${model}:${res.status}:invalid_json`);
+  }
+
+  const output = extractOpenAIText(data);
+  if (!output) {
+    throw new Error(`openai:${model}:${res.status}:empty_response`);
+  }
+  return output;
 }
 
 async function callGemini(env, model, messages, system, temperature, timeoutMs) {
@@ -403,10 +456,24 @@ async function callGemini(env, model, messages, system, temperature, timeoutMs) 
     timeoutMs
   );
 
-  const text = await res.text();
-  if (!res.ok) throw new Error("provider_error");
-  const data = JSON.parse(text);
-  return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  const bodyText = await res.text();
+  if (!res.ok) {
+    const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
+    throw new Error(`gemini:${model}:${res.status}:${snippet}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(bodyText);
+  } catch {
+    throw new Error(`gemini:${model}:${res.status}:invalid_json`);
+  }
+
+  const output = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+  if (!output || !output.trim()) {
+    throw new Error(`gemini:${model}:${res.status}:empty_response`);
+  }
+  return output;
 }
 
 async function routeWaterfall(env, config, messages, system) {
@@ -414,6 +481,7 @@ async function routeWaterfall(env, config, messages, system) {
   const totalTimeout = clampNumber(config.timeouts?.total_ms, 1000, 30000, 8000);
   const temperature = typeof config.temperature === "number" ? config.temperature : undefined;
   const deadline = Date.now() + totalTimeout;
+  let lastError;
 
   const candidates = order.filter(item => {
     if (!item || !item.provider || !item.model) return false;
@@ -445,12 +513,13 @@ async function routeWaterfall(env, config, messages, system) {
         const out = await callGemini(env, model, messages, system, temperature, timeoutMs);
         if (out && out.trim()) return { text: out, provider, model };
       }
-    } catch {
+    } catch (err) {
+      lastError = err;
       continue;
     }
   }
 
-  throw new Error("provider_error");
+  throw lastError || new Error("provider_error");
 }
 
 export default {
@@ -465,10 +534,97 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/") {
       return json(
-        { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "POST /chat"] },
+        { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "GET /probe/openai", "POST /chat"] },
         200,
         buildCorsHeaders(origin)
       );
+    }
+
+    if (request.method === "GET" && url.pathname === "/probe/openai") {
+      const modelEntry = (CONFIG.model_waterfall || []).find(
+        item => (item?.provider || "").toLowerCase() === "openai"
+      );
+      const model = modelEntry?.model || "";
+
+      if (!model) {
+        return json(
+          { ok: false, provider: "openai", model, status_code: 0, error: "missing_openai_model", request_id: rid },
+          500,
+          buildCorsHeaders(origin)
+        );
+      }
+
+      if (!env.OPENAI_API_KEY) {
+        return json(
+          { ok: false, provider: "openai", model, status_code: 0, error: "missing_openai_key", request_id: rid },
+          503,
+          buildCorsHeaders(origin)
+        );
+      }
+
+      const payload = buildOpenAIPayload(
+        model,
+        [{ role: "user", content: "ping" }],
+        "Health probe",
+        0
+      );
+
+      try {
+        const res = await safeFetch(
+          "https://api.openai.com/v1/responses",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          },
+          clampNumber(CONFIG.timeouts?.total_ms, 1000, 30000, 8000)
+        );
+
+        const bodyText = await res.text();
+        if (!res.ok) {
+          const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
+          return json(
+            { ok: false, provider: "openai", model, status_code: res.status, error: snippet, request_id: rid },
+            502,
+            buildCorsHeaders(origin)
+          );
+        }
+
+        let data;
+        try {
+          data = JSON.parse(bodyText);
+        } catch {
+          return json(
+            { ok: false, provider: "openai", model, status_code: res.status, error: "invalid_json", request_id: rid },
+            502,
+            buildCorsHeaders(origin)
+          );
+        }
+
+        const output = extractOpenAIText(data);
+        return json(
+          {
+            ok: true,
+            provider: "openai",
+            model,
+            status_code: res.status,
+            output_preview: (output || "").slice(0, 120),
+            request_id: rid,
+          },
+          200,
+          buildCorsHeaders(origin)
+        );
+      } catch (err) {
+        const message = (err?.message || "probe_error").slice(0, 200);
+        return json(
+          { ok: false, provider: "openai", model, status_code: 0, error: message, request_id: rid },
+          502,
+          buildCorsHeaders(origin)
+        );
+      }
     }
 
     if (request.method === "GET" && url.pathname === "/health") {
