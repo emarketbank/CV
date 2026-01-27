@@ -279,40 +279,9 @@ class PrismAgent {
                 throw new Error(`HTTP ${res.status}`);
             }
 
-            // SSE Stream consumption
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            let fullText = '';
-
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
-
-                for (const line of lines) {
-                    if (line.startsWith('event:')) continue;
-                    if (line.startsWith(':')) continue; // ping/comment
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if (data === '{}') continue; // done event
-                        try {
-                            const parsed = JSON.parse(data);
-                            if (typeof parsed === 'string') {
-                                fullText += parsed;
-                            } else if (parsed && parsed.message) {
-                                fullText += ' [' + parsed.message + ']';
-                            }
-                        } catch { }
-                    }
-                }
-            }
-
-            if (fullText.trim()) {
-                this.addMessage('ai', fullText.trim());
+            const data = await res.json();
+            if (data.response) {
+                this.addMessage('ai', data.response);
             } else {
                 throw new Error('empty_response');
             }
