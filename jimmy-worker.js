@@ -3,6 +3,7 @@
  * - Routes: GET /, GET /health, POST /chat, GET/POST /admin/config
  * - Contact + Identity intents handled BEFORE AI
  * - KV-backed config with fallback defaults
+ * - Hardcoded model waterfall (admin cannot change models)
  */
 
 const MAX_RETRIES = 3;
@@ -202,15 +203,13 @@ function normalizeMessages(body, env) {
 function isContactRequest(messages) {
   const lastUser = [...messages].reverse().find(m => m.role === "user");
   if (!lastUser) return false;
-  const text = (lastUser.content || "").toString();
-  return CONTACT_INTENT_REGEX.test(text);
+  return CONTACT_INTENT_REGEX.test(lastUser.content || "");
 }
 
 function isIdentityRequest(messages) {
   const lastUser = [...messages].reverse().find(m => m.role === "user");
   if (!lastUser) return false;
-  const text = (lastUser.content || "").toString();
-  return IDENTITY_INTENT_REGEX.test(text);
+  return IDENTITY_INTENT_REGEX.test(lastUser.content || "");
 }
 
 function getContactTemplate(config, lang) {
@@ -290,7 +289,11 @@ async function safeFetchWithRetry(url, options, timeoutMs, rid) {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const res = await safeFetch(url, options, timeoutMs);
-      if (res.ok || (res.status >= 400 && res.status < 500)) return res;
+      if (res.ok) return res;
+
+      const retryable = res.status === 429 || res.status >= 500;
+      if (!retryable) return res;
+
       lastError = new Error(`HTTP ${res.status}`);
       console.warn(`[${rid}] attempt ${attempt} => ${res.status}`);
     } catch (e) {
@@ -368,22 +371,21 @@ async function routeAI(env, config, messages, system, temperature, rid) {
   const order = primary === "openai" ? ["openai", "gemini"] : ["gemini", "openai"];
 
   for (const provider of order) {
-    const models = getProviderModels(provider);
-
-    if (provider === "gemini" && !env.GEMINI_API_KEY) continue;
     if (provider === "openai" && !env.OPENAI_API_KEY) continue;
+    if (provider === "gemini" && !env.GEMINI_API_KEY) continue;
+
+    const models = getProviderModels(provider);
 
     for (const model of models) {
       try {
-        if (provider === "gemini") {
-          const out = await callGemini(env, model, messages, system, temperature, rid);
-          if (out && out.trim()) return out;
-          throw new Error("Empty response");
-        }
         if (provider === "openai") {
           const out = await callOpenAI(env, model, messages, system, temperature, rid);
           if (out && out.trim()) return out;
-          throw new Error("Empty response");
+        }
+
+        if (provider === "gemini") {
+          const out = await callGemini(env, model, messages, system, temperature, rid);
+          if (out && out.trim()) return out;
         }
       } catch (e) {
         console.warn(`[${rid}] ${provider}:${model} failed`);
