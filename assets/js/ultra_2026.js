@@ -187,21 +187,11 @@ class DraggableMarquee {
 
 // --- 4. 3D TILT & SPOTLIGHT EFFECT ---
 const initInteractions = () => {
-    // 3D Tilt for Identity Card
+    // 3D Tilt for Identity Card - DISABLED (Kept empty for consistency)
+    /* 
     const tiltCard = document.querySelector('.tilt-3d');
-    if (tiltCard) {
-        tiltCard.addEventListener('mousemove', (e) => {
-            const rect = tiltCard.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10;
-            const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
-            tiltCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-        tiltCard.addEventListener('mouseleave', () => {
-            tiltCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-        });
-    }
+    if (tiltCard) { ... }
+    */
 
     // Spotlight for Stat Cards
     const statCards = document.querySelectorAll('.stat-card');
@@ -246,6 +236,88 @@ const initVideo = () => {
     });
 };
 
+// --- 7. CAROUSEL INTERACTION (Universal) ---
+const initCarousel = () => {
+    const setupCarousel = (containerId, prevClass, nextClass, indicatorId = null) => {
+        const container = document.getElementById(containerId);
+        const prevBtn = document.querySelector(`.${prevClass}`);
+        const nextBtn = document.querySelector(`.${nextClass}`);
+        const indicator = indicatorId ? document.getElementById(indicatorId) : null;
+        
+        if (!container) return;
+
+        const scrollAmount = 340; 
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+        }
+
+        // Optional Scrubber Sync
+        if (indicator) {
+            container.addEventListener('scroll', () => {
+                const scrollL = container.scrollLeft;
+                const maxScroll = container.scrollWidth - container.clientWidth;
+                const progress = maxScroll > 0 ? scrollL / maxScroll : 0;
+                const trackWidth = indicator.parentElement.offsetWidth;
+                const indicatorPos = progress * (trackWidth - 8);
+                indicator.style.left = `${indicatorPos}px`;
+            }, { passive: true });
+            
+            // Clickable Years Logic
+            const years = indicator.parentElement.querySelectorAll('.scrub-year');
+            years.forEach(year => {
+                year.addEventListener('click', () => {
+                    const targetYear = year.getAttribute('data-target');
+                    const targetCard = container.querySelector(`.exp-card[data-year="${targetYear}"]`);
+                    if (targetCard) {
+                        const scrollPos = targetCard.offsetLeft - (container.clientWidth / 2) + (targetCard.clientWidth / 2);
+                        container.scrollTo({ left: scrollPos, behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+    };
+
+    // Initialize Experience Carousel
+    setupCarousel('expCarousel', 'prev-btn', 'next-btn', 'scrubIndicator');
+
+    // Initialize Education Carousel
+    setupCarousel('eduCarousel', 'edu-prev', 'edu-next');
+};
+
+// --- 8. TERMINAL EDUCATION LOGIC (Ultra Modern) ---
+const initTerminal = () => {
+    const trigger = document.getElementById('eduTrigger');
+    const windowEl = document.getElementById('eduWindow');
+    const logs = document.querySelectorAll('.log-entry');
+    
+    if (!trigger || !windowEl) return;
+
+    trigger.addEventListener('click', () => {
+        windowEl.classList.toggle('open');
+        const isOpen = windowEl.classList.contains('open');
+        
+        // Update Status Text
+        trigger.querySelector('.status').innerText = isOpen ? 'Close' : 'View';
+
+        if (isOpen) {
+            logs.forEach((log, index) => {
+                log.style.transitionDelay = `${index * 80}ms`;
+            });
+        } else {
+            logs.forEach(log => log.style.transitionDelay = '0ms');
+        }
+    });
+};
+
 // --- MASTER BOOT ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("System 3.2: Online");
@@ -261,4 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initInteractions();
     initScrollReveal();
     initVideo();
+    initCarousel();
+    initTerminal();
 });

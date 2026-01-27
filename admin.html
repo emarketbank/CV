@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
   <title>لوحة تحكم كابتن جيمي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f7f3ef;
-      --ink: #121417;
-      --muted: #5b646d;
-      --accent: #1c8c7a;
-      --accent-strong: #0f6b5d;
+      --bg: #f6f2ee;
+      --ink: #0f1419;
+      --muted: #5f6872;
+      --accent: #0f7e6c;
+      --accent-strong: #0b5f52;
       --card: #ffffff;
-      --border: rgba(18, 20, 23, 0.12);
-      --shadow: 0 20px 60px rgba(18, 20, 23, 0.08);
+      --border: rgba(15, 20, 25, 0.12);
+      --shadow: 0 24px 60px rgba(15, 20, 25, 0.08);
+      --soft: rgba(15, 20, 25, 0.04);
     }
 
     * {
@@ -27,22 +29,20 @@
       margin: 0;
       font-family: "Cairo", sans-serif;
       background:
-        radial-gradient(circle at 10% 20%, rgba(28, 140, 122, 0.15), transparent 40%),
-        radial-gradient(circle at 90% 10%, rgba(18, 20, 23, 0.08), transparent 40%),
+        radial-gradient(circle at 12% 15%, rgba(15, 126, 108, 0.14), transparent 45%),
+        radial-gradient(circle at 88% 8%, rgba(15, 20, 25, 0.08), transparent 40%),
         var(--bg);
       color: var(--ink);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 18px;
+      padding: 32px 18px 80px;
     }
 
     .panel {
-      width: min(960px, 100%);
+      max-width: 1200px;
+      margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 26px;
       padding: 32px;
       box-shadow: var(--shadow);
     }
@@ -50,14 +50,13 @@
     .header {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 24px;
+      gap: 8px;
+      margin-bottom: 26px;
     }
 
     .header h1 {
       margin: 0;
-      font-size: clamp(1.6rem, 2.5vw, 2.3rem);
-      font-weight: 700;
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
     }
 
     .header p {
@@ -68,7 +67,7 @@
     }
 
     .section {
-      margin-bottom: 24px;
+      margin-bottom: 26px;
       padding-bottom: 22px;
       border-bottom: 1px solid var(--border);
     }
@@ -90,23 +89,29 @@
       gap: 16px;
     }
 
-    .inline-grid {
+    .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
     }
 
     label {
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
-      color: var(--ink);
       display: block;
       margin-bottom: 6px;
     }
 
     .field-hint {
       margin: 0 0 10px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--muted);
       line-height: 1.6;
     }
@@ -118,7 +123,7 @@
       border-radius: 14px;
       border: 1px solid var(--border);
       padding: 12px 14px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-family: inherit;
       background: #fff;
       color: var(--ink);
@@ -126,53 +131,32 @@
     }
 
     textarea {
-      min-height: 200px;
+      min-height: 160px;
       resize: vertical;
       line-height: 1.6;
     }
 
+    textarea.small {
+      min-height: 120px;
+    }
+
+    input:focus,
     textarea:focus,
-    select:focus,
-    input:focus {
+    select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(28, 140, 122, 0.12);
+      box-shadow: 0 0 0 4px rgba(15, 126, 108, 0.12);
     }
 
-    .footer {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+    .tag {
+      display: inline-flex;
       align-items: center;
-    }
-
-    button {
-      border: none;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--soft);
       border-radius: 999px;
-      padding: 10px 22px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #fff;
-      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(28, 140, 122, 0.2);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+      font-size: 0.82rem;
+      color: var(--muted);
     }
 
     .status {
@@ -184,22 +168,89 @@
       color: var(--accent-strong);
     }
 
-    details {
-      border-radius: 16px;
-      border: 1px dashed var(--border);
-      padding: 12px 14px;
-      background: rgba(28, 140, 122, 0.04);
+    .status.error {
+      color: #b42318;
     }
 
-    summary {
-      cursor: pointer;
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 0.92rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button.secondary {
+      background: #1a2027;
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--accent-strong);
+      border: 1px solid var(--accent);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .card-lite {
+      background: rgba(15, 20, 25, 0.03);
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .audit-list {
+      max-height: 220px;
+      overflow: auto;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .audit-item {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audit-item:last-child {
+      border-bottom: none;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 126, 108, 0.12);
+      color: var(--accent-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
     @media (max-width: 640px) {
       .panel {
-        padding: 24px;
+        padding: 22px;
       }
     }
   </style>
@@ -208,142 +259,327 @@
   <div class="panel">
     <div class="header">
       <h1>لوحة تحكم كابتن جيمي</h1>
-      <p>تحكم سريع في سلوك جيمي والحقائق والمزوّد — بدون أي إعدادات معقّدة.</p>
+      <p>تحكم كامل في السلوك والقواعد من مكان واحد — بدون أي تضارب أو تعقيد.</p>
     </div>
 
     <div class="section">
-      <div class="section-title">الاتصال</div>
-      <div class="inline-grid">
+      <div class="section-title">الاتصال الآمن</div>
+      <div class="grid">
         <div>
           <label for="endpointInput">رابط الـ Worker</label>
-          <p class="field-hint">الرابط الذي يستقبل الرسائل.</p>
+          <p class="field-hint">اكتب رابط السيرفر الخاص بـ Jimmy.</p>
           <input id="endpointInput" type="text" placeholder="https://mg-ai-proxy.emarketbank.workers.dev">
         </div>
         <div>
           <label for="tokenInput">رمز الإدارة</label>
-          <p class="field-hint">يتم استخدامه لحماية التعديلات.</p>
-          <input id="tokenInput" type="password" placeholder="اكتب الرمز مرة واحدة">
+          <p class="field-hint">يُستخدم لحماية التعديلات. يتم حفظه على جهازك.</p>
+          <input id="tokenInput" type="password" autocomplete="off" placeholder="اكتب الرمز">
         </div>
       </div>
       <div class="actions" style="margin-top:12px;">
         <button id="saveConnection">حفظ الاتصال</button>
+        <button class="ghost" id="rotateToken">تدوير الرمز</button>
         <div class="status" id="connectionStatus">جاهز.</div>
       </div>
-      <p class="field-hint">يتم حفظ الرمز في المتصفح، ويُطلب مرة واحدة فقط.</p>
     </div>
 
     <div class="section">
-      <div class="section-title">سلوك جيمي</div>
+      <div class="section-title">الإصدارات والنشر</div>
+      <div class="split">
+        <div class="card-lite">
+          <div class="row">
+            <span class="tag">الإصدار الحالي</span>
+            <span class="pill" id="activeVersion">—</span>
+          </div>
+          <p class="field-hint" id="activeMeta">—</p>
+        </div>
+        <div class="card-lite">
+          <div class="row">
+            <span class="tag">مسودة العمل</span>
+            <span class="pill" id="draftVersion">—</span>
+          </div>
+          <p class="field-hint" id="draftMeta">—</p>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button class="ghost" id="loadActive">تحميل Active</button>
+        <button class="ghost" id="loadDraft">تحميل Draft</button>
+        <button id="publishDraft">نشر</button>
+        <button class="secondary" id="rollback">Rollback</button>
+        <div class="status" id="versionStatus">—</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">اللغة + التعليمات الأساسية</div>
       <div class="grid">
         <div>
-          <label for="systemPrompt">تعليمات سلوك جيمي</label>
-          <p class="field-hint">كيف يتكلم؟ كيف يرد؟ متى يسأل؟ متى يعرض التواصل؟</p>
-          <textarea id="systemPrompt">أنت "كابتن جيمي" — المساعد الرسمي لمحمد جمال.
-أنت مش محمد، وما ينفعش تدّعي إنك هو.
-دورك توصل الناس لمحمد بسرعة وبوضوح.
-
-قواعد اللغة:
-- لو المستخدم عربي: رد مصري مهني مختصر.
-- لو المستخدم إنجليزي: رد أمريكي مباشر.
-- خلي اللغة ثابتة طول المحادثة.
-
-قواعد الرد:
-- أول رد ≤ 2 سطر، بعد كده ≤ 3 سطور.
-- سؤال متابعة واحد فقط (لو محتاج).
-- بدون أي ذكر لـ AI/مزود/موديل.
-- بدون إيموجيز.
-
-التواصل:
-- ما تعرضش التواصل إلا لو المستخدم طلب صراحة.
-- لو طلب تواصل: استخدم نص التواصل الثابت بالحرف.
-
-خارج النطاق:
-- لو طلب خطة/محتوى/بحث: قول إن محمد هو الأنسب وسأله لو يحب يتواصل.
-
-ممنوعات:
-- نصايح عامة طويلة.
-- أي أرقام أو إنجازات غير مؤكدة.</textarea>
-        </div>
-        <div>
-          <label for="verifiedFacts">حقائق مؤكدة فقط</label>
-          <p class="field-hint">أرقام، إنجازات، وخبرات مثبتة. يُمنع كتابة أي ادعاءات غير مؤكدة.</p>
-          <textarea id="verifiedFacts">حقائق مؤكدة فقط (استخدمها عند الارتباط بالسؤال):
-- خبرة 10+ سنين في النمو الرقمي والتحول الرقمي في MENA مع تركيز قوي على السعودية.
-- 6× نمو مبيعات/إيراد عضوي تقريبًا في Arabian Oud خلال ~24 شهر.
-- إدارة إنفاق إعلاني يومي تقريبًا $12k–$20k عبر 6 أسواق.
-- 7× نمو تعاقدات في DigiMora خلال حوالي سنة.
-- مشاركة في Guinness World Record (5M orders، Black Friday 2020).</textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">التواصل</div>
-      <div>
-        <label for="contactTemplate">نص التواصل الثابت</label>
-        <p class="field-hint">هذا النص يظهر حرفيًا عند طلب التواصل. لا يتم تعديله بواسطة الذكاء الاصطناعي.</p>
-        <textarea id="contactTemplate">محمد هيكون سعيد يسمع منك.
-تحب مكالمة سريعة ولا واتساب؟
-
-📞 مكالمة: 00201555141282
-💬 واتساب: https://wa.me/201555141282</textarea>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">الإعدادات الأساسية</div>
-      <div class="inline-grid">
-        <div>
-          <label for="primaryProvider">المزوّد الأساسي</label>
-          <p class="field-hint">اختر المزوّد الذي يعمل به جيمي. الموديل يتم اختياره تلقائيًا.</p>
-          <select id="primaryProvider">
-            <option value="gemini" selected>Gemini</option>
-            <option value="openai">OpenAI</option>
-          </select>
-        </div>
-        <div>
           <label for="defaultLanguage">اللغة الافتراضية</label>
-          <p class="field-hint">تُستخدم فقط في حال تعذّر تحديد لغة المستخدم.</p>
           <select id="defaultLanguage">
-            <option value="ar" selected>عربي</option>
+            <option value="ar">عربي</option>
             <option value="en">English</option>
           </select>
         </div>
+        <div>
+          <label for="versionInput">Version ID</label>
+          <input id="versionInput" type="text" placeholder="سيتم توليده تلقائياً" readonly>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div>
+          <label for="systemPromptAr">System Prompt (AR)</label>
+          <textarea id="systemPromptAr"></textarea>
+        </div>
+        <div>
+          <label for="systemPromptEn">System Prompt (EN)</label>
+          <textarea id="systemPromptEn"></textarea>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div>
+          <label for="verifiedFactsAr">Verified Facts (AR)</label>
+          <textarea id="verifiedFactsAr" class="small"></textarea>
+        </div>
+        <div>
+          <label for="verifiedFactsEn">Verified Facts (EN)</label>
+          <textarea id="verifiedFactsEn" class="small"></textarea>
+        </div>
       </div>
     </div>
 
     <div class="section">
-      <details>
-        <summary>إعدادات متقدمة (اختياري)</summary>
-        <p class="field-hint">هذه الإعدادات للمستخدم المتقدم فقط.</p>
-        <div class="inline-grid">
-          <div>
-            <label for="maxLines">أقصى عدد سطور</label>
-            <input id="maxLines" type="number" min="1" max="12" step="1" value="3">
-          </div>
-          <div>
-            <label for="followupQuestions">قواعد أسئلة المتابعة</label>
-            <input id="followupQuestions" type="number" min="0" max="3" step="1" value="1">
-          </div>
+      <div class="section-title">القوالب الثابتة</div>
+      <div class="grid-2">
+        <div>
+          <label for="contactTemplateAr">Contact Template (AR)</label>
+          <textarea id="contactTemplateAr" class="small"></textarea>
         </div>
-      </details>
+        <div>
+          <label for="contactTemplateEn">Contact Template (EN)</label>
+          <textarea id="contactTemplateEn" class="small"></textarea>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div>
+          <label for="identityTemplateAr">Identity Template (AR)</label>
+          <textarea id="identityTemplateAr" class="small"></textarea>
+        </div>
+        <div>
+          <label for="identityTemplateEn">Identity Template (EN)</label>
+          <textarea id="identityTemplateEn" class="small"></textarea>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px;">
+        <div>
+          <label for="fallbackAr">Fallback Message (AR)</label>
+          <textarea id="fallbackAr" class="small"></textarea>
+        </div>
+        <div>
+          <label for="fallbackEn">Fallback Message (EN)</label>
+          <textarea id="fallbackEn" class="small"></textarea>
+        </div>
+      </div>
     </div>
 
-    <div class="footer">
+    <div class="section">
+      <div class="section-title">قواعد النوايا</div>
+      <div class="grid-2">
+        <div>
+          <label for="contactKeywords">كلمات نية التواصل</label>
+          <p class="field-hint">سطر لكل كلمة أو عبارة. يمكن الفصل بفاصلة أيضًا.</p>
+          <textarea id="contactKeywords" class="small"></textarea>
+        </div>
+        <div>
+          <label for="identityKeywords">كلمات نية التعريف</label>
+          <p class="field-hint">سطر لكل كلمة أو عبارة. يمكن الفصل بفاصلة أيضًا.</p>
+          <textarea id="identityKeywords" class="small"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">قواعد التنفيذ (Policy Engine)</div>
+      <div class="grid">
+        <div>
+          <label for="maxLines">أقصى عدد سطور</label>
+          <input id="maxLines" type="number" min="1" max="12" step="1">
+        </div>
+        <div>
+          <label for="followupQuestions">عدد أسئلة المتابعة</label>
+          <input id="followupQuestions" type="number" min="0" max="3" step="1">
+        </div>
+        <div>
+          <label>منع ذكر AI أو المزوّد</label>
+          <select id="blockAi">
+            <option value="true">مفعل</option>
+            <option value="false">غير مفعل</option>
+          </select>
+        </div>
+        <div>
+          <label>منع الإيموجي</label>
+          <select id="blockEmojis">
+            <option value="true">مفعل</option>
+            <option value="false">غير مفعل</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">سياسة الموديل (Single Model)</div>
+      <div class="grid">
+        <div>
+          <label for="provider">المزوّد</label>
+          <select id="provider">
+            <option value="openai">OpenAI</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </div>
+        <div>
+          <label for="model">اسم الموديل</label>
+          <input id="model" list="modelList" placeholder="مثال: gpt-5.2">
+          <datalist id="modelList">
+            <option value="gpt-5.2"></option>
+            <option value="gpt-5.1"></option>
+            <option value="gemini-3-flash"></option>
+            <option value="gemini-2.5-flash"></option>
+            <option value="gemini-2.5-pro"></option>
+          </datalist>
+        </div>
+        <div>
+          <label for="timeoutMs">Timeout (ms)</label>
+          <input id="timeoutMs" type="number" min="2000" max="20000" step="500">
+        </div>
+        <div>
+          <label for="temperature">Temperature (اختياري)</label>
+          <input id="temperature" type="number" min="0" max="1.2" step="0.1" placeholder="0.5">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Limits (التاريخ والنص)</div>
+      <div class="grid">
+        <div>
+          <label for="maxHistory">Max History</label>
+          <input id="maxHistory" type="number" min="1" max="30" step="1">
+        </div>
+        <div>
+          <label for="maxInputChars">Max Input Chars</label>
+          <input id="maxInputChars" type="number" min="200" max="8000" step="100">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Playground</div>
+      <div class="grid">
+        <div>
+          <label for="previewMessage">رسالة اختبار</label>
+          <textarea id="previewMessage" class="small" placeholder="اكتب سؤالًا للتجربة..."></textarea>
+        </div>
+        <div>
+          <label for="previewLanguage">لغة الرسالة</label>
+          <select id="previewLanguage">
+            <option value="auto">تلقائي</option>
+            <option value="ar">عربي</option>
+            <option value="en">English</option>
+          </select>
+          <div class="actions" style="margin-top:12px;">
+            <button id="runPreview">تشغيل الاختبار</button>
+          </div>
+          <div class="card-lite" style="margin-top:12px;">
+            <div class="field-hint">النتيجة</div>
+            <div id="previewOutput" style="white-space:pre-wrap; min-height: 90px;"></div>
+          </div>
+          <div class="status" id="previewStatus">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Audit Log</div>
+      <div class="actions" style="margin-bottom:10px;">
+        <button class="ghost" id="loadAudit">تحميل السجل</button>
+        <div class="status" id="auditStatus">—</div>
+      </div>
+      <div class="audit-list" id="auditList">لا يوجد بيانات بعد.</div>
+    </div>
+
+    <div class="section">
       <div class="actions">
-        <button id="saveBtn">حفظ التعديلات</button>
-        <div class="status" id="status">جاهز.</div>
+        <button id="saveDraft">حفظ Draft</button>
+        <div class="status" id="mainStatus">جاهز.</div>
       </div>
     </div>
   </div>
 
   <script>
-    const qs = new URLSearchParams(window.location.search);
-    const endpointFromQuery = qs.get("endpoint");
-    const tokenFromQuery = qs.get("token");
+    const state = {
+      active: null,
+      draft: null,
+      currentVersion: ""
+    };
 
-    const storedEndpoint = localStorage.getItem("jimmy_admin_endpoint");
-    const storedToken = localStorage.getItem("jimmy_admin_token");
+    const endpointInput = document.getElementById("endpointInput");
+    const tokenInput = document.getElementById("tokenInput");
+    const saveConnectionBtn = document.getElementById("saveConnection");
+    const rotateTokenBtn = document.getElementById("rotateToken");
+    const connectionStatus = document.getElementById("connectionStatus");
+
+    const activeVersionEl = document.getElementById("activeVersion");
+    const draftVersionEl = document.getElementById("draftVersion");
+    const activeMetaEl = document.getElementById("activeMeta");
+    const draftMetaEl = document.getElementById("draftMeta");
+    const versionStatusEl = document.getElementById("versionStatus");
+
+    const loadActiveBtn = document.getElementById("loadActive");
+    const loadDraftBtn = document.getElementById("loadDraft");
+    const publishDraftBtn = document.getElementById("publishDraft");
+    const rollbackBtn = document.getElementById("rollback");
+
+    const defaultLanguageEl = document.getElementById("defaultLanguage");
+    const versionInputEl = document.getElementById("versionInput");
+    const systemPromptArEl = document.getElementById("systemPromptAr");
+    const systemPromptEnEl = document.getElementById("systemPromptEn");
+    const verifiedFactsArEl = document.getElementById("verifiedFactsAr");
+    const verifiedFactsEnEl = document.getElementById("verifiedFactsEn");
+
+    const contactTemplateArEl = document.getElementById("contactTemplateAr");
+    const contactTemplateEnEl = document.getElementById("contactTemplateEn");
+    const identityTemplateArEl = document.getElementById("identityTemplateAr");
+    const identityTemplateEnEl = document.getElementById("identityTemplateEn");
+    const fallbackArEl = document.getElementById("fallbackAr");
+    const fallbackEnEl = document.getElementById("fallbackEn");
+
+    const contactKeywordsEl = document.getElementById("contactKeywords");
+    const identityKeywordsEl = document.getElementById("identityKeywords");
+
+    const maxLinesEl = document.getElementById("maxLines");
+    const followupQuestionsEl = document.getElementById("followupQuestions");
+    const blockAiEl = document.getElementById("blockAi");
+    const blockEmojisEl = document.getElementById("blockEmojis");
+
+    const providerEl = document.getElementById("provider");
+    const modelEl = document.getElementById("model");
+    const timeoutMsEl = document.getElementById("timeoutMs");
+    const temperatureEl = document.getElementById("temperature");
+
+    const maxHistoryEl = document.getElementById("maxHistory");
+    const maxInputCharsEl = document.getElementById("maxInputChars");
+
+    const previewMessageEl = document.getElementById("previewMessage");
+    const previewLanguageEl = document.getElementById("previewLanguage");
+    const runPreviewBtn = document.getElementById("runPreview");
+    const previewOutputEl = document.getElementById("previewOutput");
+    const previewStatusEl = document.getElementById("previewStatus");
+
+    const saveDraftBtn = document.getElementById("saveDraft");
+    const mainStatusEl = document.getElementById("mainStatus");
+
+    const loadAuditBtn = document.getElementById("loadAudit");
+    const auditStatusEl = document.getElementById("auditStatus");
+    const auditListEl = document.getElementById("auditList");
 
     function sanitizeEndpoint(value) {
       if (!value) return "";
@@ -352,153 +588,380 @@
       if (!/^https?:\/\//i.test(cleaned)) {
         cleaned = `https://${cleaned}`;
       }
-      return cleaned;
+      return cleaned.replace(/\/$/, "");
     }
 
-    let ENDPOINT = sanitizeEndpoint(endpointFromQuery) ||
-      sanitizeEndpoint(storedEndpoint) ||
-      "https://mg-ai-proxy.emarketbank.workers.dev";
-    let AUTH_TOKEN = tokenFromQuery || storedToken || "";
-    let CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin/config`;
-
-    if (endpointFromQuery) localStorage.setItem("jimmy_admin_endpoint", sanitizeEndpoint(endpointFromQuery));
-    if (tokenFromQuery) localStorage.setItem("jimmy_admin_token", tokenFromQuery);
-
-    if (tokenFromQuery) {
-      const cleanUrl = `${window.location.origin}${window.location.pathname}?endpoint=${encodeURIComponent(ENDPOINT)}`;
-      window.history.replaceState({}, "", cleanUrl);
-    }
-
-    const endpointInput = document.getElementById("endpointInput");
-    const tokenInput = document.getElementById("tokenInput");
-    const saveConnectionBtn = document.getElementById("saveConnection");
-    const connectionStatusEl = document.getElementById("connectionStatus");
-
-    const systemPromptEl = document.getElementById("systemPrompt");
-    const verifiedFactsEl = document.getElementById("verifiedFacts");
-    const contactTemplateEl = document.getElementById("contactTemplate");
-    const defaultLanguageEl = document.getElementById("defaultLanguage");
-    const primaryProviderEl = document.getElementById("primaryProvider");
-    const maxLinesEl = document.getElementById("maxLines");
-    const followupQuestionsEl = document.getElementById("followupQuestions");
-    const statusEl = document.getElementById("status");
-    const saveBtn = document.getElementById("saveBtn");
+    let ENDPOINT = sanitizeEndpoint(localStorage.getItem("jimmy_admin_endpoint") || "");
+    let AUTH_TOKEN = localStorage.getItem("jimmy_admin_token") || "";
 
     endpointInput.value = ENDPOINT;
     tokenInput.value = AUTH_TOKEN;
 
-    function setStatus(message, ok = false) {
-      statusEl.textContent = message;
-      statusEl.classList.toggle("ok", ok);
-    }
-
-    function setConnectionStatus(message, ok = false) {
-      connectionStatusEl.textContent = message;
-      connectionStatusEl.classList.toggle("ok", ok);
+    function setStatus(el, message, ok = false, error = false) {
+      el.textContent = message;
+      el.classList.toggle("ok", ok);
+      el.classList.toggle("error", error);
     }
 
     function buildHeaders() {
       const headers = { "Content-Type": "application/json" };
-      if (AUTH_TOKEN) {
-        headers.Authorization = `Bearer ${AUTH_TOKEN}`;
-      }
+      if (AUTH_TOKEN) headers.Authorization = `Bearer ${AUTH_TOKEN}`;
       return headers;
     }
 
-    function saveConnection() {
-      const rawEndpoint = endpointInput.value;
-      const endpointValue = sanitizeEndpoint(rawEndpoint);
+    function apiUrl(path) {
+      return `${ENDPOINT}${path}`;
+    }
+
+    function listFromText(value) {
+      return value
+        .split(/\n|,/)
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function textFromList(value) {
+      return Array.isArray(value) ? value.join("\n") : "";
+    }
+
+    function formatMeta(config, type) {
+      if (!config) return "—";
+      if (type === "active") {
+        return config.published_at ? `نُشر: ${config.published_at}` : (config.updated_at ? `تحديث: ${config.updated_at}` : "—");
+      }
+      return config.updated_at ? `آخر تحديث: ${config.updated_at}` : "—";
+    }
+
+    async function fetchConfig(stateName) {
+      const res = await fetch(apiUrl(`/admin/config?state=${stateName}`), { headers: buildHeaders() });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "فشل تحميل الإعدادات.");
+      return data?.config || null;
+    }
+
+    function fillForm(config, setVersion = true) {
+      if (!config) return;
+      if (setVersion) {
+        state.currentVersion = config.version || "";
+        versionInputEl.value = state.currentVersion;
+      } else {
+        state.currentVersion = "";
+        versionInputEl.value = "";
+      }
+      defaultLanguageEl.value = config.default_language || "ar";
+
+      systemPromptArEl.value = config.system_prompt?.ar || "";
+      systemPromptEnEl.value = config.system_prompt?.en || "";
+      verifiedFactsArEl.value = config.verified_facts?.ar || "";
+      verifiedFactsEnEl.value = config.verified_facts?.en || "";
+
+      contactTemplateArEl.value = config.contact_templates?.ar || "";
+      contactTemplateEnEl.value = config.contact_templates?.en || "";
+      identityTemplateArEl.value = config.identity_templates?.ar || "";
+      identityTemplateEnEl.value = config.identity_templates?.en || "";
+      fallbackArEl.value = config.fallback_messages?.ar || "";
+      fallbackEnEl.value = config.fallback_messages?.en || "";
+
+      contactKeywordsEl.value = textFromList(config.intent_rules?.contact_keywords);
+      identityKeywordsEl.value = textFromList(config.intent_rules?.identity_keywords);
+
+      maxLinesEl.value = config.rules?.max_lines ?? "";
+      followupQuestionsEl.value = config.rules?.followup_questions ?? "";
+      blockAiEl.value = config.rules?.block_ai_mentions ? "true" : "false";
+      blockEmojisEl.value = config.rules?.block_emojis ? "true" : "false";
+
+      providerEl.value = config.model_policy?.provider || "openai";
+      modelEl.value = config.model_policy?.model || "";
+      timeoutMsEl.value = config.model_policy?.timeout_ms ?? "";
+      temperatureEl.value = config.model_policy?.temperature ?? "";
+
+      maxHistoryEl.value = config.limits?.max_history ?? "";
+      maxInputCharsEl.value = config.limits?.max_input_chars ?? "";
+    }
+
+    function collectConfig() {
+      const temperatureRaw = temperatureEl.value.trim();
+      const temperature = temperatureRaw ? Number(temperatureRaw) : null;
+
+      return {
+        version: state.currentVersion || "",
+        default_language: defaultLanguageEl.value,
+        system_prompt: {
+          ar: systemPromptArEl.value.trim(),
+          en: systemPromptEnEl.value.trim()
+        },
+        verified_facts: {
+          ar: verifiedFactsArEl.value.trim(),
+          en: verifiedFactsEnEl.value.trim()
+        },
+        contact_templates: {
+          ar: contactTemplateArEl.value.trim(),
+          en: contactTemplateEnEl.value.trim()
+        },
+        identity_templates: {
+          ar: identityTemplateArEl.value.trim(),
+          en: identityTemplateEnEl.value.trim()
+        },
+        fallback_messages: {
+          ar: fallbackArEl.value.trim(),
+          en: fallbackEnEl.value.trim()
+        },
+        rules: {
+          max_lines: Number(maxLinesEl.value),
+          followup_questions: Number(followupQuestionsEl.value),
+          block_ai_mentions: blockAiEl.value === "true",
+          block_emojis: blockEmojisEl.value === "true"
+        },
+        intent_rules: {
+          contact_keywords: listFromText(contactKeywordsEl.value),
+          identity_keywords: listFromText(identityKeywordsEl.value)
+        },
+        model_policy: {
+          provider: providerEl.value,
+          model: modelEl.value.trim(),
+          timeout_ms: Number(timeoutMsEl.value),
+          temperature: Number.isFinite(temperature) ? temperature : null
+        },
+        limits: {
+          max_history: Number(maxHistoryEl.value),
+          max_input_chars: Number(maxInputCharsEl.value)
+        }
+      };
+    }
+
+    async function bootstrap() {
+      if (!ENDPOINT) {
+        setStatus(mainStatusEl, "اكتب رابط الـ Worker أولاً.", false, true);
+        return;
+      }
+
+      setStatus(mainStatusEl, "جارٍ تحميل الإعدادات...");
+      try {
+        state.active = await fetchConfig("active");
+        state.draft = await fetchConfig("draft");
+
+        activeVersionEl.textContent = state.active?.version || "—";
+        draftVersionEl.textContent = state.draft?.version || "—";
+        activeMetaEl.textContent = formatMeta(state.active, "active");
+        draftMetaEl.textContent = formatMeta(state.draft, "draft");
+
+        if (state.draft) {
+          fillForm(state.draft, true);
+          setStatus(versionStatusEl, "تم تحميل Draft.", true);
+        } else if (state.active) {
+          fillForm(state.active, false);
+          setStatus(versionStatusEl, "تم تحميل Active (لا يوجد Draft).", true);
+        } else {
+          setStatus(versionStatusEl, "لا يوجد إعدادات بعد.", false, true);
+        }
+
+        setStatus(mainStatusEl, "جاهز.", true);
+      } catch (err) {
+        setStatus(mainStatusEl, err.message || "فشل تحميل الإعدادات.", false, true);
+      }
+    }
+
+    async function saveConnection() {
+      const endpointValue = sanitizeEndpoint(endpointInput.value);
       const tokenValue = tokenInput.value.trim();
 
       if (!endpointValue) {
-        setConnectionStatus("اكتب رابط الـ Worker بشكل صحيح.", false);
+        setStatus(connectionStatus, "اكتب رابط صحيح.", false, true);
         return;
       }
 
       ENDPOINT = endpointValue;
-      localStorage.setItem("jimmy_admin_endpoint", ENDPOINT);
-      endpointInput.value = ENDPOINT;
-
       AUTH_TOKEN = tokenValue;
+
+      localStorage.setItem("jimmy_admin_endpoint", ENDPOINT);
       localStorage.setItem("jimmy_admin_token", AUTH_TOKEN);
 
-      CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin/config`;
-      setConnectionStatus("تم حفظ الاتصال.", true);
-      loadConfig();
+      setStatus(connectionStatus, "تم حفظ الاتصال.", true);
+      await bootstrap();
     }
 
-    async function loadConfig() {
+    async function rotateToken() {
+      if (!ENDPOINT) {
+        setStatus(connectionStatus, "اكتب رابط الـ Worker أولاً.", false, true);
+        return;
+      }
+
+      setStatus(connectionStatus, "جارٍ تدوير الرمز...");
+
       try {
-        const res = await fetch(CONFIG_URL, { headers: buildHeaders() });
+        const res = await fetch(apiUrl("/admin/token/rotate"), {
+          method: "POST",
+          headers: buildHeaders(),
+          body: JSON.stringify({})
+        });
         const data = await res.json();
-
-        if (!res.ok) {
-          setStatus(data?.error || "فشل تحميل الإعدادات.");
-          return;
-        }
-
-        const config = data?.config || {};
-        systemPromptEl.value = config.system_prompt || systemPromptEl.value;
-        verifiedFactsEl.value = config.verified_facts || verifiedFactsEl.value;
-        contactTemplateEl.value = config.contact_templates?.ar || contactTemplateEl.value;
-        defaultLanguageEl.value = config.default_language || defaultLanguageEl.value;
-        primaryProviderEl.value = config.primary_provider || primaryProviderEl.value;
-        maxLinesEl.value = config.rules?.max_lines ?? maxLinesEl.value;
-        followupQuestionsEl.value = config.rules?.followup_questions ?? followupQuestionsEl.value;
-        setStatus("تم تحميل الإعدادات.", true);
+        if (!res.ok) throw new Error(data?.error || "فشل تدوير الرمز");
+        AUTH_TOKEN = data.token;
+        tokenInput.value = AUTH_TOKEN;
+        localStorage.setItem("jimmy_admin_token", AUTH_TOKEN);
+        setStatus(connectionStatus, "تم تدوير الرمز.", true);
       } catch (err) {
-        setStatus("فشل تحميل الإعدادات.");
+        setStatus(connectionStatus, err.message || "فشل تدوير الرمز.", false, true);
       }
     }
 
-    async function saveConfig() {
-      setStatus("جارٍ الحفظ...");
-      saveBtn.disabled = true;
-
+    async function loadConfig(stateName) {
+      if (!ENDPOINT) return;
+      setStatus(versionStatusEl, "جارٍ التحميل...");
       try {
-        const payload = {
-          system_prompt: systemPromptEl.value.trim(),
-          verified_facts: verifiedFactsEl.value.trim(),
-          contact_templates: {
-            ar: contactTemplateEl.value.trim(),
-            en: contactTemplateEl.value.trim(),
-          },
-          default_language: defaultLanguageEl.value,
-          primary_provider: primaryProviderEl.value,
-          rules: {
-            max_lines: Number(maxLinesEl.value),
-            followup_questions: Number(followupQuestionsEl.value),
-          },
-        };
-
-        if (!payload.system_prompt) {
-          setStatus("اكتب تعليمات سلوك جيمي أولاً.");
+        const config = await fetchConfig(stateName);
+        if (!config) {
+          setStatus(versionStatusEl, stateName === "draft" ? "لا يوجد Draft." : "لا يوجد Active.", false, true);
           return;
         }
+        fillForm(config, stateName === "draft");
+        setStatus(versionStatusEl, `تم تحميل ${stateName}.`, true);
+      } catch (err) {
+        setStatus(versionStatusEl, err.message || "فشل التحميل.", false, true);
+      }
+    }
 
-        const res = await fetch(CONFIG_URL, {
+    async function saveDraft() {
+      if (!ENDPOINT) return;
+      setStatus(mainStatusEl, "جارٍ الحفظ...");
+      saveDraftBtn.disabled = true;
+      try {
+        const payload = collectConfig();
+        const res = await fetch(apiUrl("/admin/config/draft"), {
           method: "POST",
           headers: buildHeaders(),
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-
         const data = await res.json();
-        if (!res.ok) {
-          setStatus(data?.error || "فشل الحفظ.");
-          return;
-        }
-
-        setStatus("تم الحفظ.", true);
+        if (!res.ok) throw new Error(data?.error || "فشل الحفظ.");
+        state.draft = data.config;
+        state.currentVersion = data.config?.version || "";
+        versionInputEl.value = state.currentVersion;
+        draftVersionEl.textContent = state.currentVersion || "—";
+        draftMetaEl.textContent = formatMeta(state.draft, "draft");
+        setStatus(mainStatusEl, "تم حفظ Draft.", true);
       } catch (err) {
-        setStatus("فشل الحفظ.");
+        const message = err.message || "فشل الحفظ.";
+        setStatus(mainStatusEl, message, false, true);
       } finally {
-        saveBtn.disabled = false;
+        saveDraftBtn.disabled = false;
+      }
+    }
+
+    async function publishDraft() {
+      if (!confirm("هل تريد نشر الـ Draft الآن؟")) return;
+      setStatus(versionStatusEl, "جارٍ النشر...");
+      try {
+        const res = await fetch(apiUrl("/admin/publish"), {
+          method: "POST",
+          headers: buildHeaders(),
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "فشل النشر.");
+        state.active = data.config;
+        state.draft = null;
+        activeVersionEl.textContent = state.active?.version || "—";
+        activeMetaEl.textContent = formatMeta(state.active, "active");
+        draftVersionEl.textContent = "—";
+        draftMetaEl.textContent = "—";
+        setStatus(versionStatusEl, "تم النشر.", true);
+      } catch (err) {
+        setStatus(versionStatusEl, err.message || "فشل النشر.", false, true);
+      }
+    }
+
+    async function rollback() {
+      if (!confirm("هل تريد الرجوع للإصدار السابق؟")) return;
+      setStatus(versionStatusEl, "جارٍ الرجوع...");
+      try {
+        const res = await fetch(apiUrl("/admin/rollback"), {
+          method: "POST",
+          headers: buildHeaders(),
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "فشل الرجوع.");
+        state.active = data.config;
+        activeVersionEl.textContent = state.active?.version || "—";
+        activeMetaEl.textContent = formatMeta(state.active, "active");
+        setStatus(versionStatusEl, "تم الرجوع للإصدار السابق.", true);
+      } catch (err) {
+        setStatus(versionStatusEl, err.message || "فشل الرجوع.", false, true);
+      }
+    }
+
+    async function runPreview() {
+      if (!ENDPOINT) return;
+      const message = previewMessageEl.value.trim();
+      if (!message) {
+        setStatus(previewStatusEl, "اكتب رسالة أولاً.", false, true);
+        return;
+      }
+
+      setStatus(previewStatusEl, "جارٍ الاختبار...");
+      previewOutputEl.textContent = "";
+
+      try {
+        const payload = { messages: [{ role: "user", content: message }] };
+        if (previewLanguageEl.value !== "auto") {
+          payload.language = previewLanguageEl.value;
+        }
+        const res = await fetch(apiUrl("/admin/preview"), {
+          method: "POST",
+          headers: buildHeaders(),
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "فشل الاختبار.");
+        previewOutputEl.textContent = data?.response || "";
+        const latency = data?.latency_ms ? ` (${data.latency_ms}ms)` : "";
+        setStatus(previewStatusEl, `تم الاختبار${latency}.`, true);
+      } catch (err) {
+        previewOutputEl.textContent = "";
+        setStatus(previewStatusEl, err.message || "فشل الاختبار.", false, true);
+      }
+    }
+
+    async function loadAudit() {
+      if (!ENDPOINT) return;
+      setStatus(auditStatusEl, "جارٍ التحميل...");
+      try {
+        const res = await fetch(apiUrl("/admin/audit"), { headers: buildHeaders() });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "فشل تحميل السجل.");
+        const entries = Array.isArray(data.audit) ? data.audit : [];
+        if (!entries.length) {
+          auditListEl.textContent = "لا يوجد بيانات بعد.";
+        } else {
+          auditListEl.innerHTML = entries
+            .map(item => {
+              const action = item.action || "action";
+              const time = item.at || "";
+              const version = item.version ? ` | ${item.version}` : "";
+              return `<div class="audit-item">${action}${version} — ${time}</div>`;
+            })
+            .join("");
+        }
+        setStatus(auditStatusEl, "تم تحميل السجل.", true);
+      } catch (err) {
+        setStatus(auditStatusEl, err.message || "فشل تحميل السجل.", false, true);
       }
     }
 
     saveConnectionBtn.addEventListener("click", saveConnection);
-    saveBtn.addEventListener("click", saveConfig);
-    loadConfig();
+    rotateTokenBtn.addEventListener("click", rotateToken);
+    loadActiveBtn.addEventListener("click", () => loadConfig("active"));
+    loadDraftBtn.addEventListener("click", () => loadConfig("draft"));
+    publishDraftBtn.addEventListener("click", publishDraft);
+    rollbackBtn.addEventListener("click", rollback);
+    saveDraftBtn.addEventListener("click", saveDraft);
+    runPreviewBtn.addEventListener("click", runPreview);
+    loadAuditBtn.addEventListener("click", loadAudit);
+
+    if (ENDPOINT && AUTH_TOKEN) {
+      bootstrap();
+    }
   </script>
 </body>
 </html>

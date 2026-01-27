@@ -387,9 +387,15 @@ h1, h2, h3, h4 {
 
     position: absolute;
 
-    padding: 4px 10px; background: rgba(0, 0, 0, 0.9); border: 1px solid var(--highlight);
+    padding: 4px 10px; 
 
-    border-radius: 4px; font-size: 0.65rem; font-family: monospace; color: var(--highlight);
+    background: rgba(0, 0, 0, 0.6); /* Lighter background */
+
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Very subtle border */
+
+    border-radius: 4px; font-size: 0.65rem; font-family: monospace; 
+
+    color: var(--text-muted); /* Muted text color */
 
     backdrop-filter: blur(10px);
 
@@ -401,7 +407,9 @@ h1, h2, h3, h4 {
 
     font-weight: 700;
 
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    box-shadow: none; /* Removed heavy glow */
+
+    opacity: 0.7; /* Calmer transparency */
 
 }
 
@@ -502,38 +510,71 @@ h1, h2, h3, h4 {
 }
 
 
-/* --- 🎞️ EXPERIENCE CAROUSEL (Apple Style) --- */
+/* --- 🎞️ EXPERIENCE CAROUSEL (Clean Navigation) --- */
 .carousel-container {
     position: relative;
     width: 100%;
     padding-bottom: 40px;
 }
 
-/* Scroll Container */
+/* Navigation Buttons (Glass Orbs) */
+.nav-btn {
+    position: absolute; top: 40%; transform: translateY(-50%);
+    width: 48px; height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #fff; font-size: 1.2rem;
+    cursor: pointer; z-index: 10;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover {
+    background: var(--highlight);
+    border-color: var(--highlight);
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+.prev-btn { left: -20px; }
+.next-btn { right: -20px; }
+
+/* Scroll Container (Smooth & Simple) */
 .horizontal-scroll {
     display: flex;
     gap: 24px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    padding: 20px 5vw; /* Start/End padding */
-    scrollbar-width: none; /* Hide scrollbar Firefox */
-    -ms-overflow-style: none;  /* Hide scrollbar IE */
+    scroll-behavior: smooth; /* Native smooth scroll */
+    padding: 20px 5vw;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab; /* Standard drag cursor */
 }
+.horizontal-scroll:active { cursor: grabbing; }
 .horizontal-scroll::-webkit-scrollbar { display: none; }
 
-/* The Card */
+/* The Card (Clean) */
 .exp-card {
     min-width: 280px;
-    height: 400px; /* Portrait Ratio */
+    height: 400px;
     background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 24px;
     padding: 32px;
     display: flex; flex-direction: column; justify-content: flex-end;
     scroll-snap-align: center;
-    transition: transform 0.4s ease;
-    cursor: grab;
+    transition: transform 0.3s ease, border-color 0.3s;
+    user-select: none; /* Prevent text selection while dragging */
 }
+
+/* Simple Active State */
+.exp-card:hover {
+    border-color: var(--highlight);
+    transform: translateY(-5px);
+}
+
+/* Remove Complex Drag States */
+.carousel-container:active .exp-card { cursor: grabbing; }
 
 .exp-card:hover {
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(20,20,25,0.8) 100%);
@@ -563,6 +604,15 @@ h1, h2, h3, h4 {
     display: flex; justify-content: space-between;
     font-size: 0.75rem; color: var(--text-faint);
     font-family: monospace;
+}
+
+.scrub-year {
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 10px 0; /* Easier to click */
+}
+.scrub-year:hover {
+    color: var(--highlight);
 }
 
 /* The Moving Indicator */
@@ -600,15 +650,102 @@ h1, h2, h3, h4 {
 .card-icon { color: var(--highlight); opacity: 0.8; }
 
 
-/* --- 🏫 EDUCATION --- */
-.kinetic-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
-.kinetic-header {
-    padding: 32px 0; display: flex; align-items: center; cursor: pointer; transition: 0.3s;
+/* --- 🎓 EDUCATION (Ultra Modern Log) --- */
+.education-section.terminal-mode { padding: 40px 0 80px; }
+
+/* The Trigger (Glass Chip) */
+.terminal-trigger {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem; 
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px 28px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    display: flex; align-items: center; gap: 12px;
+    width: fit-content; margin: 0 auto;
+    backdrop-filter: blur(10px);
 }
-.kinetic-header:hover { padding-left: 20px; }
-.kinetic-number { margin-right: 30px; font-family: var(--font-display); color: var(--text-faint); font-size: 0.9rem; }
-.kinetic-title { flex: 1; font-size: 1.2rem; color: #fff; }
-.kinetic-arrow { color: var(--text-faint); }
+
+.terminal-trigger:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--highlight);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.trigger-icon { 
+    color: var(--highlight); font-size: 1.1rem; 
+    transition: transform 0.3s;
+}
+.terminal-window.open + .terminal-trigger .trigger-icon { transform: rotate(90deg); }
+
+.status { 
+    font-size: 0.75rem; 
+    color: var(--text-faint); 
+    background: rgba(255,255,255,0.05); 
+    padding: 4px 10px; 
+    border-radius: 20px; 
+    margin-left: auto;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* The Window (Glass Panel) */
+.terminal-window {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s;
+    background: linear-gradient(180deg, rgba(20,20,25,0.6) 0%, rgba(20,20,25,0.2) 100%);
+    backdrop-filter: blur(24px);
+    border-radius: 24px;
+    width: 100%; max-width: 800px; margin: 20px auto 0;
+    opacity: 0;
+    border: 1px solid transparent;
+}
+
+.terminal-window.open { 
+    max-height: 500px; 
+    opacity: 1; 
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.5);
+}
+
+.terminal-content { 
+    padding: 40px; 
+    display: flex; flex-direction: column; gap: 16px;
+}
+
+/* Log Entries (Clean Rows) */
+.log-entry { 
+    display: grid; grid-template-columns: 80px 1fr auto; gap: 20px;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    align-items: center;
+    opacity: 0; transform: translateY(10px); transition: 0.4s;
+}
+.terminal-window.open .log-entry { opacity: 1; transform: translateY(0); }
+.log-entry:last-child { border-bottom: none; }
+
+.log-date { 
+    font-family: var(--font-display); 
+    font-weight: 700; color: var(--highlight); 
+    font-size: 0.9rem;
+}
+
+.log-info { display: flex; flex-direction: column; }
+.log-title { color: #fff; font-size: 1rem; font-weight: 500; margin-bottom: 4px; }
+.log-place { color: var(--text-muted); font-size: 0.85rem; }
+
+.log-type {
+    font-size: 0.7rem; color: var(--text-faint); 
+    text-transform: uppercase; letter-spacing: 1px;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 4px 8px; border-radius: 6px;
+}
 
 
 /* --- 🦶 FOOTER (THE DOCK) --- */
@@ -643,6 +780,24 @@ h1, h2, h3, h4 {
 .status-text { font-size: 0.75rem; color: #4ade80; }
 
 .footer-micro-copy { margin-top: 20px; font-size: 0.75rem; color: var(--text-faint); opacity: 0.5; }
+
+/* Casual Outro Styles */
+.footer-casual-msg {
+    text-align: center;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+.footer-casual-msg p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+.footer-casual-msg .secondary {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    margin-top: 8px;
+    font-style: italic;
+}
 
 
 /* --- 📱 MOBILE RESPONSIVE --- */
@@ -882,4 +1037,15 @@ h1, h2, h3, h4 {
         bottom: 20px;
         right: 20px;
     }
+}
+
+/* --- 🎓 EDUCATION CAROUSEL VARIANT --- */
+.edu-card .exp-year {
+    color: #a78bfa; /* Soft Purple */
+}
+
+.edu-card:hover {
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, rgba(20,20,25,0.8) 100%);
+    border-color: #8b5cf6;
+    transform: translateY(-10px);
 }

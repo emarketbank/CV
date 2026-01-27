@@ -4,88 +4,83 @@
 - `index.html` - main site (English)
 - `portfolio/` and `achievements/` - portfolio and achievements pages
 - `assets/css/` - shared styles
-- `assets/js/` - shared scripts
+- `assets/js/` - shared scripts (including the chat widget)
 - `assets/docs/mohamed-gamal-cv.pdf` - downloadable CV
 - `about-mo.gamal.md` - long-form bio copy
-- `assets/captain-jimmy-prompt.txt` - Jimmy system prompt reference
-- `jimmy-worker.js` - Cloudflare Worker (dynamic Jimmy config)
+- `jimmy-worker.js` - Cloudflare Worker (engine + policy + admin API)
 - `admin.html` - control panel (GitHub Pages)
 
-## Architecture (MVP)
-- Worker = engine only (routing, security, providers, normalization).
-- On every `/chat` request, Worker loads KV config and builds:
-  `system_prompt = system_prompt + "\n\n" + verified_facts`.
-- If KV is missing or incomplete, Worker falls back to embedded defaults.
+## Architecture (Rebuild 2026)
+- **Single Source of Truth**: Worker uses KV config only. No embedded behavior defaults.
+- **Draft → Publish → Rollback**: Admin edits draft, publishes to active, and can roll back.
+- **Policy Engine**: Enforces max lines + blocks AI mentions + emojis after the model responds.
+- **Predictable Latency**: Single model per request, no retries.
 
 ## Endpoints
+Public:
 - `POST /chat`
-  - Public
   - CORS: `*`
-  - Reads KV on every request
+  - Uses **active** config only
 
-- `GET /admin`
-- `POST /admin`
-  - Private
-  - CORS allowlist: `https://emarketbank.github.io`
-  - Authorization: `Authorization: Bearer ADMIN_TOKEN`
-  - Origin not allowed → `403`
-  - Missing/invalid token → `401`
+Health:
+- `GET /health`
+  - KV status, active config presence, provider key availability
 
-## KV config
+Admin (private, CORS allowlist + Bearer token):
+- `GET /admin/config?state=active|draft`
+- `POST /admin/config/draft` (alias: `POST /admin/config`)
+- `POST /admin/publish`
+- `POST /admin/rollback`
+- `POST /admin/preview`
+- `POST /admin/token/rotate`
+- `GET /admin/audit`
+
+## KV Keys
 - Binding: `JIMMY_KV`
-- Key: `jimmy:config`
+- Keys:
+  - `jimmy:config:active`
+  - `jimmy:config:draft`
+  - `jimmy:config:history`
+  - `jimmy:admin`
+  - `jimmy:audit`
 
-Schema (JSON):
-- `system_prompt` (string, required)
-- `verified_facts` (string, optional)
-- `contact_templates` (object with `ar`, `en`)
+## Config Schema (JSON)
+Required fields:
 - `default_language` (`ar` or `en`)
-- `primary_provider` (`gemini` or `openai`)
-- `rules` (object with `max_lines`, `followup_questions`)
+- `system_prompt` (`{ ar, en }`)
+- `verified_facts` (`{ ar, en }`)
+- `contact_templates` (`{ ar, en }`)
+- `identity_templates` (`{ ar, en }`)
+- `fallback_messages` (`{ ar, en }`)
+- `rules` (`{ max_lines, followup_questions, block_ai_mentions, block_emojis }`)
+- `intent_rules` (`{ contact_keywords[], identity_keywords[] }`)
+- `model_policy` (`{ provider, model, timeout_ms, temperature? }`)
+- `limits` (`{ max_history, max_input_chars }`)
 
-## Admin panel
+Optional metadata:
+- `version`, `updated_at`, `updated_by`, `published_at`
+
+## Admin Panel
 - Hosted at: `https://emarketbank.github.io/CV/admin.html`
-- Fields:
-  - System Prompt
-  - Verified Facts
-  - Contact Templates (AR/EN)
-  - Default Language / Primary Provider / Models
-  - Rules (max lines + follow-up questions)
-- Save writes directly to KV. Changes are live immediately.
+- Features:
+  - Draft → Publish → Rollback
+  - AR / EN separated 100%
+  - Playground testing against Draft
+  - Token rotation
+  - Audit log
 
-## Behavior rules (write inside system_prompt)
-- Responses are short.
-- One follow-up question only.
-- No contact suggestion unless the user asks.
-- No hallucinated numbers or titles.
-- Use KB facts only when directly relevant.
+## Notes
+- No defaults: If no active config exists, `/chat` returns “Service not configured.”
+- Update behavior only through Admin.
+- Logs are JSON with latency and request ID.
 
-## System Prompt Template (Arabic)
-أنت "كابتن جيمي" — المساعد الرسمي لمحمد جمال.
-بتتكلم عربي مصري، هادي، مباشر، من غير تنظير.
-
-قواعد الرد:
-- 2 إلى 6 سطور فقط.
-- سؤال متابعة واحد فقط في آخر سطر.
-- ممنوع ذكر أي مزود/موديل/AI.
-- ممنوع إيموجيز.
-- ممنوع تقترح تواصل إلا لو المستخدم طلب صراحة.
-
-قاعدة الحقائق:
-- استخدم معلومات الـ Verified Facts فقط لو السؤال له علاقة مباشرة.
-- لو مش متأكد: قول "مش متأكد" واطلب معلومة واحدة.
-
-## Verified Facts Template (Arabic)
-حقائق مؤكدة عن محمد جمال (استخدمها فقط عند الارتباط بالسؤال):
-- [ضع الحقائق المؤكدة هنا بنقاط قصيرة]
-- [أرقام مؤكدة فقط]
-
-ممنوعات:
-- أي منصب/رقم/إنجاز غير مؤكد.
-- ممنوع ذكر كل الأرقام مرة واحدة.
+## Repo hygiene (later)
+- There are unrelated deletions/asset diffs in the repo. We will ignore them for now and run a cleanup sprint after the chat system stabilizes.
 
 ## Testing (post-deploy)
-- Run 3 requests (AR / EN / Contact) and review Worker logs.
+1) Create Draft from Admin.
+2) Publish.
+3) Run 3 requests (AR / EN / Contact) and verify logs + response rules.
 
 ## Language notes
 - Arabic pages: `portfolio/index-ar.html`, `achievements/index-ar.html`

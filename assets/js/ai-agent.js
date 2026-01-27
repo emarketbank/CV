@@ -5,9 +5,9 @@
 
 const AGENT_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
-    timeoutMs: 25000,  // 25 seconds (increased from 9s)
+    timeoutMs: 10000,
     maxHistory: 12,
-    maxRetries: 2,
+    maxRetries: 1,
     retryDelayMs: 1500,
     storageKey: 'jimmy_chat_history',
     typingText: {
@@ -15,8 +15,8 @@ const AGENT_CONFIG = {
         en: 'Thinking...'
     },
     errorText: {
-        ar: 'حصلت مشكلة في الاتصال. بنحاول تاني...',
-        en: 'Connection issue. Retrying...',
+        ar: 'حصلت مشكلة في الاتصال.',
+        en: 'Connection issue.',
         arFinal: 'الخدمة مش متاحة حالياً. جرّب كمان شوية.',
         enFinal: 'Service temporarily unavailable. Please try again later.'
     }
@@ -247,7 +247,10 @@ class MGAgent {
             }
 
             if (!res.ok) {
-                const message = data?.error || data?.response || 'Request failed.';
+                if (data?.response) {
+                    return { response: data.response, request_id: data.request_id, is_fallback: true };
+                }
+                const message = data?.error || 'Request failed.';
                 throw new Error(message);
             }
 
@@ -289,7 +292,7 @@ class MGAgent {
         this.setSendingState(true);
 
         try {
-            const data = await this.fetchResponse({ messages: this.messages });
+            const data = await this.fetchResponse({ messages: this.messages, language: this.userLanguage });
             const reply = data?.response?.trim();
 
             if (!reply) {
