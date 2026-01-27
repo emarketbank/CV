@@ -85,7 +85,8 @@
     }
 
     textarea,
-    select {
+    select,
+    input {
       width: 100%;
       border-radius: 14px;
       border: 1px solid var(--border);
@@ -104,7 +105,8 @@
     }
 
     textarea:focus,
-    select:focus {
+    select:focus,
+    input:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 4px rgba(28, 140, 122, 0.12);
@@ -112,6 +114,12 @@
 
     .model-row {
       margin-top: 8px;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
     }
 
     .footer {
@@ -181,23 +189,57 @@
 
     <div class="grid">
       <div>
-        <label for="systemRole">System Role / Instructions</label>
-        <textarea id="systemRole" placeholder="Paste the full system role here..."></textarea>
+        <label for="systemPrompt">System Prompt</label>
+        <textarea id="systemPrompt" placeholder="Full system prompt for Jimmy..."></textarea>
       </div>
       <div>
-        <label for="knowledgeBase">Knowledge Base</label>
-        <textarea id="knowledgeBase" placeholder="Paste Mohamed knowledge base here..."></textarea>
+        <label for="verifiedFacts">Verified Facts</label>
+        <textarea id="verifiedFacts" placeholder="Facts Jimmy can use when relevant..."></textarea>
+      </div>
+      <div>
+        <label for="contactTemplateAr">Contact Template (AR)</label>
+        <textarea id="contactTemplateAr" placeholder="Arabic contact template..."></textarea>
+      </div>
+      <div>
+        <label for="contactTemplateEn">Contact Template (EN)</label>
+        <textarea id="contactTemplateEn" placeholder="English contact template..."></textarea>
       </div>
     </div>
 
     <div class="model-row">
-      <label for="activeModel">Active Model (optional)</label>
-      <select id="activeModel">
-        <option value="">Auto (PRIMARY_AI)</option>
-        <option value="gemini:gemini-2.5-flash">Gemini 2.5 Flash</option>
-        <option value="gemini:gemini-1.5-flash">Gemini 1.5 Flash</option>
-        <option value="openai:gpt-4o-mini">OpenAI GPT-4o mini</option>
-      </select>
+      <label>Runtime Settings</label>
+      <div class="inline-grid">
+        <div>
+          <label for="defaultLanguage">Default Language</label>
+          <select id="defaultLanguage">
+            <option value="ar">Arabic (ar)</option>
+            <option value="en">English (en)</option>
+          </select>
+        </div>
+        <div>
+          <label for="primaryProvider">Primary Provider</label>
+          <select id="primaryProvider">
+            <option value="gemini">Gemini</option>
+            <option value="openai">OpenAI</option>
+          </select>
+        </div>
+        <div>
+          <label for="geminiModel">Gemini Model</label>
+          <input id="geminiModel" type="text" placeholder="gemini-2.5-flash">
+        </div>
+        <div>
+          <label for="openaiModel">OpenAI Model</label>
+          <input id="openaiModel" type="text" placeholder="gpt-4o-mini">
+        </div>
+        <div>
+          <label for="maxLines">Max Lines</label>
+          <input id="maxLines" type="number" min="1" max="12" step="1">
+        </div>
+        <div>
+          <label for="followupQuestions">Follow-up Questions</label>
+          <input id="followupQuestions" type="number" min="0" max="3" step="1">
+        </div>
+      </div>
     </div>
 
     <div class="footer">
@@ -228,9 +270,16 @@
     const AUTH_TOKEN = tokenFromQuery || storedToken || "";
     const CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
 
-    const systemRoleEl = document.getElementById("systemRole");
-    const knowledgeBaseEl = document.getElementById("knowledgeBase");
-    const activeModelEl = document.getElementById("activeModel");
+    const systemPromptEl = document.getElementById("systemPrompt");
+    const verifiedFactsEl = document.getElementById("verifiedFacts");
+    const contactTemplateArEl = document.getElementById("contactTemplateAr");
+    const contactTemplateEnEl = document.getElementById("contactTemplateEn");
+    const defaultLanguageEl = document.getElementById("defaultLanguage");
+    const primaryProviderEl = document.getElementById("primaryProvider");
+    const geminiModelEl = document.getElementById("geminiModel");
+    const openaiModelEl = document.getElementById("openaiModel");
+    const maxLinesEl = document.getElementById("maxLines");
+    const followupQuestionsEl = document.getElementById("followupQuestions");
     const statusEl = document.getElementById("status");
     const saveBtn = document.getElementById("saveBtn");
 
@@ -258,9 +307,16 @@
         }
 
         const config = data?.config || {};
-        systemRoleEl.value = config.system_role || "";
-        knowledgeBaseEl.value = config.knowledge_base || "";
-        activeModelEl.value = config.active_model || "";
+        systemPromptEl.value = config.system_prompt || "";
+        verifiedFactsEl.value = config.verified_facts || "";
+        contactTemplateArEl.value = config.contact_templates?.ar || "";
+        contactTemplateEnEl.value = config.contact_templates?.en || "";
+        defaultLanguageEl.value = config.default_language || "ar";
+        primaryProviderEl.value = config.primary_provider || "gemini";
+        geminiModelEl.value = config.models?.gemini || "";
+        openaiModelEl.value = config.models?.openai || "";
+        maxLinesEl.value = config.rules?.max_lines ?? 6;
+        followupQuestionsEl.value = config.rules?.followup_questions ?? 1;
         setStatus("Loaded.", true);
       } catch (err) {
         setStatus("Failed to load config.");
@@ -273,9 +329,22 @@
 
       try {
         const payload = {
-          system_role: systemRoleEl.value.trim(),
-          knowledge_base: knowledgeBaseEl.value.trim(),
-          active_model: activeModelEl.value,
+          system_prompt: systemPromptEl.value.trim(),
+          verified_facts: verifiedFactsEl.value.trim(),
+          contact_templates: {
+            ar: contactTemplateArEl.value.trim(),
+            en: contactTemplateEnEl.value.trim(),
+          },
+          default_language: defaultLanguageEl.value,
+          primary_provider: primaryProviderEl.value,
+          models: {
+            gemini: geminiModelEl.value.trim(),
+            openai: openaiModelEl.value.trim(),
+          },
+          rules: {
+            max_lines: Number(maxLinesEl.value),
+            followup_questions: Number(followupQuestionsEl.value),
+          },
         };
 
         const res = await fetch(CONFIG_URL, {
@@ -287,11 +356,6 @@
         const data = await res.json();
         if (!res.ok) {
           setStatus(data?.error || "Save failed.");
-          return;
-        }
-
-        if (data?.ignored_active_model) {
-          setStatus("Saved (active model ignored).", true);
           return;
         }
 

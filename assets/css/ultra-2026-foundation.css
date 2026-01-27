@@ -1,0 +1,88 @@
+/* 
+   🚀 ULTRA-MODERN 2026 FOUNDATION
+   Philosophy: "Dimensional Clarity, Fluid Energy, Premium Silence"
+*/
+
+:root {
+    /* --- 🎨 THE 2026 PALETTE: CHRONOS DARK --- */
+    --accent-primary: #00f2ff;    /* Cyber Cyan */
+    --accent-secondary: #7000ff; /* Electric Indigo */
+    --accent-glow: rgba(0, 242, 255, 0.15);
+    
+    --bg-base: #020203;          /* The deep void */
+    --bg-surface: #0a0a0c;       /* Floating layer */
+    --bg-glass: rgba(10, 10, 12, 0.7);
+    
+    --text-hero: #ffffff;
+    --text-body: #a1a1aa;        /* Muted tech silver */
+    --text-dim: #52525b;
+    
+    /* --- 📏 DIMENSIONAL TOKENS (The Depth System) --- */
+    --z-depth-1: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --z-depth-2: 0 12px 32px rgba(0, 0, 0, 0.7);
+    --z-depth-3: 0 24px 64px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.1);
+    
+    /* Inner light for "carved" or "beveled" glass look */
+    --inner-light: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    
+    /* --- 🖋️ TYPOGRAPHY EVOLUTION --- */
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-display: 'Outfit', sans-serif;
+    
+    --tracking-header: -0.04em;
+    --tracking-body: -0.01em;
+    
+    /* --- 🌊 MOTION EASING (The "Apple-Premium" feel) --- */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+/* Base resets with modern defaults */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: var(--bg-base);
+    color: var(--text-body);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Typography Scale */
+h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--text-hero);
+    letter-spacing: var(--tracking-header);
+    font-weight: 700;
+}
+
+/* The "Product" Container - Not just a wrapper */
+.product-shell {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glass Surface Utility */
+.glass-surface {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--inner-light);
+}
+
+/* Performance-first: prevents layout shifts */
+img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}

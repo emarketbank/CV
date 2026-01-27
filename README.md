@@ -11,11 +11,11 @@
 - `jimmy-worker.js` - Cloudflare Worker (dynamic Jimmy config)
 - `admin.html` - control panel (GitHub Pages)
 
-## Architecture (Non-negotiable)
+## Architecture (MVP)
 - Worker = engine only (routing, security, providers, normalization).
-- No system prompt hardcoded in the Worker.
 - On every `/chat` request, Worker loads KV config and builds:
-  `system_prompt = system_role + "\n\n" + knowledge_base`.
+  `system_prompt = system_prompt + "\n\n" + verified_facts`.
+- If KV is missing or incomplete, Worker falls back to embedded defaults.
 
 ## Endpoints
 - `POST /chat`
@@ -36,33 +36,33 @@
 - Key: `jimmy:config`
 
 Schema (JSON):
-- `system_role` (string, required)
-- `knowledge_base` (string, optional)
-- `active_model` (string, optional: `gemini:<model>` or `openai:<model>`)
-- `version` (number, optional)
-- `updated_at` (ISO string, optional)
-- `updated_by` (string, optional)
-
-Active model is whitelisted. If value is not in allowlist, it is ignored and falls back to `PRIMARY_AI`.
-You can override allowlist with `ALLOWED_MODELS` (comma-separated).
+- `system_prompt` (string, required)
+- `verified_facts` (string, optional)
+- `contact_templates` (object with `ar`, `en`)
+- `default_language` (`ar` or `en`)
+- `primary_provider` (`gemini` or `openai`)
+- `models` (object with `gemini`, `openai`)
+- `rules` (object with `max_lines`, `followup_questions`)
 
 ## Admin panel
 - Hosted at: `https://emarketbank.github.io/CV/admin.html`
 - Fields:
-  - System Role / Instructions
-  - Knowledge Base
-  - Active Model (optional)
+  - System Prompt
+  - Verified Facts
+  - Contact Templates (AR/EN)
+  - Default Language / Primary Provider / Models
+  - Rules (max lines + follow-up questions)
 - Save writes directly to KV. Changes are live immediately.
 
-## Behavior rules (write inside system_role)
+## Behavior rules (write inside system_prompt)
 - Responses are short.
 - One follow-up question only.
 - No contact suggestion unless the user asks.
 - No hallucinated numbers or titles.
 - Use KB facts only when directly relevant.
 
-## System Role Template (Arabic)
-أنت "جيمي" — المساعد الرسمي لمحمد جمال.
+## System Prompt Template (Arabic)
+أنت "كابتن جيمي" — المساعد الرسمي لمحمد جمال.
 بتتكلم عربي مصري، هادي، مباشر، من غير تنظير.
 
 قواعد الرد:
@@ -73,10 +73,10 @@ You can override allowlist with `ALLOWED_MODELS` (comma-separated).
 - ممنوع تقترح تواصل إلا لو المستخدم طلب صراحة.
 
 قاعدة الحقائق:
-- استخدم معلومات الـ Knowledge Base فقط لو السؤال له علاقة مباشرة.
+- استخدم معلومات الـ Verified Facts فقط لو السؤال له علاقة مباشرة.
 - لو مش متأكد: قول "مش متأكد" واطلب معلومة واحدة.
 
-## Knowledge Base Template (Arabic)
+## Verified Facts Template (Arabic)
 حقائق مؤكدة عن محمد جمال (استخدمها فقط عند الارتباط بالسؤال):
 - [ضع الحقائق المؤكدة هنا بنقاط قصيرة]
 - [أرقام مؤكدة فقط]

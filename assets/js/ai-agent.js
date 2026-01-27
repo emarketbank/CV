@@ -85,9 +85,9 @@ class MGAgent {
                 time: 'الآن'
             },
             en: {
-                name: 'Captain Jemy',
+                name: 'Captain Jimmy',
                 subtitle: 'System Officer',
-                welcome: "Welcome! I'm Captain Jemy 👮‍♂️. How can I help you explore Mohamed's work?",
+                welcome: "Welcome! I'm Captain Jimmy 👮‍♂️. How can I help you explore Mohamed's work?",
                 placeholder: 'Ask about experience, skills, or projects...',
                 time: 'Just now'
             }
@@ -130,7 +130,7 @@ class MGAgent {
                 </div>
             </div>
 
-            <div class="ai-core-trigger" id="toggleChat" aria-label="Talk to Captain Jemy">
+            <div class="ai-core-trigger" id="toggleChat" aria-label="Talk to Captain Jimmy">
                 <div class="core-node">
                     <div class="core-inner"></div>
                     <img src="https://raw.githubusercontent.com/emarketbank/CV/refs/heads/main/assets/images/Cjimmy.png" alt="AI Agent">
