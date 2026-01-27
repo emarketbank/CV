@@ -112,8 +112,8 @@ const CONFIG = {
 
   // Waterfall provider list:
   model_waterfall: [
-    { provider: "openai", model: "gpt-5.1" },
-    { provider: "gemini", model: "gemini-3-flash" },
+    { provider: "gemini", model: "gemini-1.5-flash" },
+    { provider: "openai", model: "gpt-4o-mini" },
   ],
 
   timeouts: { total_ms: 25000 },
