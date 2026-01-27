@@ -6,7 +6,7 @@
   <title>لوحة تحكم كابتن جيمي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f3ef;
@@ -25,7 +25,7 @@
 
     body {
       margin: 0;
-      font-family: "Cairo", "Space Grotesk", sans-serif;
+      font-family: "Cairo", sans-serif;
       background:
         radial-gradient(circle at 10% 20%, rgba(28, 140, 122, 0.15), transparent 40%),
         radial-gradient(circle at 90% 10%, rgba(18, 20, 23, 0.08), transparent 40%),
@@ -92,16 +92,23 @@
 
     .inline-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 14px;
     }
 
     label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
+    }
+
+    .field-hint {
+      margin: 0 0 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
     }
 
     textarea,
@@ -177,12 +184,6 @@
       color: var(--accent-strong);
     }
 
-    .hint {
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
     details {
       border-radius: 16px;
       border: 1px dashed var(--border);
@@ -207,7 +208,7 @@
   <div class="panel">
     <div class="header">
       <h1>لوحة تحكم كابتن جيمي</h1>
-      <p>عدّل سلوك جيمي والمعلومات بشكل مباشر — بدون Deploy ولا Cloudflare كل مرة.</p>
+      <p>تحكم سريع في سلوك جيمي والحقائق والمزوّد — بدون أي إعدادات معقّدة.</p>
     </div>
 
     <div class="section">
@@ -215,58 +216,65 @@
       <div class="inline-grid">
         <div>
           <label for="endpointInput">رابط الـ Worker</label>
+          <p class="field-hint">الرابط الذي يستقبل الرسائل.</p>
           <input id="endpointInput" type="text" placeholder="https://mg-ai-proxy.emarketbank.workers.dev">
         </div>
         <div>
-          <label for="tokenInput">رمز الإدارة (Token)</label>
-          <input id="tokenInput" type="password" placeholder="اكتب التوكن مرة واحدة">
+          <label for="tokenInput">رمز الإدارة</label>
+          <p class="field-hint">يتم استخدامه لحماية التعديلات.</p>
+          <input id="tokenInput" type="password" placeholder="اكتب الرمز مرة واحدة">
         </div>
       </div>
       <div class="actions" style="margin-top:12px;">
         <button id="saveConnection">حفظ الاتصال</button>
         <div class="status" id="connectionStatus">جاهز.</div>
       </div>
-      <div class="hint">التوكن بيتخزن محليًا في المتصفح. اكتبُه مرة واحدة فقط.</div>
+      <p class="field-hint">يتم حفظ الرمز في المتصفح، ويُطلب مرة واحدة فقط.</p>
     </div>
 
     <div class="section">
       <div class="section-title">سلوك جيمي</div>
       <div class="grid">
         <div>
-          <label for="systemPrompt">System Prompt</label>
+          <label for="systemPrompt">تعليمات سلوك جيمي</label>
+          <p class="field-hint">كيف يتكلم؟ كيف يرد؟ متى يسأل؟ متى يعرض التواصل؟</p>
           <textarea id="systemPrompt" placeholder="اكتب تعليمات جيمي هنا..."></textarea>
         </div>
         <div>
-          <label for="verifiedFacts">Verified Facts</label>
-          <textarea id="verifiedFacts" placeholder="حقائق مؤكدة فقط..."></textarea>
+          <label for="verifiedFacts">حقائق مؤكدة فقط</label>
+          <p class="field-hint">أرقام، إنجازات، وخبرات مثبتة. يُمنع كتابة أي ادعاءات غير مؤكدة.</p>
+          <textarea id="verifiedFacts" placeholder="ضع الحقائق المؤكدة هنا..."></textarea>
         </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-title">المزوّد والموديل</div>
+      <div class="section-title">التواصل</div>
+      <div>
+        <label for="contactTemplate">نص التواصل الثابت</label>
+        <p class="field-hint">هذا النص يظهر حرفيًا عند طلب التواصل. لا يتم تعديله بواسطة الذكاء الاصطناعي.</p>
+        <textarea id="contactTemplate" placeholder="اكتب نص التواصل هنا..."></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">الإعدادات الأساسية</div>
       <div class="inline-grid">
         <div>
-          <label for="defaultLanguage">اللغة الافتراضية</label>
-          <select id="defaultLanguage">
-            <option value="ar">عربي</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-        <div>
           <label for="primaryProvider">المزوّد الأساسي</label>
+          <p class="field-hint">اختر المزوّد الذي يعمل به جيمي. الموديل يتم اختياره تلقائيًا.</p>
           <select id="primaryProvider">
             <option value="gemini">Gemini</option>
             <option value="openai">OpenAI</option>
           </select>
         </div>
         <div>
-          <label for="geminiModel">Gemini Model</label>
-          <input id="geminiModel" type="text" placeholder="gemini-2.5-flash">
-        </div>
-        <div>
-          <label for="openaiModel">OpenAI Model</label>
-          <input id="openaiModel" type="text" placeholder="gpt-4o-mini">
+          <label for="defaultLanguage">اللغة الافتراضية</label>
+          <p class="field-hint">تُستخدم فقط في حال تعذّر تحديد لغة المستخدم.</p>
+          <select id="defaultLanguage">
+            <option value="ar">عربي</option>
+            <option value="en">English</option>
+          </select>
         </div>
       </div>
     </div>
@@ -274,23 +282,14 @@
     <div class="section">
       <details>
         <summary>إعدادات متقدمة (اختياري)</summary>
-        <div class="grid">
-          <div>
-            <label for="contactTemplateAr">قالب التواصل عربي</label>
-            <textarea id="contactTemplateAr" placeholder="قالب التواصل بالعربي..."></textarea>
-          </div>
-          <div>
-            <label for="contactTemplateEn">قالب التواصل إنجليزي</label>
-            <textarea id="contactTemplateEn" placeholder="Contact template in English..."></textarea>
-          </div>
-        </div>
-        <div class="inline-grid" style="margin-top:14px;">
+        <p class="field-hint">هذه الإعدادات للمستخدم المتقدم فقط.</p>
+        <div class="inline-grid">
           <div>
             <label for="maxLines">أقصى عدد سطور</label>
             <input id="maxLines" type="number" min="1" max="12" step="1">
           </div>
           <div>
-            <label for="followupQuestions">أسئلة المتابعة</label>
+            <label for="followupQuestions">قواعد أسئلة المتابعة</label>
             <input id="followupQuestions" type="number" min="0" max="3" step="1">
           </div>
         </div>
@@ -301,9 +300,6 @@
       <div class="actions">
         <button id="saveBtn">حفظ التعديلات</button>
         <div class="status" id="status">جاهز.</div>
-      </div>
-      <div class="hint">
-        لازم يكون الـ KV مربوط باسم <code>JIMMY_KV</code>، والتوكن متسجل في Worker.
       </div>
     </div>
   </div>
@@ -335,12 +331,9 @@
 
     const systemPromptEl = document.getElementById("systemPrompt");
     const verifiedFactsEl = document.getElementById("verifiedFacts");
-    const contactTemplateArEl = document.getElementById("contactTemplateAr");
-    const contactTemplateEnEl = document.getElementById("contactTemplateEn");
+    const contactTemplateEl = document.getElementById("contactTemplate");
     const defaultLanguageEl = document.getElementById("defaultLanguage");
     const primaryProviderEl = document.getElementById("primaryProvider");
-    const geminiModelEl = document.getElementById("geminiModel");
-    const openaiModelEl = document.getElementById("openaiModel");
     const maxLinesEl = document.getElementById("maxLines");
     const followupQuestionsEl = document.getElementById("followupQuestions");
     const statusEl = document.getElementById("status");
@@ -380,7 +373,8 @@
       localStorage.setItem("jimmy_admin_token", AUTH_TOKEN);
 
       CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
-      setConnectionStatus("تم حفظ إعدادات الاتصال.", true);
+      setConnectionStatus("تم حفظ الاتصال.", true);
+      loadConfig();
     }
 
     async function loadConfig() {
@@ -396,12 +390,9 @@
         const config = data?.config || {};
         systemPromptEl.value = config.system_prompt || "";
         verifiedFactsEl.value = config.verified_facts || "";
-        contactTemplateArEl.value = config.contact_templates?.ar || "";
-        contactTemplateEnEl.value = config.contact_templates?.en || "";
+        contactTemplateEl.value = config.contact_templates?.ar || config.contact_templates?.en || "";
         defaultLanguageEl.value = config.default_language || "ar";
         primaryProviderEl.value = config.primary_provider || "gemini";
-        geminiModelEl.value = config.models?.gemini || "";
-        openaiModelEl.value = config.models?.openai || "";
         maxLinesEl.value = config.rules?.max_lines ?? 6;
         followupQuestionsEl.value = config.rules?.followup_questions ?? 1;
         setStatus("تم تحميل الإعدادات.", true);
@@ -419,15 +410,11 @@
           system_prompt: systemPromptEl.value.trim(),
           verified_facts: verifiedFactsEl.value.trim(),
           contact_templates: {
-            ar: contactTemplateArEl.value.trim(),
-            en: contactTemplateEnEl.value.trim(),
+            ar: contactTemplateEl.value.trim(),
+            en: contactTemplateEl.value.trim(),
           },
           default_language: defaultLanguageEl.value,
           primary_provider: primaryProviderEl.value,
-          models: {
-            gemini: geminiModelEl.value.trim(),
-            openai: openaiModelEl.value.trim(),
-          },
           rules: {
             max_lines: Number(maxLinesEl.value),
             followup_questions: Number(followupQuestionsEl.value),
@@ -435,7 +422,7 @@
         };
 
         if (!payload.system_prompt) {
-          setStatus("اكتب الـ System Prompt أولاً.");
+          setStatus("اكتب تعليمات سلوك جيمي أولاً.");
           return;
         }
 
