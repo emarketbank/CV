@@ -1,31 +1,35 @@
 /**
- * 🌌 ULTRA MODERN AGENT 2026 - Direct & Compact
- * No fuss, just instant access.
+ * 🌌 THE DARK PRISM AGENT - 2026 EDITION
+ * Logic for the Ultra-Modern Console
  */
 
-const AGENT_CONFIG = {
+const PRISM_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
+    requestTimeoutMs: 12000,
+    maxHistory: 12,
+    maxInputChars: 2500,
     texts: {
         en: {
-            title: "Captain Jimmy // AI",
-            placeholder: "Ask about experience...",
-            welcome: "Systems online. Accessing Mohamed's career database. How can I help?",
-            error: "Connection lost. Please try again."
+            status: "SYSTEM READY",
+            placeholder: "Ask Jimmy...",
+            welcome: "Command Line Active. Accessing Mohamed's neural database...",
+            error: "ERR_CONNECTION_LOST"
         },
         ar: {
-            title: "كابتن جيمي // AI",
-            placeholder: "اسأل عن الخبرات...",
-            welcome: "النظام متصل. جاهز للإجابة عن أي تفاصيل تخص خبرات محمد.",
-            error: "فقدنا الاتصال. حاول مرة تانية."
+            status: "النظام جاهز",
+            placeholder: "اسأل جيمي...",
+            welcome: "تم تفعيل سطر الأوامر. جاري استدعاء بيانات محمد...",
+            error: "خطأ في الاتصال"
         }
     }
 };
 
-class DirectAgent {
+class PrismAgent {
     constructor() {
         this.isOpen = false;
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
         this.messages = [];
+        this.isSending = false;
         this.init();
     }
 
@@ -37,194 +41,279 @@ class DirectAgent {
     }
 
     render() {
-        const txt = AGENT_CONFIG.texts[this.lang];
+        const txt = PRISM_CONFIG.texts[this.lang];
         
         const html = `
-            <div id="aiTrigger" class="ai-trigger-orb">
-                <div class="orb-core">
-                    <img src="assets/images/Cjimmy.png" alt="AI">
-                    <div class="orb-ring"></div>
-                </div>
+            <div id="mg-neural-backdrop"></div>
+            
+            <div id="aiTrigger" class="console-trigger">
+                <img src="assets/images/jimmy-icon222222.png" alt="AI">
             </div>
 
-            <div id="aiInterface" class="ai-interface-container">
-                <div class="focus-header">
-                    <div class="focus-title">
-                        <i class="ri-robot-2-fill"></i>
-                        <span>${txt.title}</span>
+            <div id="aiConsole" class="ai-console-container">
+                <div class="console-header">
+                    <div class="console-brand-wrapper">
+                        <img src="assets/images/jimmy-icon222222.png" class="header-avatar" alt="AI">
+                        <div class="header-info">
+                            <span class="header-name">CAPTAIN JIMMY</span>
+                            <span class="header-status"><span class="status-beacon"></span>AI ASSISTANT</span>
+                        </div>
                     </div>
-                    <button id="btnClose" class="focus-close">
-                        <i class="ri-arrow-down-s-line"></i>
+                    <button id="btnClose" class="console-close">
+                        <i class="ri-close-line"></i>
                     </button>
                 </div>
-                
-                <div id="chatMessages" class="focus-messages"></div>
 
-                <div class="focus-input-area">
-                    <div class="focus-input-wrapper">
-                        <input type="text" id="chatInput" class="focus-input" placeholder="${txt.placeholder}" autocomplete="off">
-                        <button id="btnSend" class="focus-send-btn">
-                            <i class="ri-send-plane-fill"></i>
-                        </button>
+                <div id="consoleMsgs" class="console-messages">
+                    <!-- Stream -->
+                </div>
+
+                <div class="console-input-area">
+                    <div class="input-capsule">
+                        <span class="input-prompt">->_</span>
+                        <input type="text" id="consoleInput" class="console-input" placeholder="${txt.placeholder}" autocomplete="off">
+                        <span class="return-hint">↵ Enter</span>
                     </div>
                 </div>
             </div>
         `;
 
         const root = document.createElement('div');
-        root.id = 'mg-neural-root';
+        root.id = 'mg-prism-root';
         root.innerHTML = html;
         document.body.appendChild(root);
     }
 
     cacheDOM() {
         this.ui = {
+            backdrop: document.getElementById('mg-neural-backdrop'),
             trigger: document.getElementById('aiTrigger'),
-            window: document.getElementById('aiInterface'),
+            console: document.getElementById('aiConsole'),
             close: document.getElementById('btnClose'),
-            input: document.getElementById('chatInput'),
-            send: document.getElementById('btnSend'),
-            msgs: document.getElementById('chatMessages')
+            input: document.getElementById('consoleInput'),
+            msgs: document.getElementById('consoleMsgs')
         };
     }
 
     bindEvents() {
-        // Toggle Logic
         this.ui.trigger.addEventListener('click', () => this.toggle(true));
         this.ui.close.addEventListener('click', () => this.toggle(false));
-
-        // Input Logic
-        this.ui.input.addEventListener('input', (e) => {
-            const valid = e.target.value.trim().length > 0;
-            this.ui.send.classList.toggle('ready', valid);
+        this.ui.backdrop.addEventListener('click', () => this.toggle(false));
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isOpen) this.toggle(false);
         });
 
         this.ui.input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') this.sendMessage();
+            if (e.key === 'Enter') this.handleSubmit();
         });
 
-        this.ui.send.addEventListener('click', () => this.sendMessage());
+        // Focus Trap: Keep input focused unless closing
+        this.ui.input.addEventListener('blur', () => {
+            if (this.isOpen) {
+                setTimeout(() => {
+                    if (this.isOpen && document.activeElement !== this.ui.close) {
+                        this.ui.input.focus();
+                    }
+                }, 150);
+            }
+        });
     }
 
     toggle(open) {
         this.isOpen = open;
-        
-        if (open) {
-            this.ui.window.classList.add('active');
-            this.ui.trigger.classList.add('hidden');
-            
-            // Focus input after animation
-            setTimeout(() => this.ui.input.focus(), 300);
+        const { console: win, backdrop, trigger, input } = this.ui;
 
-            // First time welcome
+        if (open) {
+            win.classList.add('active');
+            backdrop.classList.add('active');
+            trigger.classList.add('hidden');
+            document.body.style.overflow = 'hidden';
+
             if (this.messages.length === 0) {
-                this.addMessage(AGENT_CONFIG.texts[this.lang].welcome, 'ai');
+                this.addMessage('ai', PRISM_CONFIG.texts[this.lang].welcome);
             }
+            
+            setTimeout(() => input.focus(), 100);
+
         } else {
-            this.ui.window.classList.remove('active');
-            this.ui.trigger.classList.remove('hidden');
+            win.classList.remove('active');
+            backdrop.classList.remove('active');
+            trigger.classList.remove('hidden');
+            document.body.style.overflow = '';
         }
     }
 
-    sendMessage() {
-        const text = this.ui.input.value.trim();
+    handleSubmit() {
+        if (this.isSending) return;
+        const raw = this.ui.input.value.trim();
+        const text = this.trimInput(raw);
         if (!text) return;
 
-        // UI Reset
         this.ui.input.value = '';
-        this.ui.send.classList.remove('ready');
-        
-        // Add User Message
-        this.addMessage(text, 'user');
-        
-        // AI Thinking
-        const loadingId = this.showLoading();
-
-        // Network Request
-        this.fetchReply(text)
-            .then(reply => {
-                this.removeLoading(loadingId);
-                this.addMessage(reply, 'ai');
-            })
-            .catch(() => {
-                this.removeLoading(loadingId);
-                this.addMessage(AGENT_CONFIG.texts[this.lang].error, 'ai');
-            });
+        this.addMessage('user', text);
+        this.showTyping();
+        this.fetchResponse();
     }
 
-    addMessage(text, role) {
-        const div = document.createElement('div');
-        div.className = `chat-bubble bubble-${role}`;
-        div.textContent = text;
-        this.ui.msgs.appendChild(div);
+    trimInput(text) {
+        const limit = PRISM_CONFIG.maxInputChars || 2500;
+        if (!text) return '';
+        return text.length > limit ? text.slice(0, limit) : text;
+    }
+
+    trimHistory() {
+        const maxHistory = PRISM_CONFIG.maxHistory || 12;
+        const keep = Math.max(maxHistory * 2, maxHistory);
+        if (this.messages.length > keep) {
+            this.messages = this.messages.slice(-keep);
+        }
+    }
+
+    buildPayload() {
+        const maxHistory = PRISM_CONFIG.maxHistory || 12;
+        const maxChars = PRISM_CONFIG.maxInputChars || 2500;
+        const ignore = new Set([
+            PRISM_CONFIG.texts.en.error,
+            PRISM_CONFIG.texts.ar.error,
+            PRISM_CONFIG.texts.en.welcome,
+            PRISM_CONFIG.texts.ar.welcome
+        ]);
+
+        const cleaned = this.messages
+            .filter(m => !ignore.has(m.content))
+            .map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: (m.content || '').toString().slice(0, maxChars)
+            }))
+            .filter(m => m.content.trim().length > 0);
+
+        return cleaned.slice(-maxHistory);
+    }
+
+
+    setSending(isSending) {
+        this.isSending = isSending;
+        if (this.ui && this.ui.input) {
+            this.ui.input.disabled = isSending;
+        }
+    }
+
+
+    addMessage(role, text) {
+        // Remove typing if exists
+        const typing = document.getElementById('consoleTyping');
+        if (typing) typing.remove();
+
+        const isUser = role === 'user';
+        const icon = isUser ? '<i class="ri-user-smile-line"></i>' : '<i class="ri-cpu-line"></i>';
+        
+        const html = `
+            <div class="console-msg msg-${role}">
+                <div class="msg-avatar ${isUser ? 'icon-user' : 'icon-ai'}">${icon}</div>
+                <div class="msg-content">${this.formatText(text)}</div>
+            </div>
+        `;
+
+        this.ui.msgs.insertAdjacentHTML('beforeend', html);
         this.scrollToBottom();
 
         this.messages.push({ role, content: text });
+        this.trimHistory();
         this.saveHistory();
     }
 
-    showLoading() {
-        const id = 'load-' + Date.now();
-        const div = document.createElement('div');
-        div.id = id;
-        div.className = 'chat-bubble bubble-ai typing-dots';
-        div.textContent = '...';
-        this.ui.msgs.appendChild(div);
+    showTyping() {
+        const html = `
+            <div id="consoleTyping" class="console-msg msg-ai">
+                <div class="msg-avatar icon-ai"><i class="ri-cpu-line"></i></div>
+                <div class="msg-content typing-block">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        this.ui.msgs.insertAdjacentHTML('beforeend', html);
         this.scrollToBottom();
-        return id;
-    }
-
-    removeLoading(id) {
-        const el = document.getElementById(id);
-        if (el) el.remove();
     }
 
     scrollToBottom() {
         this.ui.msgs.scrollTop = this.ui.msgs.scrollHeight;
     }
 
-    async fetchReply(text) {
-        // Format for API
-        const history = this.messages.map(m => ({
-            role: m.role === 'user' ? 'user' : 'assistant',
-            content: m.content
-        }));
-
-        const res = await fetch(AGENT_CONFIG.workerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                messages: history,
-                language: this.lang
-            })
-        });
-
-        const data = await res.json();
-        return data.response;
+    formatText(text) {
+        // Basic formatting for nice text blocks
+        return text.replace(/\n/g, '<br>');
     }
 
-    saveHistory() {
+    async fetchResponse() {
+        if (this.isSending) return;
+        this.setSending(true);
+
+        const payload = this.buildPayload();
+        if (!payload.length) {
+            this.setSending(false);
+            this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
+            return;
+        }
+
+        const controller = new AbortController();
+        const timeoutMs = PRISM_CONFIG.requestTimeoutMs || 12000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        let data;
+
         try {
-            localStorage.setItem('jimmy_direct_history', JSON.stringify(this.messages));
-        } catch (e) {}
+            const res = await fetch(PRISM_CONFIG.workerUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: payload,
+                    language: this.lang
+                }),
+                signal: controller.signal
+            });
+
+            const contentType = res.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+                data = await res.json();
+            } else {
+                throw new Error('bad_response');
+            }
+
+            if (data && data.response) {
+                this.addMessage('ai', data.response);
+            } else {
+                throw new Error('no_response');
+            }
+        } catch (e) {
+            const fallback = data && data.response ? data.response : PRISM_CONFIG.texts[this.lang].error;
+            this.addMessage('ai', fallback);
+        } finally {
+            clearTimeout(timeoutId);
+            this.setSending(false);
+        }
+    }
+
+
+    saveHistory() {
+        localStorage.setItem('mg_prism_history', JSON.stringify(this.messages));
     }
 
     loadHistory() {
+        const saved = localStorage.getItem('mg_prism_history');
+        if (!saved) return;
         try {
-            const saved = localStorage.getItem('jimmy_direct_history');
-            if (saved) {
-                this.messages = JSON.parse(saved);
-                this.messages.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = `chat-bubble bubble-${m.role}`;
-                    div.textContent = m.content;
-                    this.ui.msgs.appendChild(div);
-                });
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+                this.messages = parsed;
+                this.trimHistory();
             }
-        } catch (e) {}
+        } catch (e) {
+            localStorage.removeItem('mg_prism_history');
+        }
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    window.directAgent = new DirectAgent();
+    window.prismAgent = new PrismAgent();
 });

@@ -92,20 +92,25 @@ const EMERGENCY_FALLBACK = {
   en: "Service temporarily unavailable. Please try again later.",
 };
 
+let LAST_PROVIDER_USED = "";
+
 const AI_MENTION_REGEX = /\b(ai|a\.i\.|openai|gpt-?\d*|chatgpt|gemini|anthropic|claude|llm|language model)\b/i;
 const AI_MENTION_REGEX_AR = /(ذكاء اصطناعي|نموذج لغوي|جي بي تي|شات جي بي تي|جيميني|اوپن ايه اي|أوبن إيه آي)/i;
 const EMOJI_REGEX = /[\p{Extended_Pictographic}\uFE0F]/gu;
+const AI_MENTION_REGEX_GLOBAL = new RegExp(AI_MENTION_REGEX.source, "ig");
+const AI_MENTION_REGEX_AR_GLOBAL = new RegExp(AI_MENTION_REGEX_AR.source, "ig");
 
 function json(payload, status = 200, headers) {
   return new Response(JSON.stringify(payload), { status, headers });
 }
 
 function buildCorsHeaders(origin) {
+  const allowOrigin = origin || "*";
   return {
     "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": origin || "*",
+    "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",
   };
@@ -172,6 +177,17 @@ function containsAiMention(text) {
   return AI_MENTION_REGEX.test(text) || AI_MENTION_REGEX_AR.test(text);
 }
 
+function redactAiMentions(text) {
+  if (!text) return "";
+  let output = text.toString();
+  output = output.replace(AI_MENTION_REGEX_GLOBAL, "");
+  output = output.replace(AI_MENTION_REGEX_AR_GLOBAL, "");
+  output = output.replace(/\s{2,}/g, " ");
+  output = output.replace(/\s+([,.!?])/g, "$1");
+  output = output.replace(/\(\s*\)/g, "");
+  return output.trim();
+}
+
 function stripEmojis(text) {
   return text.replace(EMOJI_REGEX, "").replace(/[ \t]{2,}/g, " ").trim();
 }
@@ -195,8 +211,18 @@ function enforcePolicy(text, rules, lang, fallbackMessages) {
   }
 
   if (rules.block_ai_mentions) {
-    const lines = output.split("\n").filter(line => !containsAiMention(line));
-    output = lines.join("\n").trim();
+    const cleaned = output
+      .split("\n")
+      .map(line => {
+        if (!containsAiMention(line)) return line;
+        const redacted = redactAiMentions(line);
+        if (!redacted) return "";
+        if (containsAiMention(redacted)) return "";
+        return redacted;
+      })
+      .filter(Boolean);
+
+    output = cleaned.join("\n").trim();
   }
 
   output = sanitizeLines(output);
@@ -240,7 +266,7 @@ function buildSystemPrompt(config, lang) {
   }
 
   const rulesLine = ruleParts.length
-    ? (lang === "en" ? `Rules: ${ruleParts.join(" ")}` : `قواعد إضافية: ${ruleParts.join(" ")}`)
+    ? (lang === "en" ? `Rules: ${ruleParts.join("\n")}` : `قواعد إضافية: ${ruleParts.join("\n")}`)
     : "";
 
   return [base, facts, rulesLine].filter(part => part && part.trim().length).join("\n\n").trim();
@@ -389,25 +415,34 @@ async function routeWaterfall(env, config, messages, system) {
   const temperature = typeof config.temperature === "number" ? config.temperature : undefined;
   const deadline = Date.now() + totalTimeout;
 
-  for (const item of order) {
-    if (!item || !item.provider || !item.model) continue;
+  const candidates = order.filter(item => {
+    if (!item || !item.provider || !item.model) return false;
+    const provider = item.provider.toLowerCase();
+    if (provider === "openai") return !!env.OPENAI_API_KEY;
+    if (provider === "gemini") return !!env.GEMINI_API_KEY;
+    return false;
+  });
+
+  for (let i = 0; i < candidates.length; i += 1) {
+    const item = candidates[i];
     const provider = item.provider.toLowerCase();
     const model = item.model;
-
-    if (provider === "openai" && !env.OPENAI_API_KEY) continue;
-    if (provider === "gemini" && !env.GEMINI_API_KEY) continue;
 
     const remaining = deadline - Date.now();
     if (remaining <= 0) break;
 
+    const remainingModels = candidates.length - i;
+    const baseBudget = Math.floor(remaining / remainingModels);
+    const timeoutMs = Math.min(remaining, Math.max(1200, baseBudget));
+
     try {
       if (provider === "openai") {
-        const out = await callOpenAI(env, model, messages, system, temperature, remaining);
+        const out = await callOpenAI(env, model, messages, system, temperature, timeoutMs);
         if (out && out.trim()) return { text: out, provider, model };
       }
 
       if (provider === "gemini") {
-        const out = await callGemini(env, model, messages, system, temperature, remaining);
+        const out = await callGemini(env, model, messages, system, temperature, timeoutMs);
         if (out && out.trim()) return { text: out, provider, model };
       }
     } catch {
@@ -425,55 +460,63 @@ export default {
     const rid = requestId();
 
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: buildCorsHeaders(origin || "*") });
+      return new Response(null, { status: 204, headers: buildCorsHeaders(origin) });
     }
 
     if (request.method === "GET" && url.pathname === "/") {
       return json(
         { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "POST /chat"] },
         200,
-        buildCorsHeaders("*")
+        buildCorsHeaders(origin)
       );
     }
 
     if (request.method === "GET" && url.pathname === "/health") {
       const errors = validateConfig(CONFIG);
+      const waterfall = Array.isArray(CONFIG.model_waterfall)
+        ? CONFIG.model_waterfall.map(item => `${item.provider}:${item.model}`).join(" > ")
+        : "";
       return json(
         {
           status: "ok",
           timestamp: new Date().toISOString(),
+          request_id: rid,
           config_loaded: true,
           config_valid: errors.length === 0,
           config_errors: errors,
+          provider: CONFIG.model_waterfall?.[0]?.provider || "",
+          has_keys: { gemini: !!env.GEMINI_API_KEY, openai: !!env.OPENAI_API_KEY },
+          last_provider_used: LAST_PROVIDER_USED,
+          waterfall,
           provider_key_present: { gemini: !!env.GEMINI_API_KEY, openai: !!env.OPENAI_API_KEY },
           provider_in_use: CONFIG.model_waterfall?.[0]?.provider || "",
         },
         200,
-        buildCorsHeaders("*")
+        buildCorsHeaders(origin)
       );
     }
 
     if (!(request.method === "POST" && url.pathname === "/chat")) {
-      return json({ error: "Not Found" }, 404, buildCorsHeaders("*"));
+      return json({ error: "Not Found" }, 404, buildCorsHeaders(origin));
     }
 
     let body;
     try {
       body = await request.json();
     } catch {
-      return json({ response: "Invalid JSON", request_id: rid }, 400, buildCorsHeaders("*"));
+      return json({ response: "Invalid JSON", request_id: rid }, 400, buildCorsHeaders(origin));
     }
 
     const errors = validateConfig(CONFIG);
     if (errors.length) {
       console.log(JSON.stringify({ rid, endpoint: "chat", status: "error", reason: "config_invalid", errors }));
       const lang = detectLang(body, CONFIG.default_language || "ar");
-      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 500, buildCorsHeaders("*"));
+      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 500, buildCorsHeaders(origin));
     }
 
     const messages = normalizeMessages(body, CONFIG.limits);
     if (!messages.length) {
-      return json({ response: "No messages provided.", request_id: rid }, 400, buildCorsHeaders("*"));
+      return json({ response: "No messages provided.", request_id: rid }, 400, buildCorsHeaders(origin));
     }
 
     const lang = detectLang(body, CONFIG.default_language || "ar");
@@ -481,13 +524,13 @@ export default {
     if (isIntent(messages, CONFIG.intent_rules.contact_keywords)) {
       const template = getContactTemplate(CONFIG, lang);
       const enforced = enforceTemplatePolicy(template, CONFIG.rules, lang, CONFIG.fallback_messages);
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders("*"));
+      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
     }
 
     if (isIntent(messages, CONFIG.intent_rules.identity_keywords)) {
       const template = getIdentityTemplate(CONFIG, lang);
       const enforced = enforceTemplatePolicy(template, CONFIG.rules, lang, CONFIG.fallback_messages);
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders("*"));
+      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
     }
 
     const system = buildSystemPrompt(CONFIG, lang);
@@ -495,13 +538,14 @@ export default {
 
     try {
       const result = await routeWaterfall(env, CONFIG, messages, system);
+      LAST_PROVIDER_USED = result?.provider && result?.model ? `${result.provider}:${result.model}` : (result?.provider || "");
       const enforced = enforcePolicy(result.text, CONFIG.rules, lang, CONFIG.fallback_messages);
       const latency = Date.now() - start;
       console.log(JSON.stringify({ rid, endpoint: "chat", status: "ok", latency_ms: latency, provider: result.provider, model: result.model }));
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders("*"));
+      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
     } catch (err) {
       console.log(JSON.stringify({ rid, endpoint: "chat", status: "error", reason: err?.message || "provider_error" }));
-      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 503, buildCorsHeaders("*"));
+      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 503, buildCorsHeaders(origin));
     }
   },
 };
