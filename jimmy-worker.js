@@ -619,12 +619,20 @@ async function handleChat(request, env) {
 
             // Pipe provider tokens into SSE.token
             const reader = tokenStream.getReader();
+            let sentAnyToken = false;
+
             while (true) {
               const { done, value } = await reader.read();
               if (done) break;
               if (typeof value === "string" && value.length) {
                 controller.enqueue(SSE.token(value));
+                sentAnyToken = true;
               }
+            }
+
+            // ⛑️ Guarantee non-empty response
+            if (!sentAnyToken) {
+              controller.enqueue(SSE.token(" "));
             }
 
             controller.enqueue(SSE.done());
