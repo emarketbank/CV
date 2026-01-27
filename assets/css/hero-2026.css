@@ -156,10 +156,9 @@
 
 .hero-visual-stack {
     position: relative;
-    width: 320px;
-    /* Reduced from 400px */
-    height: 320px;
-    /* Reduced from 400px */
+    width: 280px;
+    /* Fine-tuned to 280px as requested */
+    height: 280px;
 }
 
 /* THE DEPTH ARTIFACT (Glass layer behind) */
@@ -209,21 +208,53 @@
     filter: grayscale(0) contrast(1.1) scale(1.1);
 }
 
-/* THE ARABIC LOGO FLOAT - Balanced and closer */
 .hero-brand-logo {
     position: absolute;
-    top: -40px;
-    right: -20px;
+    top: -65px;
+    right: 20px;
     z-index: 10;
-    width: 220px;
-    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.8));
+    width: 200px;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.6));
     animation: float-logo 8s ease-in-out infinite;
     pointer-events: none;
+    overflow: hidden;
+    /* For the shine */
 }
 
 .hero-brand-logo img {
     width: 100%;
     height: auto;
+    display: block;
+}
+
+/* THE SHINE SWEEP EFFECT */
+.hero-brand-logo::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 150%;
+    height: 100%;
+    background: linear-gradient(to right,
+            transparent 0%,
+            rgba(255, 255, 255, 0.05) 40%,
+            rgba(255, 255, 255, 0.4) 50%,
+            rgba(255, 255, 255, 0.05) 60%,
+            transparent 100%);
+    transform: skewX(-20deg);
+    animation: shine-sweep 6s infinite var(--ease-in-out-expo);
+    z-index: 1;
+}
+
+@keyframes shine-sweep {
+    0% {
+        left: -150%;
+    }
+
+    20%,
+    100% {
+        left: 200%;
+    }
 }
 
 /* --- GLASS SHARDS (Decorative Depth) --- */

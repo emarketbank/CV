@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jimmy Control</title>
+  <title>لوحة تحكم كابتن جيمي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f3ef;
@@ -25,7 +25,7 @@
 
     body {
       margin: 0;
-      font-family: "Space Grotesk", sans-serif;
+      font-family: "Cairo", "Space Grotesk", sans-serif;
       background:
         radial-gradient(circle at 10% 20%, rgba(28, 140, 122, 0.15), transparent 40%),
         radial-gradient(circle at 90% 10%, rgba(18, 20, 23, 0.08), transparent 40%),
@@ -50,7 +50,7 @@
     .header {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 24px;
     }
 
@@ -67,18 +67,38 @@
       line-height: 1.6;
     }
 
+    .section {
+      margin-bottom: 24px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 16px;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
     }
 
     label {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
       color: var(--muted);
       display: block;
       margin-bottom: 10px;
@@ -90,7 +110,7 @@
       width: 100%;
       border-radius: 14px;
       border: 1px solid var(--border);
-      padding: 14px 16px;
+      padding: 12px 14px;
       font-size: 0.95rem;
       font-family: inherit;
       background: #fff;
@@ -99,7 +119,7 @@
     }
 
     textarea {
-      min-height: 220px;
+      min-height: 200px;
       resize: vertical;
       line-height: 1.6;
     }
@@ -112,21 +132,11 @@
       box-shadow: 0 0 0 4px rgba(28, 140, 122, 0.12);
     }
 
-    .model-row {
-      margin-top: 8px;
-    }
-
-    .inline-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
-    }
-
     .footer {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .actions {
@@ -139,7 +149,7 @@
     button {
       border: none;
       border-radius: 999px;
-      padding: 12px 24px;
+      padding: 10px 22px;
       font-size: 0.95rem;
       font-weight: 600;
       color: #fff;
@@ -173,6 +183,19 @@
       line-height: 1.6;
     }
 
+    details {
+      border-radius: 16px;
+      border: 1px dashed var(--border);
+      padding: 12px 14px;
+      background: rgba(28, 140, 122, 0.04);
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
     @media (max-width: 640px) {
       .panel {
         padding: 24px;
@@ -183,41 +206,55 @@
 <body>
   <div class="panel">
     <div class="header">
-      <h1>Jimmy Control Center</h1>
-      <p>Update Jimmy behavior instantly. No deploys, no code changes.</p>
+      <h1>لوحة تحكم كابتن جيمي</h1>
+      <p>عدّل سلوك جيمي والمعلومات بشكل مباشر — بدون Deploy ولا Cloudflare كل مرة.</p>
     </div>
 
-    <div class="grid">
-      <div>
-        <label for="systemPrompt">System Prompt</label>
-        <textarea id="systemPrompt" placeholder="Full system prompt for Jimmy..."></textarea>
-      </div>
-      <div>
-        <label for="verifiedFacts">Verified Facts</label>
-        <textarea id="verifiedFacts" placeholder="Facts Jimmy can use when relevant..."></textarea>
-      </div>
-      <div>
-        <label for="contactTemplateAr">Contact Template (AR)</label>
-        <textarea id="contactTemplateAr" placeholder="Arabic contact template..."></textarea>
-      </div>
-      <div>
-        <label for="contactTemplateEn">Contact Template (EN)</label>
-        <textarea id="contactTemplateEn" placeholder="English contact template..."></textarea>
-      </div>
-    </div>
-
-    <div class="model-row">
-      <label>Runtime Settings</label>
+    <div class="section">
+      <div class="section-title">الاتصال</div>
       <div class="inline-grid">
         <div>
-          <label for="defaultLanguage">Default Language</label>
+          <label for="endpointInput">رابط الـ Worker</label>
+          <input id="endpointInput" type="text" placeholder="https://mg-ai-proxy.emarketbank.workers.dev">
+        </div>
+        <div>
+          <label for="tokenInput">رمز الإدارة (Token)</label>
+          <input id="tokenInput" type="password" placeholder="اكتب التوكن مرة واحدة">
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px;">
+        <button id="saveConnection">حفظ الاتصال</button>
+        <div class="status" id="connectionStatus">جاهز.</div>
+      </div>
+      <div class="hint">التوكن بيتخزن محليًا في المتصفح. اكتبُه مرة واحدة فقط.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">سلوك جيمي</div>
+      <div class="grid">
+        <div>
+          <label for="systemPrompt">System Prompt</label>
+          <textarea id="systemPrompt" placeholder="اكتب تعليمات جيمي هنا..."></textarea>
+        </div>
+        <div>
+          <label for="verifiedFacts">Verified Facts</label>
+          <textarea id="verifiedFacts" placeholder="حقائق مؤكدة فقط..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">المزوّد والموديل</div>
+      <div class="inline-grid">
+        <div>
+          <label for="defaultLanguage">اللغة الافتراضية</label>
           <select id="defaultLanguage">
-            <option value="ar">Arabic (ar)</option>
-            <option value="en">English (en)</option>
+            <option value="ar">عربي</option>
+            <option value="en">English</option>
           </select>
         </div>
         <div>
-          <label for="primaryProvider">Primary Provider</label>
+          <label for="primaryProvider">المزوّد الأساسي</label>
           <select id="primaryProvider">
             <option value="gemini">Gemini</option>
             <option value="openai">OpenAI</option>
@@ -231,25 +268,42 @@
           <label for="openaiModel">OpenAI Model</label>
           <input id="openaiModel" type="text" placeholder="gpt-4o-mini">
         </div>
-        <div>
-          <label for="maxLines">Max Lines</label>
-          <input id="maxLines" type="number" min="1" max="12" step="1">
-        </div>
-        <div>
-          <label for="followupQuestions">Follow-up Questions</label>
-          <input id="followupQuestions" type="number" min="0" max="3" step="1">
-        </div>
       </div>
+    </div>
+
+    <div class="section">
+      <details>
+        <summary>إعدادات متقدمة (اختياري)</summary>
+        <div class="grid">
+          <div>
+            <label for="contactTemplateAr">قالب التواصل عربي</label>
+            <textarea id="contactTemplateAr" placeholder="قالب التواصل بالعربي..."></textarea>
+          </div>
+          <div>
+            <label for="contactTemplateEn">قالب التواصل إنجليزي</label>
+            <textarea id="contactTemplateEn" placeholder="Contact template in English..."></textarea>
+          </div>
+        </div>
+        <div class="inline-grid" style="margin-top:14px;">
+          <div>
+            <label for="maxLines">أقصى عدد سطور</label>
+            <input id="maxLines" type="number" min="1" max="12" step="1">
+          </div>
+          <div>
+            <label for="followupQuestions">أسئلة المتابعة</label>
+            <input id="followupQuestions" type="number" min="0" max="3" step="1">
+          </div>
+        </div>
+      </details>
     </div>
 
     <div class="footer">
       <div class="actions">
-        <button id="saveBtn">Save Changes</button>
-        <div class="status" id="status">Ready.</div>
+        <button id="saveBtn">حفظ التعديلات</button>
+        <div class="status" id="status">جاهز.</div>
       </div>
       <div class="hint">
-        Admin endpoint: <code>/admin</code> (CORS locked to GitHub Pages). Add
-        <code>?endpoint=YOUR_WORKER_URL</code> and optional <code>&token=ADMIN_TOKEN</code>.
+        لازم يكون الـ KV مربوط باسم <code>JIMMY_KV</code>، والتوكن متسجل في Worker.
       </div>
     </div>
   </div>
@@ -262,13 +316,22 @@
     const storedEndpoint = localStorage.getItem("jimmy_admin_endpoint");
     const storedToken = localStorage.getItem("jimmy_admin_token");
 
-    const ENDPOINT = endpointFromQuery || storedEndpoint || "https://mg-ai-proxy.emarketbank.workers.dev";
+    let ENDPOINT = endpointFromQuery || storedEndpoint || "https://mg-ai-proxy.emarketbank.workers.dev";
+    let AUTH_TOKEN = tokenFromQuery || storedToken || "";
+    let CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
 
     if (endpointFromQuery) localStorage.setItem("jimmy_admin_endpoint", endpointFromQuery);
     if (tokenFromQuery) localStorage.setItem("jimmy_admin_token", tokenFromQuery);
 
-    const AUTH_TOKEN = tokenFromQuery || storedToken || "";
-    const CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
+    if (tokenFromQuery) {
+      const cleanUrl = `${window.location.origin}${window.location.pathname}?endpoint=${encodeURIComponent(ENDPOINT)}`;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+
+    const endpointInput = document.getElementById("endpointInput");
+    const tokenInput = document.getElementById("tokenInput");
+    const saveConnectionBtn = document.getElementById("saveConnection");
+    const connectionStatusEl = document.getElementById("connectionStatus");
 
     const systemPromptEl = document.getElementById("systemPrompt");
     const verifiedFactsEl = document.getElementById("verifiedFacts");
@@ -283,9 +346,17 @@
     const statusEl = document.getElementById("status");
     const saveBtn = document.getElementById("saveBtn");
 
+    endpointInput.value = ENDPOINT;
+    tokenInput.value = AUTH_TOKEN;
+
     function setStatus(message, ok = false) {
       statusEl.textContent = message;
       statusEl.classList.toggle("ok", ok);
+    }
+
+    function setConnectionStatus(message, ok = false) {
+      connectionStatusEl.textContent = message;
+      connectionStatusEl.classList.toggle("ok", ok);
     }
 
     function buildHeaders() {
@@ -296,13 +367,29 @@
       return headers;
     }
 
+    function saveConnection() {
+      const endpointValue = endpointInput.value.trim();
+      const tokenValue = tokenInput.value.trim();
+
+      if (endpointValue) {
+        ENDPOINT = endpointValue;
+        localStorage.setItem("jimmy_admin_endpoint", ENDPOINT);
+      }
+
+      AUTH_TOKEN = tokenValue;
+      localStorage.setItem("jimmy_admin_token", AUTH_TOKEN);
+
+      CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
+      setConnectionStatus("تم حفظ إعدادات الاتصال.", true);
+    }
+
     async function loadConfig() {
       try {
         const res = await fetch(CONFIG_URL, { headers: buildHeaders() });
         const data = await res.json();
 
         if (!res.ok) {
-          setStatus(data?.error || "Failed to load config.");
+          setStatus(data?.error || "فشل تحميل الإعدادات.");
           return;
         }
 
@@ -317,14 +404,14 @@
         openaiModelEl.value = config.models?.openai || "";
         maxLinesEl.value = config.rules?.max_lines ?? 6;
         followupQuestionsEl.value = config.rules?.followup_questions ?? 1;
-        setStatus("Loaded.", true);
+        setStatus("تم تحميل الإعدادات.", true);
       } catch (err) {
-        setStatus("Failed to load config.");
+        setStatus("فشل تحميل الإعدادات.");
       }
     }
 
     async function saveConfig() {
-      setStatus("Saving...");
+      setStatus("جارٍ الحفظ...");
       saveBtn.disabled = true;
 
       try {
@@ -347,6 +434,11 @@
           },
         };
 
+        if (!payload.system_prompt) {
+          setStatus("اكتب الـ System Prompt أولاً.");
+          return;
+        }
+
         const res = await fetch(CONFIG_URL, {
           method: "POST",
           headers: buildHeaders(),
@@ -355,18 +447,19 @@
 
         const data = await res.json();
         if (!res.ok) {
-          setStatus(data?.error || "Save failed.");
+          setStatus(data?.error || "فشل الحفظ.");
           return;
         }
 
-        setStatus("Saved.", true);
+        setStatus("تم الحفظ.", true);
       } catch (err) {
-        setStatus("Save failed.");
+        setStatus("فشل الحفظ.");
       } finally {
         saveBtn.disabled = false;
       }
     }
 
+    saveConnectionBtn.addEventListener("click", saveConnection);
     saveBtn.addEventListener("click", saveConfig);
     loadConfig();
   </script>
