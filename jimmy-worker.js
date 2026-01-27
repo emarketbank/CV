@@ -1,39 +1,82 @@
 /**
- * Jimmy — Cloudflare Worker (Code-config, 2026)
- * - Single source of truth in code
- * - No Admin panel, no KV
- * - Policy enforcement after model response
- * - Waterfall with a fixed total timeout, no retries
+ * Jimmy — Cloudflare Worker (Standardized SSE, 2026)
+ * - Unified SSE protocol: meta -> token -> done (+ error)
+ * - No raw passthrough: worker normalizes OpenAI/Gemini/Intents into same stream
+ * - CORS allowlist + explicit 403
+ * - Waterfall: OpenAI primary, Gemini fallback
+ * - Structured logs
  */
 
 const CONFIG = {
   default_language: "ar",
+  allowed_origins: [
+    "https://mo-gamal.com",
+    "https://www.mo-gamal.com",
+    "http://localhost:3000",
+  ],
+
+  // NOTE: Keep prompts short, directive, and stable.
   system_prompt: {
-    ar: "أنت \"كابتن جيمي\" المساعد الرسمي لمحمد جمال.\nأنت مش محمد وماينفعش تدّعي إنك هو.\nهدفك: رد قصير واضح، حقائق مؤكدة فقط، وتوصيل العميل لمحمد عند الحاجة.\nاللغة: مصري مهني مختصر وثابت.\nلا تذكر الذكاء الاصطناعي أو المزوّد أو الموديل. بدون إيموجي.\nلا تعرض التواصل إلا بطلب صريح.\nلو الطلب خطة/محتوى/بحث أو خارج نطاقك: قول إن محمد الأنسب واسأله لو عايز يتواصل.",
-    en: "You are \"Captain Jimmy\", Mohamed Gamal’s official assistant.\nYou are not Mohamed and never claim to be him.\nGoal: short, clear replies using verified facts only, and connect to Mohamed when needed.\nLanguage: direct American English and stay consistent.\nDo not mention AI/providers/models. No emojis.\nDo not offer contact unless explicitly requested.\nIf asked for plans/content/research, say Mohamed is best and ask if they want to reach him.",
+    ar:
+      'أنت "كابتن جيمي" المساعد الرسمي لمحمد جمال.\n' +
+      "أنت مش محمد وماينفعش تدّعي إنك هو.\n" +
+      "هدفك: رد قصير واضح، حقائق مؤكدة فقط، وتوصيل العميل لمحمد عند الحاجة.\n" +
+      "اللغة: مصري مهني مختصر وثابت.\n" +
+      "لا تذكر الذكاء الاصطناعي أو المزوّد أو الموديل. بدون إيموجي.\n" +
+      "لا تعرض التواصل إلا بطلب صريح.\n" +
+      "لو الطلب خطة/محتوى/بحث أو خارج نطاقك: قول إن محمد الأنسب واسأله لو عايز يتواصل.",
+    en:
+      'You are "Captain Jimmy", Mohamed Gamal’s official assistant.\n' +
+      "You are not Mohamed and never claim to be him.\n" +
+      "Goal: short, clear replies using verified facts only, and connect to Mohamed when needed.\n" +
+      "Language: direct American English and stay consistent.\n" +
+      "Do not mention AI/providers/models. No emojis.\n" +
+      "Do not offer contact unless explicitly requested.\n" +
+      "If asked for plans/content/research, say Mohamed is best and ask if they want to reach him.",
   },
+
   verified_facts: {
-    ar: "حقائق مؤكدة فقط:\n- خبرة 10+ سنوات في النمو الرقمي والتحول الرقمي في MENA مع تركيز على السعودية.\n- نمو عضوي ~6x في Arabian Oud خلال ~24 شهر.\n- إدارة إنفاق إعلاني يومي تقريباً $12k–$20k عبر 6 أسواق.\n- مشاركة في Guinness World Record (5M orders، Black Friday 2020).",
-    en: "Verified facts only:\n- 10+ years in digital growth and transformation across MENA with strong KSA focus.\n- ~6x organic growth at Arabian Oud over ~24 months.\n- Managed daily ad spend ~$12k–$20k across 6 markets.\n- Participated in a Guinness World Record (5M orders, Black Friday 2020).",
+    ar:
+      "حقائق مؤكدة فقط:\n" +
+      "- خبرة 10+ سنوات في النمو الرقمي والتحول الرقمي في MENA مع تركيز على السعودية.\n" +
+      "- نمو عضوي ~6x في Arabian Oud خلال ~24 شهر.\n" +
+      "- إدارة إنفاق إعلاني يومي تقريباً $12k–$20k عبر 6 أسواق.\n" +
+      "- مشاركة في Guinness World Record (5M orders، Black Friday 2020).",
+    en:
+      "Verified facts only:\n" +
+      "- 10+ years in digital growth and transformation across MENA with strong KSA focus.\n" +
+      "- ~6x organic growth at Arabian Oud over ~24 months.\n" +
+      "- Managed daily ad spend ~$12k–$20k across 6 markets.\n" +
+      "- Participated in a Guinness World Record (5M orders, Black Friday 2020).",
   },
+
   contact_templates: {
-    ar: "محمد هيكون سعيد يسمع منك.\nتحب مكالمة سريعة ولا واتساب؟\n\nمكالمة: 00201555141282\nواتساب: https://wa.me/201555141282",
-    en: "Mohamed will be happy to hear from you.\nCall or WhatsApp — whatever works best.\n\nCall: 00201555141282\nWhatsApp: https://wa.me/201555141282",
+    ar:
+      "محمد هيكون سعيد يسمع منك.\n" +
+      "تحب مكالمة سريعة ولا واتساب؟\n\n" +
+      "مكالمة: 00201555141282\n" +
+      "واتساب: https://wa.me/201555141282",
+    en:
+      "Mohamed will be happy to hear from you.\n" +
+      "Call or WhatsApp — whatever works best.\n\n" +
+      "Call: 00201555141282\n" +
+      "WhatsApp: https://wa.me/201555141282",
   },
+
   identity_templates: {
-    ar: "أنا كابتن جيمي، المساعد الرسمي لمحمد جمال.\nبدلّل الناس على شغله وخبرته، ولو حابب أوصّلك بيه بسهولة.",
-    en: "I'm Captain Jimmy, Mohamed Gamal’s official assistant.\nI explain his work and can connect you with him if you want.",
+    ar:
+      "أنا كابتن جيمي، المساعد الرسمي لمحمد جمال.\n" +
+      "بدلّل الناس على شغله وخبرته، ولو حابب أوصّلك بيه بسهولة.",
+    en:
+      "I'm Captain Jimmy, Mohamed Gamal’s official assistant.\n" +
+      "I explain his work and can connect you with him if you want.",
   },
+
   fallback_messages: {
     ar: "الخدمة مشغولة دلوقتي. جرّب كمان شوية.",
     en: "Service temporarily unavailable. Please try again later.",
   },
-  rules: {
-    max_lines: 3,
-    followup_questions: 1,
-    block_ai_mentions: true,
-    block_emojis: true,
-  },
+
   intent_rules: {
     contact_keywords: [
       "عايز اكلم محمد",
@@ -68,640 +111,634 @@ const CONFIG = {
       "introduce yourself",
     ],
   },
-  // للمطور: نفّذ Waterfall بالموديلات بالترتيب ده بدون retries وبمهلة إجمالية ثابتة CONFIG.timeouts.total_ms.
-  // للمطور: الوقت يتوزع حسب المتبقي، وأول موديل يرجّع نص صالح يوقف السلسلة ويرجع الرد.
+
+  // Waterfall provider list:
   model_waterfall: [
     { provider: "openai", model: "gpt-5.1" },
-    { provider: "openai", model: "gpt-4.1-mini" },
     { provider: "gemini", model: "gemini-3-flash" },
-    { provider: "gemini", model: "gemini-2.5-flash" },
-    { provider: "gemini", model: "gemini-2.5-pro" },
   ],
-  timeouts: {
-    total_ms: 8000,
-  },
+
+  timeouts: { total_ms: 25000 },
   temperature: 0.4,
+
   limits: {
     max_history: 12,
     max_input_chars: 2500,
   },
+
+  // Fake stream behavior:
+  fake_stream: {
+    chunk_ms: 18, // feel free to tune
+    max_chunk: 8, // characters per chunk
+  },
+
+  // Optional keepalive for long answers:
+  heartbeat_ms: 15000,
 };
 
-const EMERGENCY_FALLBACK = {
-  ar: "الخدمة مشغولة دلوقتي. جرّب كمان شوية.",
-  en: "Service temporarily unavailable. Please try again later.",
-};
+// -------------------- Utilities --------------------
 
-let LAST_PROVIDER_USED = "";
-
-const AI_MENTION_REGEX = /\b(ai|a\.i\.|openai|gpt-?\d*|chatgpt|gemini|anthropic|claude|llm|language model)\b/i;
-const AI_MENTION_REGEX_AR = /(ذكاء اصطناعي|نموذج لغوي|جي بي تي|شات جي بي تي|جيميني|اوپن ايه اي|أوبن إيه آي)/i;
-const EMOJI_REGEX = /[\p{Extended_Pictographic}\uFE0F]/gu;
-const AI_MENTION_REGEX_GLOBAL = new RegExp(AI_MENTION_REGEX.source, "ig");
-const AI_MENTION_REGEX_AR_GLOBAL = new RegExp(AI_MENTION_REGEX_AR.source, "ig");
-
-function json(payload, status = 200, headers) {
-  return new Response(JSON.stringify(payload), { status, headers });
-}
-
-function buildCorsHeaders(origin) {
-  const allowOrigin = origin || "*";
-  return {
-    "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Max-Age": "86400",
-    "Vary": "Origin",
-  };
+function nowMs() {
+  return Date.now();
 }
 
 function requestId() {
   return `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function clampNumber(value, min, max, fallback) {
-  const n = typeof value === "string" ? Number(value) : value;
-  if (typeof n !== "number" || Number.isNaN(n)) return fallback;
-  return Math.min(Math.max(n, min), max);
+function safeJsonParse(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
 }
 
-function isNonEmptyString(value) {
-  return typeof value === "string" && value.trim().length > 0;
+function pickLanguage(payload, lastUserMessage) {
+  // Prefer explicit payload language if provided
+  const lang = (payload?.language || "").toLowerCase();
+  if (lang === "ar" || lang === "en") return lang;
+
+  // Auto-detect from last user message
+  const msg = (lastUserMessage || "").trim();
+  const hasArabic = /[\u0600-\u06FF]/.test(msg);
+  return hasArabic ? "ar" : "en";
 }
 
-function normalizeMessages(body, limits) {
-  const raw = Array.isArray(body?.messages) ? body.messages : [];
-  const maxHistory = clampNumber(limits.max_history, 1, 30, 12);
-  const maxChars = clampNumber(limits.max_input_chars, 200, 8000, 2500);
+function normalizeMessages(messages) {
+  if (!Array.isArray(messages)) return [];
+  const out = [];
 
-  const cleaned = raw
-    .map(m => {
-      const roleRaw = (m?.role || "").toLowerCase();
-      const role =
-        roleRaw === "user" ? "user" :
-        roleRaw === "assistant" || roleRaw === "model" ? "assistant" :
-        null;
+  for (const m of messages) {
+    if (!m || typeof m !== "object") continue;
+    let role = (m.role || "").toLowerCase();
+    const content = typeof m.content === "string" ? m.content : "";
 
-      const content = (m?.content || "").toString().trim();
-      if (!role || !content) return null;
-      return { role, content: content.slice(0, maxChars) };
-    })
-    .filter(Boolean);
+    if (!content.trim()) continue;
 
-  return cleaned.slice(-maxHistory);
-}
+    // normalize roles
+    if (role === "model") role = "assistant";
+    if (role !== "user" && role !== "assistant" && role !== "system") continue;
 
-function detectLang(body, defaultLang) {
-  const explicit = (body?.language || "").toLowerCase();
-  if (explicit === "ar" || explicit === "en") return explicit;
-
-  const fallback = defaultLang === "en" ? "en" : "ar";
-  const msgs = Array.isArray(body?.messages) ? body.messages : [];
-  const lastUser = [...msgs].reverse().find(m => (m?.role || "").toLowerCase() === "user");
-  const text = (lastUser?.content || "").toString();
-
-  if (/[\u0600-\u06FF]/.test(text)) return "ar";
-  if (/[A-Za-z]/.test(text)) return "en";
-  return fallback;
-}
-
-function isIntent(messages, keywords) {
-  const lastUser = [...messages].reverse().find(m => m.role === "user");
-  if (!lastUser || !Array.isArray(keywords)) return false;
-  const text = (lastUser.content || "").toLowerCase();
-  return keywords.some(k => k && text.includes(k.toLowerCase()));
-}
-
-function containsAiMention(text) {
-  return AI_MENTION_REGEX.test(text) || AI_MENTION_REGEX_AR.test(text);
-}
-
-function redactAiMentions(text) {
-  if (!text) return "";
-  let output = text.toString();
-  output = output.replace(AI_MENTION_REGEX_GLOBAL, "");
-  output = output.replace(AI_MENTION_REGEX_AR_GLOBAL, "");
-  output = output.replace(/\s{2,}/g, " ");
-  output = output.replace(/\s+([,.!?])/g, "$1");
-  output = output.replace(/\(\s*\)/g, "");
-  return output.trim();
-}
-
-function stripEmojis(text) {
-  return text.replace(EMOJI_REGEX, "").replace(/[ \t]{2,}/g, " ").trim();
-}
-
-function sanitizeLines(text) {
-  return text
-    .replace(/\r\n/g, "\n")
-    .replace(/[\t ]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-function enforcePolicy(text, rules, lang, fallbackMessages) {
-  let output = (text || "").toString().trim();
-  if (!output) return fallbackMessages[lang] || fallbackMessages.en;
-
-  output = sanitizeLines(output);
-
-  if (rules.block_emojis) {
-    output = stripEmojis(output);
+    out.push({ role, content: content.trim() });
   }
 
-  if (rules.block_ai_mentions) {
-    const cleaned = output
-      .split("\n")
-      .map(line => {
-        if (!containsAiMention(line)) return line;
-        const redacted = redactAiMentions(line);
-        if (!redacted) return "";
-        if (containsAiMention(redacted)) return "";
-        return redacted;
-      })
-      .filter(Boolean);
-
-    output = cleaned.join("\n").trim();
-  }
-
-  output = sanitizeLines(output);
-
-  if (rules.max_lines) {
-    const lines = output.split("\n").filter(Boolean);
-    output = lines.slice(0, rules.max_lines).join("\n").trim();
-  }
-
-  if (!output || output.length < 2) {
-    return fallbackMessages[lang] || fallbackMessages.en;
-  }
-
-  return output;
+  // trim history
+  return out.slice(-CONFIG.limits.max_history);
 }
 
-function enforceTemplatePolicy(text, rules, lang, fallbackMessages) {
-  const templateRules = { ...rules, max_lines: null };
-  return enforcePolicy(text, templateRules, lang, fallbackMessages);
+function truncateText(s, maxChars) {
+  if (typeof s !== "string") return "";
+  if (s.length <= maxChars) return s;
+  return s.slice(0, maxChars);
 }
 
-function buildSystemPrompt(config, lang) {
-  const base = lang === "en" ? config.system_prompt.en : config.system_prompt.ar;
-  const facts = lang === "en" ? config.verified_facts.en : config.verified_facts.ar;
-
-  const maxLines = config.rules?.max_lines;
-  const followups = config.rules?.followup_questions;
-
-  const ruleParts = [];
-  if (typeof maxLines === "number") {
-    ruleParts.push(lang === "en" ? `Max ${maxLines} lines.` : `حد أقصى ${maxLines} سطر.`);
+function findLastUser(messages) {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i]?.role === "user") return messages[i].content || "";
   }
-  if (typeof followups === "number") {
-    ruleParts.push(lang === "en" ? `Up to ${followups} follow-up question(s).` : `سؤال متابعة بحد أقصى ${followups}.`);
-  }
-  if (config.rules?.block_ai_mentions) {
-    ruleParts.push(lang === "en" ? "Do not mention AI/providers/models." : "ممنوع ذكر الذكاء الاصطناعي أو المزوّد أو الموديل.");
-  }
-  if (config.rules?.block_emojis) {
-    ruleParts.push(lang === "en" ? "No emojis." : "بدون إيموجي.");
-  }
-
-  const rulesLine = ruleParts.length
-    ? (lang === "en" ? `Rules: ${ruleParts.join("\n")}` : `قواعد إضافية: ${ruleParts.join("\n")}`)
-    : "";
-
-  return [base, facts, rulesLine].filter(part => part && part.trim().length).join("\n\n").trim();
+  return "";
 }
 
-function getContactTemplate(config, lang) {
-  return lang === "en" ? config.contact_templates.en : config.contact_templates.ar;
+function detectIntent(text) {
+  const t = (text || "").toLowerCase();
+  const has = (arr) => arr.some((k) => t.includes(k.toLowerCase()));
+
+  if (has(CONFIG.intent_rules.contact_keywords)) return "contact";
+  if (has(CONFIG.intent_rules.identity_keywords)) return "identity";
+  return null;
 }
 
-function getIdentityTemplate(config, lang) {
-  return lang === "en" ? config.identity_templates.en : config.identity_templates.ar;
+function buildCorsHeaders(origin) {
+  const isAllowed = CONFIG.allowed_origins.includes(origin);
+  // IMPORTANT: for disallowed origin, do not pretend "null" is ok; we will 403 anyway.
+  return {
+    "Access-Control-Allow-Origin": isAllowed ? origin : "",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
 }
 
-function getFallbackMessage(config, lang) {
-  const fallback = config?.fallback_messages || EMERGENCY_FALLBACK;
-  return lang === "en" ? fallback.en : fallback.ar;
+function buildSSEHeaders(origin) {
+  const cors = buildCorsHeaders(origin);
+  return {
+    ...cors,
+    "Content-Type": "text/event-stream; charset=utf-8",
+    "Cache-Control": "no-cache, no-transform",
+    Connection: "keep-alive",
+    "X-Accel-Buffering": "no",
+  };
 }
 
-function validateConfig(config) {
-  const errors = [];
+// -------------------- SSE Formatter (Unified Contract) --------------------
 
-  if (!isNonEmptyString(config.system_prompt?.ar)) errors.push("system_prompt.ar is required");
-  if (!isNonEmptyString(config.system_prompt?.en)) errors.push("system_prompt.en is required");
-  if (!isNonEmptyString(config.contact_templates?.ar)) errors.push("contact_templates.ar is required");
-  if (!isNonEmptyString(config.contact_templates?.en)) errors.push("contact_templates.en is required");
-  if (!isNonEmptyString(config.identity_templates?.ar)) errors.push("identity_templates.ar is required");
-  if (!isNonEmptyString(config.identity_templates?.en)) errors.push("identity_templates.en is required");
-  if (!isNonEmptyString(config.fallback_messages?.ar)) errors.push("fallback_messages.ar is required");
-  if (!isNonEmptyString(config.fallback_messages?.en)) errors.push("fallback_messages.en is required");
+const SSE = {
+  // data must be JSON-serializable object
+  meta: (obj) => `event: meta\ndata: ${JSON.stringify(obj)}\n\n`,
 
-  const maxLines = clampNumber(config.rules?.max_lines, 1, 12, null);
-  const followups = clampNumber(config.rules?.followup_questions, 0, 3, null);
-  if (maxLines == null) errors.push("rules.max_lines is required (1-12)");
-  if (followups == null) errors.push("rules.followup_questions is required (0-3)");
-  if (typeof config.rules?.block_ai_mentions !== "boolean") errors.push("rules.block_ai_mentions is required");
-  if (typeof config.rules?.block_emojis !== "boolean") errors.push("rules.block_emojis is required");
+  // IMPORTANT: data is always JSON string (quoted) produced by JSON.stringify.
+  token: (text) => `event: token\ndata: ${JSON.stringify(String(text))}\n\n`,
 
-  if (!Array.isArray(config.intent_rules?.contact_keywords) || !config.intent_rules.contact_keywords.length) {
-    errors.push("intent_rules.contact_keywords is required");
+  done: () => `event: done\ndata: {}\n\n`,
+
+  error: (obj) =>
+    `event: error\ndata: ${JSON.stringify({
+      message: obj?.message || "Error",
+      code: obj?.code || "ERR",
+    })}\n\n`,
+};
+
+// -------------------- Provider Calls --------------------
+
+async function callOpenAI({ apiKey, model, system, messages, temperature, timeoutMs, signal }) {
+  // Uses Responses API (v1/responses) with streaming.
+  // We request text output and stream SSE.
+  const url = "https://api.openai.com/v1/responses";
+
+  const input = [
+    { role: "system", content: system },
+    ...messages,
+  ];
+
+  const body = {
+    model,
+    input,
+    temperature,
+    stream: true,
+  };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort("timeout"), timeoutMs);
+  const compositeSignal = anySignal([signal, controller.signal]);
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+    signal: compositeSignal,
+  });
+
+  clearTimeout(timer);
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`OpenAI HTTP ${res.status}: ${text.slice(0, 200)}`);
   }
-  if (!Array.isArray(config.intent_rules?.identity_keywords) || !config.intent_rules.identity_keywords.length) {
-    errors.push("intent_rules.identity_keywords is required");
+
+  if (!res.body) throw new Error("OpenAI: missing response body");
+
+  // Convert OpenAI's stream (SSE-ish) into unified token events.
+  return normalizeOpenAIStreamToTokens(res.body);
+}
+
+async function callGemini({ apiKey, model, system, messages, temperature, timeoutMs, signal }) {
+  // Gemini streaming endpoint. We'll use generateContent?alt=sse for SSE output.
+  // NOTE: This is a typical Gemini pattern; if your existing impl differs, adjust here.
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
+      model
+    )}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+
+  // Convert messages to Gemini "contents" format
+  const contents = messages.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+
+  const body = {
+    systemInstruction: { parts: [{ text: system }] },
+    contents,
+    generationConfig: { temperature },
+  };
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort("timeout"), timeoutMs);
+  const compositeSignal = anySignal([signal, controller.signal]);
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: compositeSignal,
+  });
+
+  clearTimeout(timer);
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Gemini HTTP ${res.status}: ${text.slice(0, 200)}`);
   }
 
-  if (!Array.isArray(config.model_waterfall) || !config.model_waterfall.length) {
-    errors.push("model_waterfall is required");
-  } else {
-    config.model_waterfall.forEach((entry, idx) => {
-      const provider = (entry?.provider || "").toLowerCase();
-      if (provider !== "openai" && provider !== "gemini") errors.push(`model_waterfall[${idx}].provider invalid`);
-      if (!isNonEmptyString(entry?.model)) errors.push(`model_waterfall[${idx}].model is required`);
+  if (!res.body) throw new Error("Gemini: missing response body");
+
+  // Convert Gemini SSE stream into unified tokens
+  return normalizeGeminiStreamToTokens(res.body);
+}
+
+// -------------------- Stream Normalizers --------------------
+
+function anySignal(signals) {
+  // Minimal polyfill for combining abort signals
+  const controller = new AbortController();
+  const onAbort = () => controller.abort();
+  for (const s of signals) {
+    if (!s) continue;
+    if (s.aborted) return s;
+    s.addEventListener?.("abort", onAbort, { once: true });
+  }
+  return controller.signal;
+}
+
+function createSSEParser() {
+  // Parses SSE lines into {event, data} records.
+  let buffer = "";
+  return {
+    push(chunk) {
+      buffer += chunk;
+      const events = [];
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop() || "";
+      for (const part of parts) {
+        const lines = part.split("\n");
+        let event = "message";
+        let data = "";
+        for (const line of lines) {
+          if (line.startsWith("event:")) event = line.slice(6).trim();
+          else if (line.startsWith("data:")) data += line.slice(5).trim();
+        }
+        events.push({ event, data });
+      }
+      return events;
+    },
+    flush() {
+      buffer = "";
+    },
+  };
+}
+
+function normalizeOpenAIStreamToTokens(readable) {
+  // OpenAI returns SSE-ish with "data: {...}" lines.
+  // We'll extract text deltas if present; otherwise ignore.
+  const decoder = new TextDecoder();
+  const parser = createSSEParser();
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const reader = readable.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          const events = parser.push(chunk);
+
+          for (const ev of events) {
+            const raw = ev.data;
+            if (!raw || raw === "[DONE]") continue;
+
+            const obj = safeJsonParse(raw);
+            if (!obj) continue;
+
+            // We try multiple known shapes safely:
+            // - Responses API: response.output_text.delta might exist
+            // - Or generic "delta" events
+            const delta =
+              obj?.delta ||
+              obj?.response?.output_text?.delta ||
+              obj?.output_text?.delta ||
+              obj?.content?.[0]?.text?.delta;
+
+            const text =
+              typeof delta === "string"
+                ? delta
+                : typeof obj?.text === "string"
+                ? obj.text
+                : null;
+
+            if (text) controller.enqueue(text);
+          }
+        }
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return stream;
+}
+
+function normalizeGeminiStreamToTokens(readable) {
+  // Gemini with alt=sse sends events with data: {json}
+  // We'll extract candidates[0].content.parts[].text
+  const decoder = new TextDecoder();
+  const parser = createSSEParser();
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const reader = readable.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          const events = parser.push(chunk);
+
+          for (const ev of events) {
+            const obj = safeJsonParse(ev.data);
+            if (!obj) continue;
+
+            const parts =
+              obj?.candidates?.[0]?.content?.parts ||
+              obj?.candidates?.[0]?.content?.parts ||
+              [];
+
+            for (const p of parts) {
+              if (typeof p?.text === "string" && p.text) controller.enqueue(p.text);
+            }
+          }
+        }
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return stream;
+}
+
+// -------------------- Fake Streaming for Intents --------------------
+
+async function fakeStreamText(text, controller, { chunk_ms, max_chunk }) {
+  const s = String(text || "");
+  let i = 0;
+  while (i < s.length) {
+    const chunk = s.slice(i, i + max_chunk);
+    controller.enqueue(SSE.token(chunk));
+    i += max_chunk;
+    // small delay for "typing" feel
+    await sleep(chunk_ms);
+  }
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+// -------------------- Main Chat Handler --------------------
+
+async function handleChat(request, env) {
+  const origin = request.headers.get("Origin") || "";
+  const isAllowed = CONFIG.allowed_origins.includes(origin);
+
+  if (!isAllowed) {
+    return new Response("Forbidden", {
+      status: 403,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        Vary: "Origin",
+      },
     });
   }
 
-  const totalMs = clampNumber(config.timeouts?.total_ms, 1000, 30000, null);
-  if (totalMs == null) errors.push("timeouts.total_ms is required (1000-30000)");
+  const rid = requestId();
+  const started = nowMs();
 
-  if (config.temperature != null) {
-    const t = config.temperature;
-    if (typeof t !== "number" || Number.isNaN(t) || t < 0 || t > 1.2) {
-      errors.push("temperature must be between 0 and 1.2");
-    }
-  }
-
-  const maxHistory = clampNumber(config.limits?.max_history, 1, 30, null);
-  const maxInput = clampNumber(config.limits?.max_input_chars, 200, 8000, null);
-  if (maxHistory == null) errors.push("limits.max_history is required (1-30)");
-  if (maxInput == null) errors.push("limits.max_input_chars is required (200-8000)");
-
-  if (config.default_language !== "ar" && config.default_language !== "en") {
-    errors.push("default_language must be ar or en");
-  }
-
-  return errors;
-}
-
-function withTimeout(ms) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), ms);
-  return { signal: controller.signal, cancel: () => clearTimeout(id) };
-}
-
-async function safeFetch(url, options, timeoutMs) {
-  const t = withTimeout(timeoutMs);
+  let payload = null;
   try {
-    return await fetch(url, { ...options, signal: t.signal });
-  } finally {
-    t.cancel();
-  }
-}
-
-function extractOpenAIText(data) {
-  if (typeof data?.output_text === "string" && data.output_text.trim()) {
-    return data.output_text.trim();
+    payload = await request.json();
+  } catch {
+    return new Response("Bad Request", { status: 400 });
   }
 
-  const output = Array.isArray(data?.output) ? data.output : [];
-  const parts = [];
+  const rawMessages = normalizeMessages(payload?.messages || []);
+  const lastUser = findLastUser(rawMessages);
+  const lang = pickLanguage(payload, lastUser);
 
-  for (const item of output) {
-    if (item?.type !== "message" || !Array.isArray(item?.content)) continue;
-    for (const part of item.content) {
-      if (part?.type === "output_text" && typeof part.text === "string") {
-        parts.push(part.text);
-      }
-    }
-  }
-
-  return parts.join("\n").trim();
-}
-
-function buildOpenAIPayload(model, messages, system, temperature) {
-  const inputItems = messages.map(m => ({
+  const messages = rawMessages.map((m) => ({
     role: m.role,
-    content: [{ type: "input_text", text: m.content }],
+    content: truncateText(m.content, CONFIG.limits.max_input_chars),
   }));
 
-  const payload = {
-    model,
-    input: inputItems,
-    instructions: system,
-  };
+  const intent = detectIntent(lastUser);
 
-  if (typeof temperature === "number") {
-    payload.temperature = temperature;
-  }
+  // SSE Response stream
+  const headers = buildSSEHeaders(origin);
 
-  return payload;
-}
+  const stream = new ReadableStream({
+    async start(controller) {
+      // Heartbeat
+      let heartbeatTimer = null;
+      const heartbeat = () => {
+        controller.enqueue(`: ping\n\n`);
+      };
+      heartbeatTimer = setInterval(heartbeat, CONFIG.heartbeat_ms);
 
-async function callOpenAI(env, model, messages, system, temperature, timeoutMs) {
-  const headers = {
-    Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-    "Content-Type": "application/json",
-  };
+      const meta = { request_id: rid, provider: "intent", model: "n/a" };
+      const logBase = { request_id: rid, path: "/chat", lang };
 
-  const payload = buildOpenAIPayload(model, messages, system, temperature);
+      try {
+        // meta first
+        controller.enqueue(SSE.meta(meta));
 
-  const res = await safeFetch(
-    "https://api.openai.com/v1/responses",
-    {
-      method: "POST",
-      headers,
-      body: JSON.stringify(payload),
+        // Intents
+        if (intent === "contact") {
+          const text = CONFIG.contact_templates[lang] || CONFIG.contact_templates.ar;
+          await fakeStreamText(text, controller, CONFIG.fake_stream);
+          controller.enqueue(SSE.done());
+          logInfo({ ...logBase, provider: "intent", model: "contact", status: "ok", ms: nowMs() - started });
+          return;
+        }
+
+        if (intent === "identity") {
+          const text = CONFIG.identity_templates[lang] || CONFIG.identity_templates.ar;
+          await fakeStreamText(text, controller, CONFIG.fake_stream);
+          controller.enqueue(SSE.done());
+          logInfo({ ...logBase, provider: "intent", model: "identity", status: "ok", ms: nowMs() - started });
+          return;
+        }
+
+        // Build system prompt with verified facts
+        const system =
+          (CONFIG.system_prompt[lang] || CONFIG.system_prompt.ar) +
+          "\n\n" +
+          (CONFIG.verified_facts[lang] || CONFIG.verified_facts.ar);
+
+        // Waterfall: OpenAI then Gemini
+        const totalBudget = CONFIG.timeouts.total_ms;
+        const perProvider = Math.floor(totalBudget / CONFIG.model_waterfall.length);
+
+        const abortAll = new AbortController();
+
+        for (let i = 0; i < CONFIG.model_waterfall.length; i++) {
+          const { provider, model } = CONFIG.model_waterfall[i];
+          const providerBudget = i === 0 ? perProvider : totalBudget - perProvider; // give fallback more time
+          const providerStart = nowMs();
+
+          try {
+            // update meta for provider
+            controller.enqueue(SSE.meta({ request_id: rid, provider, model }));
+
+            logInfo({
+              ...logBase,
+              at: "start_provider",
+              provider,
+              model,
+              budget_ms: providerBudget,
+            });
+
+            let tokenStream = null;
+
+            if (provider === "openai") {
+              if (!env.OPENAI_API_KEY) throw new Error("Missing OPENAI_API_KEY");
+              tokenStream = await callOpenAI({
+                apiKey: env.OPENAI_API_KEY,
+                model,
+                system,
+                messages,
+                temperature: CONFIG.temperature,
+                timeoutMs: providerBudget,
+                signal: abortAll.signal,
+              });
+            } else if (provider === "gemini") {
+              if (!env.GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
+              tokenStream = await callGemini({
+                apiKey: env.GEMINI_API_KEY,
+                model,
+                system,
+                messages,
+                temperature: CONFIG.temperature,
+                timeoutMs: providerBudget,
+                signal: abortAll.signal,
+              });
+            } else {
+              throw new Error(`Unknown provider: ${provider}`);
+            }
+
+            // Pipe provider tokens into SSE.token
+            const reader = tokenStream.getReader();
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              if (typeof value === "string" && value.length) {
+                controller.enqueue(SSE.token(value));
+              }
+            }
+
+            controller.enqueue(SSE.done());
+
+            logInfo({
+              ...logBase,
+              at: "end_provider",
+              provider,
+              model,
+              status: "ok",
+              provider_ms: nowMs() - providerStart,
+              total_ms: nowMs() - started,
+            });
+            return; // success: stop waterfall
+          } catch (err) {
+            logWarn({
+              ...logBase,
+              at: "provider_error",
+              provider,
+              model,
+              status: "fail",
+              provider_ms: nowMs() - providerStart,
+              message: String(err?.message || err),
+            });
+
+            // try next provider in waterfall
+            continue;
+          }
+        }
+
+        // If all providers failed
+        const fallback = CONFIG.fallback_messages[lang] || CONFIG.fallback_messages.ar;
+        controller.enqueue(SSE.error({ message: fallback, code: "ALL_FAILED" }));
+        await fakeStreamText(fallback, controller, CONFIG.fake_stream);
+        controller.enqueue(SSE.done());
+
+        logError({
+          ...logBase,
+          at: "all_failed",
+          status: "fail",
+          total_ms: nowMs() - started,
+        });
+      } catch (err) {
+        const fallback = CONFIG.fallback_messages[lang] || CONFIG.fallback_messages.ar;
+        controller.enqueue(SSE.error({ message: fallback, code: "WORKER_ERR" }));
+        controller.enqueue(SSE.done());
+
+        logError({
+          ...logBase,
+          at: "worker_error",
+          status: "fail",
+          total_ms: nowMs() - started,
+          message: String(err?.message || err),
+        });
+      } finally {
+        if (heartbeatTimer) clearInterval(heartbeatTimer);
+        controller.close();
+      }
     },
-    timeoutMs
-  );
-
-  const bodyText = await res.text();
-  if (!res.ok) {
-    const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
-    throw new Error(`openai:${model}:${res.status}:${snippet}`);
-  }
-
-  let data;
-  try {
-    data = JSON.parse(bodyText);
-  } catch {
-    throw new Error(`openai:${model}:${res.status}:invalid_json`);
-  }
-
-  const output = extractOpenAIText(data);
-  if (!output) {
-    throw new Error(`openai:${model}:${res.status}:empty_response`);
-  }
-  return output;
-}
-
-async function callGemini(env, model, messages, system, temperature, timeoutMs) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
-
-  const payload = {
-    system_instruction: { parts: [{ text: system }] },
-    contents: messages.map(m => ({
-      role: m.role === "user" ? "user" : "model",
-      parts: [{ text: m.content }],
-    })),
-  };
-
-  if (typeof temperature === "number") {
-    payload.generationConfig = { temperature };
-  }
-
-  const res = await safeFetch(
-    url,
-    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
-    timeoutMs
-  );
-
-  const bodyText = await res.text();
-  if (!res.ok) {
-    const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
-    throw new Error(`gemini:${model}:${res.status}:${snippet}`);
-  }
-
-  let data;
-  try {
-    data = JSON.parse(bodyText);
-  } catch {
-    throw new Error(`gemini:${model}:${res.status}:invalid_json`);
-  }
-
-  const output = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-  if (!output || !output.trim()) {
-    throw new Error(`gemini:${model}:${res.status}:empty_response`);
-  }
-  return output;
-}
-
-async function routeWaterfall(env, config, messages, system) {
-  const order = Array.isArray(config.model_waterfall) ? config.model_waterfall : [];
-  const totalTimeout = clampNumber(config.timeouts?.total_ms, 1000, 30000, 8000);
-  const temperature = typeof config.temperature === "number" ? config.temperature : undefined;
-  const deadline = Date.now() + totalTimeout;
-  let lastError;
-
-  const candidates = order.filter(item => {
-    if (!item || !item.provider || !item.model) return false;
-    const provider = item.provider.toLowerCase();
-    if (provider === "openai") return !!env.OPENAI_API_KEY;
-    if (provider === "gemini") return !!env.GEMINI_API_KEY;
-    return false;
   });
 
-  for (let i = 0; i < candidates.length; i += 1) {
-    const item = candidates[i];
-    const provider = item.provider.toLowerCase();
-    const model = item.model;
-
-    const remaining = deadline - Date.now();
-    if (remaining <= 0) break;
-
-    const remainingModels = candidates.length - i;
-    const baseBudget = Math.floor(remaining / remainingModels);
-    const timeoutMs = Math.min(remaining, Math.max(1200, baseBudget));
-
-    try {
-      if (provider === "openai") {
-        const out = await callOpenAI(env, model, messages, system, temperature, timeoutMs);
-        if (out && out.trim()) return { text: out, provider, model };
-      }
-
-      if (provider === "gemini") {
-        const out = await callGemini(env, model, messages, system, temperature, timeoutMs);
-        if (out && out.trim()) return { text: out, provider, model };
-      }
-    } catch (err) {
-      lastError = err;
-      continue;
-    }
-  }
-
-  throw lastError || new Error("provider_error");
+  return new Response(stream, { headers });
 }
+
+// -------------------- Logging --------------------
+
+function logInfo(obj) {
+  console.log(JSON.stringify({ level: "info", ...obj }));
+}
+function logWarn(obj) {
+  console.log(JSON.stringify({ level: "warn", ...obj }));
+}
+function logError(obj) {
+  console.log(JSON.stringify({ level: "error", ...obj }));
+}
+
+// -------------------- Worker Router --------------------
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const origin = request.headers.get("Origin") || "";
-    const rid = requestId();
 
+    // Preflight
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: buildCorsHeaders(origin) });
-    }
+      const isAllowed = CONFIG.allowed_origins.includes(origin);
+      if (!isAllowed) return new Response(null, { status: 403 });
 
-    if (request.method === "GET" && url.pathname === "/") {
-      return json(
-        { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "GET /probe/openai", "POST /chat"] },
-        200,
-        buildCorsHeaders(origin)
-      );
-    }
-
-    if (request.method === "GET" && url.pathname === "/probe/openai") {
-      const modelEntry = (CONFIG.model_waterfall || []).find(
-        item => (item?.provider || "").toLowerCase() === "openai"
-      );
-      const model = modelEntry?.model || "";
-
-      if (!model) {
-        return json(
-          { ok: false, provider: "openai", model, status_code: 0, error: "missing_openai_model", request_id: rid },
-          500,
-          buildCorsHeaders(origin)
-        );
-      }
-
-      if (!env.OPENAI_API_KEY) {
-        return json(
-          { ok: false, provider: "openai", model, status_code: 0, error: "missing_openai_key", request_id: rid },
-          503,
-          buildCorsHeaders(origin)
-        );
-      }
-
-      const payload = buildOpenAIPayload(
-        model,
-        [{ role: "user", content: "ping" }],
-        "Health probe",
-        0
-      );
-
-      try {
-        const res = await safeFetch(
-          "https://api.openai.com/v1/responses",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          },
-          clampNumber(CONFIG.timeouts?.total_ms, 1000, 30000, 8000)
-        );
-
-        const bodyText = await res.text();
-        if (!res.ok) {
-          const snippet = bodyText.slice(0, 200).replace(/\s+/g, " ");
-          return json(
-            { ok: false, provider: "openai", model, status_code: res.status, error: snippet, request_id: rid },
-            502,
-            buildCorsHeaders(origin)
-          );
-        }
-
-        let data;
-        try {
-          data = JSON.parse(bodyText);
-        } catch {
-          return json(
-            { ok: false, provider: "openai", model, status_code: res.status, error: "invalid_json", request_id: rid },
-            502,
-            buildCorsHeaders(origin)
-          );
-        }
-
-        const output = extractOpenAIText(data);
-        return json(
-          {
-            ok: true,
-            provider: "openai",
-            model,
-            status_code: res.status,
-            output_preview: (output || "").slice(0, 120),
-            request_id: rid,
-          },
-          200,
-          buildCorsHeaders(origin)
-        );
-      } catch (err) {
-        const message = (err?.message || "probe_error").slice(0, 200);
-        return json(
-          { ok: false, provider: "openai", model, status_code: 0, error: message, request_id: rid },
-          502,
-          buildCorsHeaders(origin)
-        );
-      }
-    }
-
-    if (request.method === "GET" && url.pathname === "/health") {
-      const errors = validateConfig(CONFIG);
-      const waterfall = Array.isArray(CONFIG.model_waterfall)
-        ? CONFIG.model_waterfall.map(item => `${item.provider}:${item.model}`).join(" > ")
-        : "";
-      return json(
-        {
-          status: "ok",
-          timestamp: new Date().toISOString(),
-          request_id: rid,
-          config_loaded: true,
-          config_valid: errors.length === 0,
-          config_errors: errors,
-          provider: CONFIG.model_waterfall?.[0]?.provider || "",
-          has_keys: { gemini: !!env.GEMINI_API_KEY, openai: !!env.OPENAI_API_KEY },
-          last_provider_used: LAST_PROVIDER_USED,
-          waterfall,
-          provider_key_present: { gemini: !!env.GEMINI_API_KEY, openai: !!env.OPENAI_API_KEY },
-          provider_in_use: CONFIG.model_waterfall?.[0]?.provider || "",
+      return new Response(null, {
+        status: 204,
+        headers: {
+          ...buildCorsHeaders(origin),
         },
-        200,
-        buildCorsHeaders(origin)
-      );
+      });
     }
 
-    if (!(request.method === "POST" && url.pathname === "/chat")) {
-      return json({ error: "Not Found" }, 404, buildCorsHeaders(origin));
+    if (url.pathname === "/chat") {
+      if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
+      return handleChat(request, env);
     }
 
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return json({ response: "Invalid JSON", request_id: rid }, 400, buildCorsHeaders(origin));
+    // Simple ping (optional). Keep it minimal.
+    if (url.pathname === "/") {
+      return new Response("OK", {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          ...buildCorsHeaders(origin),
+        },
+      });
     }
 
-    const errors = validateConfig(CONFIG);
-    if (errors.length) {
-      console.log(JSON.stringify({ rid, endpoint: "chat", status: "error", reason: "config_invalid", errors }));
-      const lang = detectLang(body, CONFIG.default_language || "ar");
-      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 500, buildCorsHeaders(origin));
-    }
-
-    const messages = normalizeMessages(body, CONFIG.limits);
-    if (!messages.length) {
-      return json({ response: "No messages provided.", request_id: rid }, 400, buildCorsHeaders(origin));
-    }
-
-    const lang = detectLang(body, CONFIG.default_language || "ar");
-
-    if (isIntent(messages, CONFIG.intent_rules.contact_keywords)) {
-      const template = getContactTemplate(CONFIG, lang);
-      const enforced = enforceTemplatePolicy(template, CONFIG.rules, lang, CONFIG.fallback_messages);
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
-    }
-
-    if (isIntent(messages, CONFIG.intent_rules.identity_keywords)) {
-      const template = getIdentityTemplate(CONFIG, lang);
-      const enforced = enforceTemplatePolicy(template, CONFIG.rules, lang, CONFIG.fallback_messages);
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
-    }
-
-    const system = buildSystemPrompt(CONFIG, lang);
-    const start = Date.now();
-
-    try {
-      const result = await routeWaterfall(env, CONFIG, messages, system);
-      LAST_PROVIDER_USED = result?.provider && result?.model ? `${result.provider}:${result.model}` : (result?.provider || "");
-      const enforced = enforcePolicy(result.text, CONFIG.rules, lang, CONFIG.fallback_messages);
-      const latency = Date.now() - start;
-      console.log(JSON.stringify({ rid, endpoint: "chat", status: "ok", latency_ms: latency, provider: result.provider, model: result.model }));
-      return json({ response: enforced, request_id: rid }, 200, buildCorsHeaders(origin));
-    } catch (err) {
-      console.log(JSON.stringify({ rid, endpoint: "chat", status: "error", reason: err?.message || "provider_error" }));
-      return json({ response: getFallbackMessage(CONFIG, lang), request_id: rid }, 503, buildCorsHeaders(origin));
-    }
+    return new Response("Not Found", { status: 404 });
   },
 };
