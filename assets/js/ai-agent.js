@@ -303,6 +303,8 @@ class PrismAgent {
                             const parsed = JSON.parse(data);
                             if (typeof parsed === 'string') {
                                 fullText += parsed;
+                            } else if (parsed && parsed.message) {
+                                fullText += ' [' + parsed.message + ']';
                             }
                         } catch { }
                     }
