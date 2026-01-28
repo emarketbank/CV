@@ -109,25 +109,101 @@ async function getBrain(env, key) {
 }
 
 function parseStyle(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new Error("INVALID_STYLE_JSON");
+  if (!text) return null;
+  const raw = String(text);
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  if (trimmed.startsWith("{")) {
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      // Fall through to plain-text parsing for resilience.
+    }
   }
+
+  const lines = raw.split(/\r?\n/);
+  let inLimits = false;
+  const limits = {};
+  let mode = "default";
+  const rulesLines = [];
+
+  for (const line of lines) {
+    const clean = line.trim();
+    if (!clean) {
+      if (!inLimits) rulesLines.push(line);
+      continue;
+    }
+
+    if (clean.toLowerCase() === "[limits]") {
+      inLimits = true;
+      continue;
+    }
+    if (clean.toLowerCase() === "[/limits]") {
+      inLimits = false;
+      continue;
+    }
+
+    if (inLimits) {
+      const match = clean.match(/^([a-z_]+)\s*=\s*(.+)$/i);
+      if (match) {
+        const key = match[1].toLowerCase();
+        const value = match[2].trim();
+        if (key === "mode") mode = value;
+        if (key === "rules_chars") limits.rules_chars = Number(value) || limits.rules_chars;
+        if (key === "user_chars") limits.user_chars = Number(value) || limits.user_chars;
+        if (key === "market_chars") limits.market_chars = Number(value) || limits.market_chars;
+      }
+      continue;
+    }
+
+    rulesLines.push(line);
+  }
+
+  const rulesText = rulesLines.join("\n").trim();
+  if (!rulesText) return null;
+
+  return {
+    rules_text: rulesText,
+    limits,
+    mode,
+  };
 }
 
 /* =======================
    INTENT DETECTION (LIGHT)
 ======================= */
 
-function detectIntent(lastMessage) {
-  const text = lastMessage.toLowerCase();
+function normalizeText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  if (/(roas|cvr|profit|margin|scale|growth|ads|seo|cac|ltv)/.test(text)) {
+function detectIntent(lastMessage) {
+  const text = normalizeText(lastMessage);
+  if (!text) return "general";
+
+  if (
+    /(marketing|growth|ads|ad|paid|seo|crm|funnel|conversion|cvr|roas|cac|ltv|retention|checkout|logistics|ops|revenue|profit|margin|budget|campaign|offer|pricing|acquisition|lead|pipeline|b2b|b2c|ecommerce|e-commerce|meta|tiktok|snapchat|whatsapp|automation|payment|payback|contribution|attribution|organic|paid media|growth engine)/.test(
+      text
+    ) ||
+    /(تسويق|نمو|اعلان|اعلانات|ميديا|سيو|crm|فانل|تحويل|روادس|روأس|كاك|لتي في|احتفاظ|شيك اوت|لوجستكس|تشغيل|تشغيلي|ايرادات|ربح|هامش|ميزانية|حملة|عرض|تسعير|استحواذ|ليد|بايبلاين|بي تو بي|بي تو سي|اي كوميرس|متاجر|متجر|ميتا|تيك توك|سناب|واتساب|اوتوميشن|دفع|باك بيريد|مساهمة|اتريبيوشن|اورجانيك|مدفوع)/.test(
+      text
+    )
+  ) {
     return "market";
   }
 
-  if (/(اشتغلت|خبرتك|مين انت|عملت ايه|experience|worked|background)/.test(text)) {
+  if (
+    /(mohamed gamal|mohamed|gamal|cv|resume|portfolio|bio|background|experience|worked|who are you|who is|about you|your work)/.test(
+      text
+    ) ||
+    /(محمد جمال|محمد|جمال|سيرة|سي في|سيڤي|بورتفوليو|خبرة|مين|من هو|عرفني عنك|عن خبرتك|انجازات|أعمالك|شغلك|خلفية)/.test(
+      text
+    )
+  ) {
     return "user";
   }
 
@@ -292,8 +368,8 @@ export default {
       const intent = detectIntent(lastUserMsg);
 
       const style = parseStyle(await getBrain(env, "jimmy:style"));
-      const userBrain = await getBrain(env, "jimmy:kb:user");
-      const marketBrain = await getBrain(env, "jimmy:kb:market");
+      const userBrain = intent === "user" ? await getBrain(env, "jimmy:kb:user") : "";
+      const marketBrain = intent === "market" ? await getBrain(env, "jimmy:kb:market") : "";
 
       const systemPrompt = buildSystemPrompt({
         style,
