@@ -11,7 +11,7 @@
    CONFIG
 ======================= */
 
-const WORKER_VERSION = "2.0.1";
+const WORKER_VERSION = "2.2.0";
 const CACHE_TTL_MS = 300_000; // 5 minutes for KB cache
 
 const ALLOWED_ORIGINS = [
@@ -21,11 +21,34 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-const GEMINI_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-];
+// Gemini Models (Google)
+const GEMINI_MODELS = {
+    expert: ["gemini-3-flash-preview", "gemini-2.5-pro"],
+    core: ["gemini-2.5-flash-lite", "gemini-2.0-flash"],
+    emergency: ["gemini-2.0-flash-lite", "gemini-1.5-flash-8b"],
+};
+
+// OpenAI Models (ChatGPT)
+const OPENAI_MODELS = {
+    expert: ["gpt-5.2", "gpt-5"],
+    core: ["gpt-5-mini", "gpt-5-nano"],
+    emergency: ["gpt-5-nano", "gpt-4o-mini"],
+};
+
+// Hierarchical Model Selection (Primary -> Fallback)
+// No Random/Shuffle to ensure stability and deterministic behavior.
+function getModelsForMode(mode) {
+    // Priority: OpenAI -> Gemini (or vice versa depending on preference, 
+    // here we alternate to balance quota)
+    if (mode === "expert") {
+        return ["gpt-5.2", "gemini-3-flash-preview", "gpt-5", "gemini-2.5-pro"];
+    } else if (mode === "emergency") {
+        return ["gpt-5-nano", "gemini-2.0-flash-lite", "gpt-4o-mini"];
+    } else {
+        // Default: Core
+        return ["gpt-5-mini", "gemini-2.5-flash-lite", "gpt-5-nano", "gemini-2.0-flash"];
+    }
+}
 
 /* =======================
    EMBEDDED CORE STRINGS
@@ -95,22 +118,14 @@ const CORE_INDUSTRY = `
    SHADOW EXPERT DETECTION
 ======================= */
 
-const ADVANCED_TRIGGERS_AR = [
-    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i, /\bCVR\b/i, /\bCRO\b/i,
-    /أعمل\s*إيه/i, /اختار\s*إزاي/i, /محتاج\s*خطة/i, /ميزانية/i,
-    /\bPayback\b/i, /\bContribution\b/i, /\bRTO\b/i,
-    /قرار\s*(صعب|مهم|كبير)/i, /مشكلة\s*في\s*(الأداء|النتايج|الربح)/i,
-    /ليه\s*(بيخسر|مش\s*بيكبر|ضعيف)/i, /محتاج\s*تشخيص/i,
-    /إيه\s*الخطوات/i, /خطة\s*عمل/i, /استراتيجية/i,
-    /تحليل/i, /قمع|funnel/i, /تحويل|conversion/i,
+const DECISION_TRIGGERS_AR = [
+    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i,
+    /أعمل\s*إيه/i, /اختار\s*إزاي/i, /قرار/i, /خسارة/i, /ميزانية/i
 ];
 
-const ADVANCED_TRIGGERS_EN = [
-    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i, /\bCVR\b/i, /\bCRO\b/i,
-    /what\s*should\s*I\s*do/i, /how\s*to\s*choose/i, /need\s*a\s*plan/i,
-    /budget/i, /payback/i, /contribution/i, /\bRTO\b/i,
-    /strategy/i, /analysis/i, /funnel/i, /conversion/i,
-    /why\s*(is|am|are)\s*.*(losing|weak|not\s*growing)/i,
+// Reserved for future use: providing short educational insights without offering expert mode
+const KNOWLEDGE_TRIGGERS_AR = [
+    /تحليل/i, /استراتيجية/i, /funnel/i, /conversion/i, /يعني\s*إيه/i
 ];
 
 const CONSENT_PATTERNS = [
@@ -122,8 +137,8 @@ function needsAdvancedMode(message) {
     const text = (message || "").trim();
     if (!text || text.length < 10) return false;
 
-    const allTriggers = [...ADVANCED_TRIGGERS_AR, ...ADVANCED_TRIGGERS_EN];
-    return allTriggers.some(pattern => pattern.test(text));
+    // Only offer if it matches high-intent decision triggers
+    return DECISION_TRIGGERS_AR.some(p => p.test(text));
 }
 
 function hasImplicitConsent(message) {
@@ -226,23 +241,39 @@ function getLocale(request, body) {
    PROMPT COMPOSITION
 ======================= */
 
+// TONE ADJUSTMENTS based on region
+function getStyleForLocale(locale) {
+    const isGulf = /sa|ae|kw|qa|bh|om/i.test(locale);
+    let baseStyle = CORE_STYLE;
+
+    if (isGulf) {
+        baseStyle += "\nنبرة: هدوء تام، احترافية عالية، مفردات خليجية خفيفة.";
+    } else {
+        baseStyle += "\nنبرة: ذكاء مصري، سخرية خفيفة جداً من الألم، سرعة بديهة.";
+    }
+    return baseStyle;
+}
+
 function buildCorePrompt(locale) {
     return [
-        `LOCALE: ${locale}`,
-        CORE_STYLE,
-        `\n--- محمد جمال ---\n${CORE_USER}`,
-        `\n--- السوق ---\n${CORE_INDUSTRY}`,
+        getStyleForLocale(locale),
+        CORE_USER,
+        CORE_INDUSTRY,
     ].join("\n\n");
 }
 
-function buildExpertPrompt(locale, advancedKB) {
+function buildExpertPrompt(locale, advancedKB, expertMsgCount = 0) {
     const core = buildCorePrompt(locale);
-    const expertRules = `
+    let expertRules = `
 --- وضع الاستشاري ---
 أنت الآن في وضع التشخيص المتقدم.
-استخدم قاعدة المعرفة التالية لتقديم تحليل عميق وقرارات مبنية على بيانات.
-التزم بنفس أسلوب جيمي: مختصر، ذكي، عملي.
+- الهدف: تشخيص المشكلة (لماذا/ماذا) وليس تقديم خطة تنفيذ (كيف).
+- لو المستخدم سألك "أعمل إيه بالظبط؟" تراجع وشخّص الأول.
 `.trim();
+
+    if (expertMsgCount >= 2) {
+        expertRules += `\n- جيمي: قلل التحليل، ركز على "تلخيص + اتجاه عملي واحد". خليك أقصر وأجرأ.`;
+    }
 
     return [
         core,
@@ -251,22 +282,13 @@ function buildExpertPrompt(locale, advancedKB) {
     ].join("\n\n");
 }
 
-const OFFER_VARIANTS = {
-    ar: [
-        "واضح إنك داخل في قرار شغل بجد… تحب نفكّها سوا بعمق أكتر شوية؟",
-        "ده موضوع محتاج تركيز… تحب ندخل فيه بشكل أعمق؟",
-        "شكلها محتاجة تحليل جاد… نتعمق فيها سوا؟",
-    ],
-    en: [
-        "Looks like you're facing a real business decision… want me to dig deeper with you?",
-        "This needs proper analysis… shall we dive in together?",
-        "Sounds like a serious decision… want to break it down properly?",
-    ],
+const OFFER_VARIANT = {
+    ar: "واضح إنك داخل في قرار شغل بجد… تحب نفكّها سوا بعمق أكتر شوية؟",
+    en: "Looks like you're facing a real business decision… want me to dig deeper with you?",
 };
 
-function getRandomOffer(locale) {
-    const variants = locale.startsWith("en") ? OFFER_VARIANTS.en : OFFER_VARIANTS.ar;
-    return variants[Math.floor(Math.random() * variants.length)];
+function getOffer(locale) {
+    return locale.startsWith("en") ? OFFER_VARIANT.en : OFFER_VARIANT.ar;
 }
 
 /* =======================
@@ -288,10 +310,8 @@ function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
    GEMINI CALL
 ======================= */
 
-async function callGemini(env, systemPrompt, messages, temperature = 0.6) {
-    if (!env.GEMINI_API_KEY) {
-        throw new Error("MISSING_GEMINI_API_KEY");
-    }
+async function callGemini(env, model, systemPrompt, messages, temperature = 0.6) {
+    if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
 
     const payload = {
         system_instruction: { parts: [{ text: systemPrompt }] },
@@ -302,28 +322,90 @@ async function callGemini(env, systemPrompt, messages, temperature = 0.6) {
         },
     };
 
-    for (const model of GEMINI_MODELS) {
+    const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
+        {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        }
+    );
+
+    if (!res.ok) throw new Error(`GEMINI_ERROR: ${res.status}`);
+
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error("GEMINI_EMPTY");
+    return text;
+}
+
+/* =======================
+   OPENAI CALL
+======================= */
+
+async function callOpenAI(env, model, systemPrompt, messages, temperature = 0.6) {
+    const apiKey = env["openai-jimmy"];
+    if (!apiKey) throw new Error("MISSING_OPENAI_API_KEY");
+
+    const openaiMessages = [
+        { role: "system", content: systemPrompt },
+        ...messages.map(m => ({
+            role: m.role === "model" ? "assistant" : m.role,
+            content: m.parts?.[0]?.text || m.content || "",
+        })),
+    ];
+
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+            model,
+            messages: openaiMessages,
+            temperature,
+            max_tokens: 600,
+        }),
+    });
+
+    if (!res.ok) throw new Error(`OPENAI_ERROR: ${res.status}`);
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content;
+    if (!text) throw new Error("OPENAI_EMPTY");
+    return text;
+}
+
+/* =======================
+   MAIN AI CALL (Deterministic Fallback)
+======================= */
+
+async function callAI(env, mode, systemPrompt, messages, temperature = 0.6) {
+    const models = getModelsForMode(mode);
+    let lastError = null;
+
+    for (const model of models) {
         try {
-            const res = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                }
-            );
-
-            if (!res.ok) continue;
-
-            const data = await res.json();
-            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) return text;
-        } catch {
+            if (model.startsWith("gemini") || model.startsWith("virtual")) {
+                return await callGemini(env, model, systemPrompt, messages, temperature);
+            } else if (model.startsWith("gpt") || model.startsWith("o")) {
+                return await callOpenAI(env, model, systemPrompt, messages, temperature);
+            }
+        } catch (err) {
+            console.warn(`Model ${model} failed:`, err?.message);
+            lastError = err;
             continue;
         }
     }
 
-    throw new Error("ALL_MODELS_FAILED");
+    // Emergency Fallback: If everything above fails, try the cheapest model directly
+    try {
+        const emergencyModel = "gpt-4o-mini";
+        return await callOpenAI(env, emergencyModel, systemPrompt, messages, temperature);
+    } catch (e) {
+        throw lastError || e;
+    }
 }
 
 /* =======================
@@ -442,38 +524,49 @@ export default {
 
             // Handle offer flow - return offer message without calling AI
             if (flow === "offer") {
-                const offerMsg = getRandomOffer(locale);
+                const offerMsg = getOffer(locale);
                 return jsonResponse({
                     response: offerMsg,
                     meta: { expert_on: false, offered: true },
                 }, 200, cors);
             }
 
+            // Determine Mode
+            let reqMode = "core";
+            if (flow === "expert_activate" || flow === "expert") {
+                reqMode = "expert";
+            }
+
             // Build appropriate prompt
             let systemPrompt;
             let newExpertOn = expertOn;
 
-            if (flow === "expert_activate" || flow === "expert") {
+            if (reqMode === "expert") {
                 const advancedKB = await getAdvancedKB(env);
                 if (advancedKB) {
-                    // Use full KB only when needed, otherwise rely on context
                     if (useFullKB) {
-                        systemPrompt = buildExpertPrompt(locale, advancedKB);
+                        systemPrompt = buildExpertPrompt(locale, advancedKB, expertMsgCount);
                     } else {
-                        // Expert light: core + brief reminder, rely on conversation context
-                        systemPrompt = buildCorePrompt(locale) + "\n\n--- تذكير ---\nأنت في وضع الاستشاري. اعتمد على سياق المحادثة السابقة.";
+                        systemPrompt = buildCorePrompt(locale) + "\n\n--- تذكير ---\nأنت في وضع التشخيص المستمر. خليك مختصر جداً ووجّه المستخدم للخطوة الجاية.";
                     }
                     newExpertOn = true;
                 } else {
-                    // Fallback if KB not available
                     systemPrompt = buildCorePrompt(locale);
                     newExpertOn = false;
+                    reqMode = "core"; // Fallback to core mode if KB fails
                 }
             } else {
                 systemPrompt = buildCorePrompt(locale);
             }
 
-            const response = await callGemini(env, systemPrompt, messages);
+            let response;
+            try {
+                response = await callAI(env, reqMode, systemPrompt, messages);
+            } catch (err) {
+                // Last ditch effort: Emergency Mode
+                console.error("Critical Failure, trying Emergency Mode:", err);
+                response = await callAI(env, "emergency", systemPrompt, messages);
+            }
 
             return jsonResponse({
                 response,
