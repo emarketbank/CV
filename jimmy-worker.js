@@ -50,45 +50,68 @@ function toGeminiContents(messages) {
   }));
 }
 
-async function callGemini(env, body) {
+const GEMINI_MODELS_PRIORITY = [
+  "gemini-3-flash",
+  "gemini-2.5-flash",
+  "gemini-2.0-flash",
+  "gemini-1.5-flash",
+];
+
+function buildModelPriority(env) {
+  const envModel = (env.GEMINI_MODEL || "").trim();
+  if (!envModel) return GEMINI_MODELS_PRIORITY;
+  const ordered = [envModel, ...GEMINI_MODELS_PRIORITY];
+  return Array.from(new Set(ordered));
+}
+
+async function callGeminiWithFallback(env, body) {
   if (!env.GEMINI_API_KEY) {
     throw new Error("MISSING_GEMINI_API_KEY");
   }
 
-  // استخدام gemini-1.5-flash لأنه الأسرع والأحدث حالياً للردود القصيرة
-  const model = env.GEMINI_MODEL || "gemini-1.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
-
   const system = getSystemPrompt(env);
+  const models = buildModelPriority(env);
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: {
-        parts: [{ text: system }],
-      },
-      contents: toGeminiContents(body.messages),
-      generationConfig: { 
-        temperature: body.temperature ?? 0.6,
-        maxOutputTokens: 800 // لضمان ردود مختصرة وسريعة
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: system }],
+          },
+          contents: toGeminiContents(body.messages),
+          generationConfig: {
+            temperature: body.temperature ?? 0.6,
+            maxOutputTokens: 800, // لضمان ردود مختصرة وسريعة
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Gemini API Error: ${res.status} - ${errorText.slice(0, 200)}`);
       }
-    }),
-  });
 
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Gemini API Error: ${res.status} - ${errorText.slice(0, 200)}`);
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) {
+        throw new Error("Gemini returned empty response");
+      }
+
+      console.log(`Gemini model used: ${model}`);
+      return text;
+    } catch (err) {
+      console.warn(`Gemini model skipped: ${model}`, err && err.message ? err.message : err);
+      continue;
+    }
   }
-  
-  const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  
-  if (!text) {
-      throw new Error("Gemini returned empty response");
-  }
-  
-  return text;
+
+  throw new Error("All Gemini models failed");
 }
 
 export default {
@@ -124,7 +147,7 @@ export default {
       }
       
       // ✅ استدعاء مباشر لـ Gemini فقط
-      const responseText = await callGemini(env, body);
+      const responseText = await callGeminiWithFallback(env, body);
 
       return jsonResponse({ response: responseText }, 200, corsHeaders);
 
